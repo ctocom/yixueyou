@@ -14,6 +14,7 @@ Route::group('index', [
     'index'=>'index/index/index',                                //
     'login'=>'index/Login/index',
     'course'=>'index/StudentCourse/index',
+    'section'=>'index/StudentCourse/section',
 ]);
 
 
