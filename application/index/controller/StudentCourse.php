@@ -18,6 +18,9 @@ class StudentCourse extends Controller
     public function section()
     {
         $course_id=$this->request->post('course_id');
+        if(!$course_id){
+            show([],200,'course_id不能为空');
+        }
         $section_info=Section::where(['is_show'=>1,'delete_time'=>0,'course_id'=>$course_id])->select();
         show($section_info,200,'ok');
     }
