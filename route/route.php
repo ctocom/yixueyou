@@ -73,8 +73,12 @@ Route::group('admin', [
 
     'questionList$'=>'admin/Question/questionList',//试题列表
     'questionAdd$'=>'admin/Question/questionAdd',//试题添加
-    'questionSection$'=>'admin/Question/questionSection',//章节数据
-    'questionUnit$'=>'admin/Question/questionUnit',//知识点数据
+    'questionSection$'=>'admin/Question/questionSection',//章节下拉
+    'questionUnit$'=>'admin/Question/questionUnit',//知识点下拉
+
+    'courseList$'=>'admin/Course/courseList',//课程列表
+    'sectionList$'=>'admin/Section/sectionList',//章节列表
+    'unitList$'=>'admin/Unit/unitList',//章节列表
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 
 /**

@@ -8,13 +8,20 @@
 
 namespace app\admin\controller;
 
-use think\Controller;
-
-class Unit extends Controller
+class Unit extends Common
 {
-    public function index()
+    public function unitList()
     {
-        
+        if($this->request->isAjax())
+        {
+            $where=[
+                'delete_time'=>0
+            ];
+            $data=model('unit')->where($where)->select();
+            show($data,0,'');
+        }else{
+            return $this->fetch();
+        }
     }
     public function edit()
     {

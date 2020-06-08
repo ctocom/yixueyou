@@ -8,13 +8,22 @@
 
 namespace app\admin\controller;
 
-use think\Controller;
-
-class Section extends Controller
+class Section extends Common
 {
-    public function index()
+    public function sectionList()
     {
-        
+        if($this->request->isAjax())
+        {
+            $where=[
+                'is_show'=>1,
+                'delete_time'=>0
+            ];
+            $data=model('section')->where($where)->select();
+            show($data,0,'');
+        }else{
+            return $this->fetch();
+        }
+
     }
     public function edit()
     {

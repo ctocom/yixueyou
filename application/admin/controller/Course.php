@@ -7,13 +7,22 @@
  */
 
 namespace app\admin\controller;
-
+use app\admin\model\Course as Courses;
 class Course extends Common
 {
-    public static function getCourseInfo()
+    public  function courseList()
     {
-        $data=model('course')->select();
-        return $data;
+        if ($this->request->isAjax())
+        {
+            $where=[
+                'delete_time'=>0,
+                'is_show'=>1
+            ];
+            $data=Courses::getCourseInfo($where);
+            show($data,0,'');
+        }else{
+           return $this->fetch();
+        }
     }
     public function edit()
     {

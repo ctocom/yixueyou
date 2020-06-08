@@ -14,4 +14,9 @@ class Course extends Model
 {
     protected $autoWriteTimestamp = true;
     protected $createTime = false;
+    public static function getCourseInfo($where)
+    {
+        $data=model('course')->where($where)->select();
+        return $data;
+    }
 }

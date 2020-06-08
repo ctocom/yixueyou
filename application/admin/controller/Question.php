@@ -4,6 +4,7 @@ use app\admin\model\Section;
 use app\admin\model\Unit;
 use app\admin\model\QuestionType;
 use app\admin\model\Question as Questions;
+use app\admin\model\Course;
 class Question extends Common
 {
     public function questionList()
@@ -13,14 +14,15 @@ class Question extends Common
                 'key' => $this->request->get('key', '', 'trim'),
                 'limit' => $this->request->get('limit', 10, 'intval'),
             ];
-            $list = Questions::withSearch(['title'], ['title' => $data['key']])
+            $list = Questions::where('title','like',"%".$data['key']."%")
                 ->paginate($data['limit'], false, ['query' => $data]);
+            $total_list=$list->total();
             $question_data = [];
             foreach ($list as $key => $val) {
                 $question_data[$key] = $val;
                 $question_data[$key]['teacher_name']=model('user')->where(['uid'=>$val->teacher_id])->value('name');
             }
-            return show($question_data, 0, '', ['count' => $list->total()]);
+            return show($question_data, 0, '', ['count' => $total_list]);
         }else{
             return  $this->fetch();
         }
@@ -40,6 +42,7 @@ class Question extends Common
            if($data['type']==1){
                //选择题
                 $data['options']=$answer;
+
            }else if($data['type']==2){
                //多选题
                $data['options']=$answer2;
@@ -49,6 +52,9 @@ class Question extends Common
            }else if($data['type']==4){
                //判断题
                $data['answer']=$answer;
+           }else if($data['type']==5){
+               //填空题题
+               $data['keyword']=$answer;
            }
            $data['name']=$data['title'];
            $user = session('user_auth');
@@ -60,7 +66,7 @@ class Question extends Common
                show([],0,'添加失败');
            }
         }else{
-            $course_data=Course::getCourseInfo();
+            $course_data=Course::getCourseInfo([]);
             $question_type=QuestionType::getQuestionType();
             $this->assign('course_data',$course_data);
             $this->assign('question_type',$question_type);
