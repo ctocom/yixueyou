@@ -641,9 +641,9 @@ class XLSXWriter
         $rels_xml="";
         $rels_xml.='<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $rels_xml.='<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
-        $rels_xml.='<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>';
-        $rels_xml.='<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>';
-        $rels_xml.='<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>';
+        $rels_xml.='<Relationship Id="rId1" QuestionType="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>';
+        $rels_xml.='<Relationship Id="rId2" QuestionType="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>';
+        $rels_xml.='<Relationship Id="rId3" QuestionType="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>';
         $rels_xml.="\n";
         $rels_xml.='</Relationships>';
         return $rels_xml;
@@ -683,9 +683,9 @@ class XLSXWriter
         $wkbkrels_xml="";
         $wkbkrels_xml.='<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $wkbkrels_xml.='<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
-        $wkbkrels_xml.='<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
+        $wkbkrels_xml.='<Relationship Id="rId1" QuestionType="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
         foreach($this->sheets as $sheet_name=>$sheet) {
-            $wkbkrels_xml.='<Relationship Id="rId'.($i+2).'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/'.($sheet->xmlname).'"/>';
+            $wkbkrels_xml.='<Relationship Id="rId'.($i+2).'" QuestionType="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/'.($sheet->xmlname).'"/>';
             $i++;
         }
         $wkbkrels_xml.="\n";

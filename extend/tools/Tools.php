@@ -31,7 +31,7 @@ class Tools
     public static function download_excel($data, $header = [], $filename = 'output.xlsx')
     {
         header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
-        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-QuestionType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         header('Content-Transfer-Encoding: binary');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');

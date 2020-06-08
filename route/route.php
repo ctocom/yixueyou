@@ -15,6 +15,8 @@ Route::group('index', [
     'login'=>'index/Login/index',
     'course'=>'index/StudentCourse/index',
     'section'=>'index/StudentCourse/section',
+    'unit'=>'index/StudentCourse/unit',
+    'unitList'=>'index/StudentCourse/unitList',
 ]);
 
 
@@ -68,6 +70,11 @@ Route::group('admin', [
     //上传管理
     'upload'=>'admin/Upload/index',                                    //上传图片
     'dowload'=>'admin/Upload/dowload',                                    //上传图片
+
+    'questionList$'=>'admin/Question/questionList',//试题列表
+    'questionAdd$'=>'admin/Question/questionAdd',//试题添加
+    'questionSection$'=>'admin/Question/questionSection',//章节数据
+    'questionUnit$'=>'admin/Question/questionUnit',//知识点数据
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 
 /**
