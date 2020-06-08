@@ -19,6 +19,9 @@ class Section extends Common
                 'delete_time'=>0
             ];
             $data=model('section')->where($where)->select();
+            foreach ($data as $key=>$v){
+                $data[$key]['course_name']=model('course')->where('id',$v['course_id'])->value('name');
+            }
             show($data,0,'');
         }else{
             return $this->fetch();
