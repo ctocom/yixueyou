@@ -15,6 +15,7 @@ class Question extends Common
                 'limit' => $this->request->get('limit', 10, 'intval'),
             ];
             $list = Questions::where('title','like',"%".$data['key']."%")
+                ->where('delete_time',0)
                 ->paginate($data['limit'], false, ['query' => $data]);
             $total_list=$list->total();
             $question_data = [];
@@ -81,8 +82,16 @@ class Question extends Common
     {
 
     }
-    public function delete()
+    //试题删除
+    public function questionDelete()
     {
+        $id=intval($this->request->post('id'));
+        $res=model('question')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
 
     }
     //章节数据

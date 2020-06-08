@@ -75,10 +75,20 @@ Route::group('admin', [
     'questionAdd$'=>'admin/Question/questionAdd',//试题添加
     'questionSection$'=>'admin/Question/questionSection',//章节下拉
     'questionUnit$'=>'admin/Question/questionUnit',//知识点下拉
+    'questionDelete$'=>'admin/Question/questionDelete',//知识点下拉
 
     'courseList$'=>'admin/Course/courseList',//课程列表
+    'courseDelete$'=>'admin/Course/courseDelete',//科目删除
+
     'sectionList$'=>'admin/Section/sectionList',//章节列表
+    'sectionDelete$'=>'admin/Section/sectionDelete',//科目删除
+
     'unitList$'=>'admin/Unit/unitList',//章节列表
+    'unitDelete$'=>'admin/Unit/unitDelete',//章节删除
+
+    'studentList$'=>'admin/Student/studentList',//学生列表
+    'studentDelete$'=>'admin/Student/studentDelete',//章节删除
+
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 
 /**

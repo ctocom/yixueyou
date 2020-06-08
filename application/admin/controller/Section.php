@@ -33,8 +33,15 @@ class Section extends Common
     {
 
     }
-    public function delete()
+    public function sectionDelete()
     {
+        $id=intval($this->request->post('id'));
+        $res=model('section')->where('id',$id)->update(['delete_time'=>time()]);;
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
 
     }
 }

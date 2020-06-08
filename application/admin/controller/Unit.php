@@ -31,8 +31,15 @@ class Unit extends Common
     {
 
     }
-    public function delete()
+    public function unitDelete()
     {
+        $id=intval($this->request->post('id'));
+        $res=model('unit')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
 
     }
 }

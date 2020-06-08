@@ -3,20 +3,20 @@
 <form class="layui-form">
     <blockquote class="layui-elem-quote quoteBox">
         <form class="layui-form">
-            <!--<div class="layui-inline">-->
-                <!--<div class="layui-input-inline">-->
-                    <!--<input type="text" class="layui-input searchVal" placeholder="输入科目" />-->
-                <!--</div>-->
-                <!--<a class="layui-btn search_btn" data-type="reload">搜索</a>-->
-            <!--</div>-->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input searchVal" placeholder="输入姓名" />
+                </div>
+                <a class="layui-btn search_btn" data-type="reload">搜索</a>
+            </div>
             <div class="layui-inline">
                 <a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>
             </div>
         </form>
     </blockquote>
-    <table id="courseList" lay-filter="courseList"></table>
+    <table id="studentList" lay-filter="studentList"></table>
     <!--操作-->
-    <script type="text/html" id="questionListBar">
+    <script type="text/html" id="studentListBar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
     </script>
@@ -31,24 +31,24 @@
 
         //用户列表
         var tableIns = table.render({
-            elem: '#courseList',
-            url : "{:url('/admin/courseList')}",
+            elem: '#studentList',
+            url : "{:url('/admin/studentList')}",
             cellMinWidth : 95,
             page : true,
             limit:10,
             limits:[5,10,15,20],
             height : "full-125",
-            id:'courseListTable',
+            id:'studentListTable',
             cols : [[
                 {field: 'id', title: 'Id', width:100, align:"center"},
-                {field: 'name', title: '科目名',align:'center'},
-                {title: '操作', width:170, templet:'#questionListBar',fixed:"right",align:"center"}
+                {field: 'name', title: '姓名',align:'center'},
+                {title: '操作', width:170, templet:'#studentListBar',fixed:"right",align:"center"}
             ]]
         });
 
         //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
         $(".search_btn").on("click",function(){
-            table.reload("courseListTable",{
+            table.reload("studentListTable",{
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
@@ -63,7 +63,7 @@
             var index = layui.layer.open({
                 title : "添加试题",
                 type : 2,
-                content : "{:url('/admin/courseAdd')}",
+                content : "{:url('/admin/studentAdd')}",
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){
@@ -107,14 +107,14 @@
         })
 
         //列表操作
-        table.on('tool(courseList)', function(obj){
+        table.on('tool(studentList)', function(obj){
             var layEvent = obj.event, data = obj.data;
             if(layEvent === 'edit'){ //编辑
                 edit(data.id);
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
                     $.ajax({
-                        url: "{:url('/admin/courseDelete')}",
+                        url: "{:url('/admin/studentDelete')}",
                         type: "post",
                         dataType: "json",
                         data: {id:data.id},
@@ -124,7 +124,6 @@
                             }else{
                                 var icon=2;
                             }
-                            console.log(data.code)
                             layer.msg(data.msg, {
                                 icon: icon,
                                 time: 2000 //2秒关闭（如果不配置，默认是3秒）

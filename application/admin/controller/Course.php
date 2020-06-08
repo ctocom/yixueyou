@@ -32,8 +32,15 @@ class Course extends Common
     {
 
     }
-    public function delete()
+    public function courseDelete()
     {
+        $id=intval($this->request->post('id'));
+        $res=model('course')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
 
     }
 }
