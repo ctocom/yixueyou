@@ -18,6 +18,10 @@ class Unit extends Common
                 'delete_time'=>0
             ];
             $data=model('unit')->where($where)->select();
+            foreach ($data as $key=>$v){
+                $data[$key]['course_name']=model('course')->where('id',$v['course_id'])->value('name');
+                $data[$key]['section_name']=model('section')->where('id',$v['section_id'])->value('name');
+            }
             show($data,0,'');
         }else{
             return $this->fetch();
