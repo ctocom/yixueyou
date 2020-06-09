@@ -3,4 +3,3 @@
 *.log
 thinkphp
 .env
-config/database.php

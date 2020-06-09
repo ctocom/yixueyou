@@ -64,4 +64,8 @@ class Common extends Controller
         cache('site_config', $list);
         return $list;
     }
+    public function changeMultiple($num)
+    {
+       return bcdiv($num,100);
+    }
 }

@@ -24,7 +24,10 @@ class Student extends Common
             $total=$list->total();
             $user_data = [];
             foreach ($list as $key => $val) {
-                $user_data[$key] = $val;
+                $user_data[$key]=$val;
+            }
+            foreach ($user_data as $k=>$v){
+                $v['score']=$this->changeMultiple($v['score']);
             }
             return show($user_data, 0, '', ['count' => $total]);
         }
