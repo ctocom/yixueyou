@@ -16,7 +16,7 @@ Route::group('index', [
     'course'=>'index/StudentCourse/index',
     'section'=>'index/StudentCourse/section',
     'unit'=>'index/StudentCourse/unit',
-    'unitList'=>'index/StudentCourse/unitList',
+    'unit_list'=>'index/StudentCourse/unit_list',
 ]);
 
 
@@ -77,14 +77,16 @@ Route::group('admin', [
     'questionUnit$'=>'admin/Question/questionUnit',//知识点下拉
     'questionDelete$'=>'admin/Question/questionDelete',//知识点下拉
 
-    'courseList$'=>'admin/Course/courseList',//课程列表
+    'courseList$'=>'admin/Course/courseList',//课目列表
     'courseDelete$'=>'admin/Course/courseDelete',//科目删除
 
     'sectionList$'=>'admin/Section/sectionList',//章节列表
-    'sectionDelete$'=>'admin/Section/sectionDelete',//科目删除
+    'sectionDelete$'=>'admin/Section/sectionDelete',//章节删除
 
-    'unitList$'=>'admin/Unit/unitList',//章节列表
-    'unitDelete$'=>'admin/Unit/unitDelete',//章节删除
+    'unitList$'=>'admin/Unit/unitList',//知识点列表
+    'unitDelete$'=>'admin/Unit/unitDelete',//知识点删除
+
+    'unitTask$'=>'admin/UnitList/unitList',//知识点列表
 
     'studentList$'=>'admin/Student/studentList',//学生列表
     'studentDelete$'=>'admin/Student/studentDelete',//章节删除

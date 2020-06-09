@@ -22,7 +22,7 @@ class StudentCourse extends Controller
     {
         $course_id=$this->request->post('course_id');
         if(!$course_id){
-            show([],200,'course_id不能为空');
+            show([],0,'course_id不能为空');
         }
         $section_info=Section::where(['is_show'=>1,'delete_time'=>0,'course_id'=>$course_id])->select();
         show($section_info,200,'ok');
@@ -32,18 +32,30 @@ class StudentCourse extends Controller
     {
         $section_id=$this->request->post('section_id');
         if(!$section_id){
-            show([],200,'section_id不能为空');
+            show([],0,'section_id不能为空');
         }
-        $unit_info=Unit::where(['is_show'=>1,'delete_time'=>0,'section_id'=>$section_id])->select();
+        $unit_info=Unit::where(['delete_time'=>0,'section_id'=>$section_id])->select();
         show($unit_info,200,'ok');
     }
     //节任务队列数据
     public function unitList()
     {
         $section_id=$this->request->post('section_id');
+        if(!$section_id){
+            show([],0,'section_id不能为空');
+        }
         //任务队列数据
-        $user_id=$this->request->post('user_id');
-        $unit=Unit::where(['delete_time'=>0])->order('complete_num','asc')->order('id','asc')->find();
+        $user_id=intval($this->request->post('user_id'));
+        if(!$user_id){
+            show([],0,'user_id不能为空');
+        }
+        $unit=Unit::where(['delete_time'=>0])
+            ->alias('u')
+            ->join('user_unit uu','u.id = uu.unit_id')
+            ->where('uu.user_id',$user_id)
+            ->order('uu.complete_num','asc')
+            ->order('uu.id','asc')
+            ->find();
         $list=UnitList::where(['unit_id'=>$unit['id'],'user_id'=>$user_id])->select();
         foreach ($list as $v){
             $name=Unit::where(['id'=>$v['unit_id']])->value('name');
@@ -51,7 +63,13 @@ class StudentCourse extends Controller
             $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
         }
         //章节进度
-        $unit_info=Unit::where(['delete_time'=>0])->order('id','asc')->select();
+        $unit_info=Unit::where(['delete_time'=>0])
+            ->alias('u')
+            ->join('user_unit uu','u.id = uu.unit_id')
+            ->where('uu.user_id',$user_id)
+            ->order('uu.complete_num','asc')
+            ->order('uu.id','asc')
+            ->select();;
         $info=[
             'unit_info'=>$unit_info,
             'list'=>$list
