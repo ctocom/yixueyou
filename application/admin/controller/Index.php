@@ -28,6 +28,13 @@ class Index extends Common
         $this->assign('menuList', $menuList);
         $info = User::get($this->uid)->hidden(['password']);
         $info['head'] ? : $info['head'] = '/images/face.jpg';
+        //查询后台未读系统消息
+        $admin_info=session('user_auth');
+        $system_num=model('system_news')
+            ->where('to_user',$admin_info['uid'])
+            ->where('is_read',0)
+            ->count();
+        $this->assign('system_num', $system_num);
         $this->assign('info', $info);
         //公告
         $notice_config = $this->noticeConfig();

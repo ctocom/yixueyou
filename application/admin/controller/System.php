@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use app\admin\model\AuthRule;
 use app\admin\model\Config;
 use app\admin\model\LoginLog;
+use app\admin\model\SystemNews;
 use think\facade\App;
 use think\facade\Cache;
 
@@ -276,6 +277,58 @@ class System extends Common
             } else {
                 $this->error('修改失败');
             }
+        }
+    }
+
+    /**
+     * 管理员信息
+     */
+    public function SystemNewsList(){
+        if($this->request->isAjax()){
+            $user_id=$this->request->get('user_id','0','intval');
+            $data['limit']=$this->request->get('limit','10','intval');
+            $where=[];
+            if($user_id){
+                $where['from_user']=$user_id;
+            }
+            $where['delete_time']=0;
+            $list = SystemNews::where($where)
+                ->order('is_read','asc')
+                ->order('id','desc')
+                ->paginate($data['limit'], false, ['query' => $data]);
+            $total=$list->total();
+            $user_data=[];
+            foreach ($list as $key => $val) {
+                $user_data[$key] = $val;
+            }
+            foreach ($user_data as $v){
+                if($v['is_read']==0){
+                    $v['is_read']='未读';
+                }else{
+                    $v['is_read']='已读';
+                }
+            }
+            return show($user_data, 0, '', ['count' => $total]);
+        }else{
+            return $this->fetch();
+        }
+    }
+    public function systemNewsStatus(){
+        $id=$this->request->post('id','0','intval');
+        $res=SystemNews::where('id',$id)->update(['is_read'=>1]);
+        if($res){
+            show([],200,'ok');
+        }else{
+            show([],0,'ok');
+        }
+    }
+    public function systemNewsdelete(){
+        $id=$this->request->post('id','0','intval');
+        $res=SystemNews::where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
         }
     }
 }

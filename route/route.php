@@ -16,7 +16,7 @@ Route::group('index', [
     'course'=>'index/StudentCourse/index',
     'section'=>'index/StudentCourse/section',
     'unit'=>'index/StudentCourse/unit',
-    'unit_list'=>'index/StudentCourse/unit_list',
+    'unitList'=>'index/StudentCourse/unitList',
 ]);
 
 
@@ -44,7 +44,10 @@ Route::group('admin', [
 
     //首页
     'index$'=>'admin/Index/index',                                           //首页
-    'home'=>'admin/Index/home',                                              //系统信息
+    'home'=>'admin/Index/home',
+    'SystemNewsInfo$'=>'admin/System/SystemNewsList',                      //系统信息
+    'SystemNewsStatus$'=>'admin/System/SystemNewsStatus',                      //系统信息修改阅读状态
+    'SystemNewsDelete$'=>'admin/System/SystemNewsDelete',                      //系统信息删除
 
     //用户管理
     'userList$'=>'admin/User/userList',                                      //用户列表

@@ -27,18 +27,23 @@
                 <li class="layui-nav-item" pc>
                     <a href="javascript:;" class="clearCache"><i class="layui-icon" data-icon="&#xe640;">&#xe640;</i><cite>清除浏览器缓存</cite></a>
                 </li>
-                <li class="layui-nav-item lockcms" pc>
-                    <a href="javascript:;"><i class="seraph icon-lock"></i><cite>锁屏</cite></a>
+                <li class="layui-nav-item" pc>
+                    <dd><a  data-url="{:url('/admin/SystemNewsInfo')}" href="javascript:;" ><i class="layui-icon layui-icon-notice"></i>&nbsp;{$system_num}<cite>消息</cite><span class="layui-badge-dot"></span></a></dd>
                 </li>
+                <!--<li class="layui-nav-item" pc>-->
+                    <!--<a style="color: white" href=""><i class="layui-icon layui-icon-notice"></i>{system_num}</a>-->
+                <!--</li>  <!--<li class="layui-nav-item" pc>-->
+                    <!--<a style="color: white" href=""><i class="layui-icon layui-icon-notice"></i>{system_num}</a>-->
+                <!--</li>-->
                 <li class="layui-nav-item" id="userInfo">
                     <a href="javascript:;"><img src="{$info.head}" class="layui-nav-img userAvatar" width="35" height="35"><cite class="adminName">{$info.name}</cite></a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" data-url="{:url('/admin/userInfo')}"><i class="seraph icon-ziliao" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
                         <dd><a href="javascript:;" data-url="{:url('/admin/editPassword')}"><i class="seraph icon-xiugai" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
                         <dd pc><a href="javascript:;" class="functionSetting"><i class="layui-icon">&#xe620;</i><cite>功能设定</cite><span class="layui-badge-dot"></span></a></dd>
-                        <!--<dd><a href="javascript:;" class="showNotice"><i class="layui-icon">&#xe645;</i><cite>系统公告</cite><span class="layui-badge-dot"></span></a></dd>-->
+                        <!--<dd><a href="javascript:;" class=""><i class="layui-icon">&#xe645;</i><cite>系统公告</cite><span class="layui-badge-dot"></span></a></dd>-->
                         <dd pc><a href="javascript:;" class="changeSkin"><i class="layui-icon">&#xe61b;</i><cite>更换皮肤</cite></a></dd>
-                        <dd><a onclick="loginout()" class="signOut"><i class="seraph icon-tuichu"></i><cite>退出</cite></a></dd>
+                        <dd><a class="signOut"><i class="seraph icon-tuichu"</i><cite>退出</cite></a></dd>
                     </dl>
                 </li>
             </ul>
@@ -114,93 +119,20 @@
         $(window).resize(function () {
             $(".navBar").height($(window).height() - 210);
         })
-
-        //判断是否处于锁屏状态【如果关闭以后则未关闭浏览器之前不再显示】
-        var notice = '';
-        {if ($notice_config.value.status == 1) and (empty($notice_config.value.notice) === false)}
-        notice = '{$notice_config.value.notice|raw}';
-        {/if}
-
-        if(window.sessionStorage.getItem("lockcms") != "true" && window.sessionStorage.getItem("showNotice") != "true"){
-            // showNotice(notice);
-        }
-
-        $(".showNotice").on("click",function(){
-            showNotice(notice);
-        })
-
-        //锁屏
-        function lockPage() {
-            layer.open({
-                title: false,
-                type: 1,
-                content: '<div class="admin-header-lock" id="lock-box">' +
-                    '<div class="admin-header-lock-img"><img src="/images/face.jpg" class="userAvatar"/></div>' +
-                    '<div class="admin-header-lock-name" id="lockUserName">{$Think.session.user_auth.name}</div>' +
-                    '<div class="input_btn">' +
-                    '<input type="password" class="admin-header-lock-input layui-input" autocomplete="off" placeholder="请输入密码解锁.." name="lockPwd" id="lockPwd" />' +
-                    '<button class="layui-btn" id="unlock">解锁</button>' +
-                    '</div>' +
-                    '</div>',
-                closeBtn: 0,
-                shade: 0.9,
-                success: function () {
-                    //判断是否设置过头像，如果设置过则修改顶部、左侧和个人资料中的头像，否则使用默认头像
-                    if (window.sessionStorage.getItem('userFace') && $(".userAvatar").length > 0) {
-                        $(".userAvatar").attr("src", $(".userAvatar").attr("src").split("images/")[0] + "images/" + window.sessionStorage.getItem('userFace').split("images/")[1]);
-                    }
+        $(".signOut").click(function(){
+            $.ajax({
+                url: "{:url('/admin/logout')}",
+                type: "post",
+                dataType: "json",
+                success: function (res) {
+                    layer.msg(res.msg, {time: 1500}, function () {
+                        location.href = res.url;
+                    });
                 }
             })
-            $(".admin-header-lock-input").focus();
-        }
+        });
 
-        $(".lockcms").on("click", function () {
-            window.sessionStorage.setItem("lockcms", true);
-            lockPage();
-        })
-        // 判断是否显示锁屏
-        if (window.sessionStorage.getItem("lockcms") == "true") {
-            lockPage();
-        }
-        // 解锁
-        $("body").on("click", "#unlock", function () {
-            var password = $(this).siblings(".admin-header-lock-input").val();
-            if (password == '') {
-                layer.msg("请输入解锁密码！");
-                $(this).siblings(".admin-header-lock-input").focus();
-            } else {
-                $.post("{:url('/admin/unlock')}", {password: password}, function (data) {
-                    if (data.code) {
-                        window.sessionStorage.setItem("lockcms", false);
-                        $(this).siblings(".admin-header-lock-input").val('');
-                        layer.closeAll("page");
-                    } else {
-                        $(this).siblings(".admin-header-lock-input").val('').focus();
-                        layer.msg(data.msg, {time: 1500}, function () {
-                            if (data.url) {
-                                window.sessionStorage.setItem("lockcms", false);
-                                location.href = data.url;
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        $(document).on('keydown', function (event) {
-            var event = event || window.event;
-            if (event.keyCode == 13) {
-                $("#unlock").click();
-            }
-        });
     })
-
-    function loginout() {
-        $.post("{:url('/admin/logout')}", '', function (data) {
-            layer.msg(data.msg, {time: 1500}, function () {
-                location.href = data.url;
-            });
-        }, 'json')
-    }
 </script>
 </body>
 </html>

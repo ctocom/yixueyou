@@ -18,7 +18,7 @@ class Student extends Common
                 'key' => $this->request->get('key', '', 'trim'),
                 'limit' => $this->request->get('limit', 10, 'intval'),
             ];
-            $list = S::where('name','like',"%".$data['key']."%")
+            $list = S::where('account','like',"%".$data['key']."%")
                 ->where('delete_time',0)
                 ->paginate($data['limit'], false, ['query' => $data]);
             $total=$list->total();
@@ -30,8 +30,9 @@ class Student extends Common
                 $v['score']=$this->changeMultiple($v['score']);
             }
             return show($user_data, 0, '', ['count' => $total]);
+        }else{
+            return $this->fetch();
         }
-        return $this->fetch();
     }
     public function studentDelete()
     {

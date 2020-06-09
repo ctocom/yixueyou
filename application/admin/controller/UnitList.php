@@ -7,23 +7,33 @@ class UnitList extends Common
     {
         if($this->request->isAjax())
         {
-            $user_id=$this->request->post('user_id');
-            $type=$this->request->post('type');
-            $complete_rate=$this->request->post('complete_status');
+            $user_id=$this->request->get('user_id','0','intval');
+            $type=$this->request->get('type','0','intval');
+            $complete_rate=$this->request->get('complete_status','-1');
             $where=[];
+            $data=[];
             if($user_id){
                 $where['user_id']=$user_id;
             }else if($type){
                 $where['type']=$type;
-            }else if($complete_rate){
+            }else if($complete_rate>=0){
                 $where['complete_rate']=$complete_rate;
             }
-            $data=model('unit_list')->where($where)->select();
-            foreach ($data as $key=>$v){
-                $data[$key]['user_name']=model('student')->where('id',$v['user_id'])->value('name');
-                $data[$key]['unit_name']=model('unit')->where('id',$v['unit_id'])->value('name');
+            $data['limit']=$this->request->get('limit', 10, 'intval');
+            $list=model('unit_user_list')
+                ->where($where)
+                ->paginate($data['limit'], false, ['query' => $data]);
+            $total=$list->total();
+            $unit_data=[];
+            foreach ($list as $key => $val) {
+                $unit_data[$key]=$val;
             }
-            show($data,0,'');
+            foreach ($unit_data as $key=>$v){
+                $unit_id=model('unit_list')->where('id',$v['unit_list_id'])->value('unit_id');
+                $unit_data[$key]['user_account']=model('student')->where('id',$v['user_id'])->value('account');
+                $unit_data[$key]['unit_name']=model('unit')->where('id',$unit_id)->value('name');
+            }
+           return show($unit_data,0,'',['count' => $total]);
         }else{
             return $this->fetch();
         }

@@ -9,6 +9,7 @@ use think\Controller;
 use app\index\model\Course;
 use app\index\model\Section;
 use app\index\model\Unit;
+use app\index\model\UserUnit;
 class StudentCourse extends Controller
 {
     //课程数据
@@ -49,14 +50,14 @@ class StudentCourse extends Controller
         if(!$user_id){
             show([],0,'user_id不能为空');
         }
-        $unit=Unit::where(['delete_time'=>0])
+        $unit=UserUnit::where(['delete_time'=>0])
             ->alias('u')
-            ->join('user_unit uu','u.id = uu.unit_id')
-            ->where('uu.user_id',$user_id)
-            ->order('uu.complete_num','asc')
-            ->order('uu.id','asc')
+            ->join('unit uu','uu.id = u.unit_id')
+            ->where('u.user_id',$user_id)
+            ->order('u.complete_num','asc')
+            ->order('u.id','asc')
             ->find();
-        $list=UnitList::where(['unit_id'=>$unit['id'],'user_id'=>$user_id])->select();
+        $list=UnitList::where(['unit_id'=>$unit['id']])->select();
         foreach ($list as $v){
             $name=Unit::where(['id'=>$v['unit_id']])->value('name');
             $v['name']=$name;
@@ -67,7 +68,7 @@ class StudentCourse extends Controller
             ->alias('u')
             ->join('user_unit uu','u.id = uu.unit_id')
             ->where('uu.user_id',$user_id)
-            ->order('uu.complete_num','asc')
+            ->order('uu.complete_num','desc')
             ->order('uu.id','asc')
             ->select();;
         $info=[
