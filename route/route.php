@@ -13,10 +13,11 @@
 Route::group('index', [
     'index'=>'index/index/index',                                //
     'login'=>'index/Login/index',
-    'course'=>'index/StudentCourse/index',
-    'section'=>'index/StudentCourse/section',
-    'unit'=>'index/StudentCourse/unit',
+    'course'=>'index/StudentCourse/index',//课程分类数据
+    'section'=>'index/StudentCourse/section', //章节分类数据
+    'unit'=>'index/StudentCourse/unit', //知识点分类数据
     'unitList'=>'index/StudentCourse/unitList',
+    'updatePassword'=>'index/Login/updatePassword',//修改密码
 ]);
 
 
@@ -93,6 +94,11 @@ Route::group('admin', [
 
     'studentList$'=>'admin/Student/studentList',//学生列表
     'studentDelete$'=>'admin/Student/studentDelete',//章节删除
+
+    'videoList$'=>'admin/StudyMaterial/videoList',//视频列表
+    'videoUpload$'=>'admin/StudyMaterial/videoUpload',//视频上传
+    'bannerUpload$'=>'admin/StudyMaterial/bannerUpload',//视频封面图上传
+    'videoAdd$'=>'admin/StudyMaterial/videoAdd',//视频添加
 
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 

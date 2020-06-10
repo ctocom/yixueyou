@@ -8,21 +8,16 @@
 
 namespace app\admin\service;
 
-//use app\admin\model\User;
-//use app\admin\model\LoginLog;
-//use app\admin\model\AuthGroupAccess;
-//use think\facade\Request;
-use app\admin\traits\Result;
 
 class FileUploadService
 {
-   public static function upload($fileInfo,$size,$ext,$adress)
+   public static function upload($fileInfo,$size,$ext,$adress,$file)
    {
        $info = $fileInfo->validate(['size'=>$size,'ext'=>$ext])->move($adress);
        if($info){
-           $msg=['code'=>0,'msg'=>'上传成功','data'=>['src'=>'/uploads/'.$info->getSaveName()]];
+           $msg=['code'=>200,'msg'=>'上传成功','data'=>['src'=>'/study_material/'.$file.'/'.$info->getSaveName()]];
        }else{
-           $msg=['code'=>1,'msg'=>$fileInfo->getError()];
+           $msg=['code'=>0,'msg'=>$fileInfo->getError()];
        }
        return $msg;
    }

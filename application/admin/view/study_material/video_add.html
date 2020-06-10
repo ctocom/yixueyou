@@ -1,0 +1,155 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">知识点</label>
+        <div class="layui-input-block">
+            <select name="unit" lay-verify="required" >
+                <option value=""></option>
+                {foreach $unit as $v}
+                <option value="{$v.id}">{$v.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">视频简介</label>
+        <div class="layui-input-block">
+            <textarea name="introduction" placeholder="请输入视频介绍" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">封面图：</label>
+        <div class="layui-input-inline">
+            　　　　　<!--存放上传后图片路径-->
+            <input type="text" name="banner"  id="inputbannerurl" placeholder="图片地址" value="" class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" id="upload_banner"><i class="layui-icon"></i>上传封面</button>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">视频：</label>
+        <div class="layui-input-inline">
+            　　　　　<!--存放上传后视频路径-->
+            <input type="text" name="video"  id="inputvideourl" placeholder="视频地址" value="" class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" id="upload_video"><i class="layui-icon"></i>上传视频</button>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{css href="/form-select/formSelects-v4.css" /}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    layui.use(['layedit','form','upload'], function(){
+        var layedit = layui.layedit;
+        var form = layui.form;
+        var upload = layui.upload;
+
+        layedit.set({
+            uploadImage:{
+                url:"{:url('/admin/upload')}",
+                type:'post'
+            }
+        });
+        index=layedit.build('title',{
+
+        }); //建立编辑器
+        upload.render({
+            elem: '#upload_video'
+            ,url: "{:url('/admin/videoUpload')}"
+            ,accept: 'video' //视频
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputvideourl").val(res.data.src);
+                    previewVideo(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+        });
+        $('#inputvideourl').click(function () {
+            var url=$("#inputvideourl").val()
+            previewVideo(url)
+        })
+        function previewVideo(url) {
+            var html = '<div class="showvideo">';
+            html += '<video  width="300" height="500" controls="controls" autoplay="autoplay">';
+            html += '<source src="'+url+'" type="video/mp4" />';
+            html += '</video>';
+            html += '</div>';
+            //弹出层
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                title: "视频预览",
+                content: html
+            });
+        }
+        upload.render({
+            elem: '#upload_banner'
+            ,url: "{:url('/admin/bannerUpload')}"
+            ,exts:"jpg|png|gif|bmp|jpeg"
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputbannerurl").val(res.data.src);
+                    previewbanner(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+        });
+        $('#inputbannerurl').click(function () {
+            var url=$("#inputbannerurl").val()
+            previewbanner(url)
+        })
+        function previewbanner(url) {
+            var html = '<div class="showbanner">';
+            html += '<img  width="600" height="500" src="'+url+'">';
+            html += '</div>';
+            //弹出层
+            index=layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                title: "封面预览",
+                content: html
+            });
+            layer.style(index, {
+                width: '600px',
+                top: '20px'
+            });
+        }
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $.ajax({
+                url: "{:url('/admin/videoAdd')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                    setTimeout(function () {
+                        parent.location.reload();
+                    },500);
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}
