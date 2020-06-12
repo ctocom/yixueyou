@@ -143,4 +143,6 @@ return [
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
 
+
+    'score_rank_limit'      =>10,  //用户积分排行榜人数
 ];

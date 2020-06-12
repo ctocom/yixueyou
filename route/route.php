@@ -18,6 +18,12 @@ Route::group('index', [
     'unit'=>'index/StudentCourse/unit', //知识点分类数据
     'unitList'=>'index/StudentCourse/unitList',
     'updatePassword'=>'index/Login/updatePassword',//修改密码
+    'setSecondPassword'=>'index/Login/setSecondPassword',//设置二级密码
+    'signIn'=>'index/SignIn/signIn',//用户签到
+    'signRankList'=>'index/SignIn/signRankList',//用户签到
+    'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
+    'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
+    'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
 ]);
 
 

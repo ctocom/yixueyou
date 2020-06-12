@@ -63,6 +63,9 @@ class Login extends Controller
         $new1_password=$this->request->post('new1_password','','trim');
         $new2_password=$this->request->post('new2_password','','trim');
         $student_info=model('student')->where('id',$user_id)->find();
+        if(!Session::has('student_id')){
+            show([],0,'您还没有登录');
+        }
         if(!$user_id){
             show([],0,'用户id必传');
         }
@@ -79,7 +82,7 @@ class Login extends Controller
             show([],0,'密码长度不能超过16位且不能小于6位');
         }
         if(strlen($new2_password)>16 || strlen($new2_password)<6){
-            show([],0,'密码长度不能超过16位且不能小于6位');
+            show([],0,'确认密码长度不能超过16位且不能小于6位');
         }
         if(md5($new1_password)!=md5($new2_password)){
             show([],0,'新密码两次不一致');
@@ -92,6 +95,37 @@ class Login extends Controller
             show([],200,'修改成功');
         }else{
             show([],0,'修改失败');
+        }
+    }
+    //设置二级密码
+    public function setSecondPassword()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+        $second1_password=$this->request->post('second1_password','','trim');
+        $second2_password=$this->request->post('second2_password','','trim');
+        if(!Session::has('student_id')){
+            show([],0,'您还没有登录');
+        }
+        if(!$user_id){
+            show([],0,'用户id必传');
+        }
+        if($user_id!=Session::get('student_id')){
+            show([],0,'用户ID错误');
+        }
+        if(strlen($second1_password)>16 || strlen($second1_password)<6){
+            show([],0,'密码长度不能超过16位且不能小于6位');
+        }
+        if(strlen($second2_password)>16 || strlen($second2_password)<6){
+            show([],0,'确认密码长度不能超过16位且不能小于6位');
+        }
+        if(md5($second1_password)!=md5($second2_password)){
+            show([],0,'新密码两次不一致');
+        }
+        $res=model('student')->where('id',$user_id)->update(['seconds_password'=>md5($second2_password)]);
+        if($res){
+            show([],200,'设置成功');
+        }else{
+            show([],0,'只能设置一次');
         }
     }
 }

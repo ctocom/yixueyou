@@ -191,4 +191,3 @@ function download_excel($data, $header = [], $filename = 'output.xlsx')
 {
     return tools\Tools::download_excel($data, $header, $filename );
 }
-
