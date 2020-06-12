@@ -41,8 +41,8 @@ class StudyMaterial extends Controller
         $unit_id=model('unit_list')->where('id',$unit_list_id)->value('unit_id');
         $unit_name=model('unit')->where('id',$unit_id)->value('name');
         //发送消息给老师
-        $data['content']='老师你好，我是'.$student_info['name'].',我已观看完'.$unit_name.'的学习内容';
-        $data['title']='学习进度';
+        $data['content']='老师，你好！我是“'.$student_info['name'].'”,我已观看完“'.$unit_name.'”的学习内容，请您审核！';
+        $data['title']=''.$student_info['name'].'的学习进度';
         $data['from_user']=$user_id;
         //查询到学生的所属老师id
         $data['to_user']=$student_info['teacher_id'];
@@ -51,5 +51,8 @@ class StudyMaterial extends Controller
         $data['type']=2;
         $data['status']=0;
         $news_res=model('systemNews')->insert($data);
+        if($news_res){
+            show([],200,'');
+        }
     }
 }
