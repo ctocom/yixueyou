@@ -23,7 +23,7 @@
             </div>
         </form>
     </blockquote>
-    <table id="videoList" lay-filter="videoList"></table>
+    <table id="videoList" lay-filter="videoTool"></table>
     <!--操作-->
     <script type="text/html" id="videoListBar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -53,7 +53,7 @@
                 {field: 'unit_name', title: '知识点', align:"center"},
                 {field: 'title', title: '标题',align:'center'},
                 {field: 'introduction', title: '介绍',align:'center'},
-                {field: 'file_url', title: '视频',align:'center',event:'showmp4',templet:function (d) {
+                {field: 'file_url', title: '视频',align:'center',event:'showvideo',templet:function (d) {
                         return "<a href='#'>点击观看视频</a>";
                     }},
                 {title: '操作', width:170, templet:'#videoListBar',fixed:"right",align:"center"}
@@ -130,13 +130,9 @@
         $(".adduser_btn").click(function(){
             add();
         })
-        table.on('row(videoList)', function (obj) {
-            console.log(obj.data) //得到当前行数据
-            var url=obj.data.file_url;
-            previewVideo(url)
-        })
+        //视频预览
         function previewVideo(url) {
-            var html = '<div class="showvideo">';
+            var html = '<div >';
             html += '<video  width="300" height="500" controls="controls" autoplay="autoplay">';
             html += '<source src="'+url+'" type="video/mp4" />';
             html += '</video>';
@@ -150,7 +146,7 @@
             });
         }
         //列表操作
-        table.on('tool(videoList)', function(obj){
+        table.on('tool(videoTool)', function(obj){
             var layEvent = obj.event, data = obj.data;
             if(layEvent === 'edit'){ //编辑
                 edit(data.id);
@@ -176,6 +172,9 @@
                         }
                     })
                 });
+            }else if(layEvent === 'showvideo'){
+                var url=obj.data.file_url;
+                previewVideo(url)
             }
         });
 

@@ -128,4 +128,11 @@ class Login extends Controller
             show([],0,'只能设置一次');
         }
     }
+    //退出登录
+    public function logout(){
+        Session::set('student_id',null);
+        Session::set('student_name',null);
+        Session::set('student_info',null);
+        show([],200,'正在退出');
+    }
 }

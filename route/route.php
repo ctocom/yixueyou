@@ -24,6 +24,7 @@ Route::group('index', [
     'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
     'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
+    'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
 ]);
 
 
@@ -106,12 +107,15 @@ Route::group('admin', [
     'bannerUpload$'=>'admin/StudyMaterial/bannerUpload',//视频封面图上传
     'videoAdd$'=>'admin/StudyMaterial/videoAdd',//视频添加
 
+    'soundList'=>'admin/StudyMaterial/soundList',//录音列表
+    'soundAdd'=>'admin/StudyMaterial/soundAdd',//录音添加
+    'soundUpload'=>'admin/StudyMaterial/soundUpload',//录音上传
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 
 /**
  * miss路由
  * 没有定义的路由全部使用该路由
  */
-Route::miss('admin/Login/login');
+Route::miss('Index/Index/index');
 return [
 ];

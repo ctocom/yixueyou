@@ -1,0 +1,185 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input searchVal" placeholder="输入视频关键词" />
+                </div>
+                <div class="layui-input-inline">
+                    <!--<label class="layui-form-label">知识点</label>-->
+                    <select name="unit" lay-verify="required" lay-filter="unit">
+                        <option value=""></option>
+                        {foreach $unit as $v}
+                        <option value="{$v.id}">{$v.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <a class="layui-btn search_btn" data-type="reload">搜索</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">上传</a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="soundList" lay-filter="soundTool"></table>
+    <!--操作-->
+    <script type="text/html" id="soundListBar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
+</form>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form','layer','table'],function(){
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery, table = layui.table;
+
+        //用户列表
+        var tableIns = table.render({
+            elem: '#soundList',
+            url : "{:url('/admin/soundList')}",
+            cellMinWidth : 95,
+            page : true,
+            limit:10,
+            limits:[5,10,15,20],
+            height : "full-125",
+            id:'soundList',
+            cols : [[
+                {field: 'id', title: 'Id', width:100, align:"center"},
+                {field: 'unit_name', title: '知识点', align:"center"},
+                {field: 'title', title: '标题',align:'center'},
+                {field: 'introduction', title: '介绍',align:'center'},
+                {field: 'file_url', title: '音频',align:'center',event:'showaudio',templet:function (d) {
+                        return "<a href='#'>点击预览音频</a>";
+                    }},
+                {title: '操作', width:170, templet:'#soundListBar',fixed:"right",align:"center"}
+            ]]
+        });
+
+        //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
+        $(".search_btn").on("click",function(){
+            table.reload("soundList",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    key: $(".searchVal").val(),  //搜索的关键字
+                }
+            })
+        });
+        form.on('select(unit)', function(data){
+            unit_id=data.value;
+            table.reload("soundList",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    key: $(".searchVal").val(),  //搜索的关键字
+                    unit_id: unit_id  //知识点ID
+                }
+            })
+        });
+        //添加用户
+        function add(){
+            var index = layui.layer.open({
+                title : "上传视频",
+                type : 2,
+                content : "{:url('/admin/soundAdd')}",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+        //编辑用户
+        function edit(uid){
+            var index = layui.layer.open({
+                title : "编辑用户",
+                type : 2,
+                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+        $(".adduser_btn").click(function(){
+            add();
+        })
+        //音频预览
+        function previewaudio(url) {
+            var audioHtml = '<div style="padding:20px;margin:0 auto;">';
+            audioHtml+='<audio src="'+url+'" width="68px" height="68px" controls="controls" autoplay="autoplay"></audio>';
+            audioHtml+='</div>';
+            //弹出层
+            layer.open({
+                type: 1,
+                shade: 0.8,
+                offset: 'auto',
+                area: ['auto','200px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "音频预览", //不显示标题
+                content: audioHtml
+            });
+        }
+        //列表操作
+        table.on('tool(soundTool)', function(obj){
+            var layEvent = obj.event, data = obj.data;
+            if(layEvent === 'edit'){ //编辑
+                edit(data.id);
+            } else if(layEvent === 'del'){ //删除
+                layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
+                    $.ajax({
+                        url: "{:url('/admin/soundDelete')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {id:data.id},
+                        success: function (data) {
+                            if(data.code==200){
+                                var icon=1;
+                            }else{
+                                var icon=2;
+                            }
+                            layer.msg(data.msg, {
+                                icon: icon,
+                                time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                tableIns.reload()
+                            });
+                        }
+                    })
+                });
+            }else if(layEvent==='showaudio'){
+                var url=obj.data.file_url;
+                previewaudio(url)
+            }
+        });
+
+    })
+</script>
+{/block}

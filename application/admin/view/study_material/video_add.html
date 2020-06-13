@@ -115,19 +115,16 @@
             previewbanner(url)
         })
         function previewbanner(url) {
-            var html = '<div class="showbanner">';
-            html += '<img  width="600" height="500" src="'+url+'">';
-            html += '</div>';
-            //弹出层
-            index=layer.open({
+            var imgHtml = "<img src='" + url + "'style='max-width:100%;max-height:100%;display:block;margin:0 auto'/>";
+            layer.open({
                 type: 1,
-                skin: 'layui-layer-rim', //加上边框
-                title: "封面预览",
-                content: html
-            });
-            layer.style(index, {
-                width: '600px',
-                top: '20px'
+                shade: 0.8,
+                offset: 'auto',
+                area: ['500px','500px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "图片预览", //不显示标题
+                content: imgHtml
             });
         }
         //监听提交
