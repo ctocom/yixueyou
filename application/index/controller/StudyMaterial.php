@@ -5,7 +5,6 @@ namespace app\index\controller;
 use think\facade\Config;
 use think\Controller;
 use think\facade\Session;
-use think\Request;
 class StudyMaterial extends Controller
 {
     public function studyMaterialList(){
@@ -22,8 +21,7 @@ class StudyMaterial extends Controller
         $material=model('studyMaterial')
             ->where($where)
             ->select();
-        $request = new Request();
-        $domain=$request->domain();
+        $domain=Config::get('domain');
         foreach ($material as $value){
             $value['create_time']=date('Y-m-d H:i:s', $value['create_time']);
             $value['file_url']=$domain.$value['file_url'];
