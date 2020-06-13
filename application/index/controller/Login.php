@@ -133,6 +133,6 @@ class Login extends Controller
         Session::set('student_id',null);
         Session::set('student_name',null);
         Session::set('student_info',null);
-        show([],200,'正在退出');
+        show([],200,'正在退出账号');
     }
 }

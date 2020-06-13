@@ -13,6 +13,7 @@
 Route::group('index', [
     'index'=>'index/index/index',                                //
     'login'=>'index/Login/index',
+    'logout'=>'index/Login/logout',
     'course'=>'index/StudentCourse/index',//课程分类数据
     'section'=>'index/StudentCourse/section', //章节分类数据
     'unit'=>'index/StudentCourse/unit', //知识点分类数据
