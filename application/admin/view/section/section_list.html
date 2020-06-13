@@ -86,7 +86,7 @@
             var index = layui.layer.open({
                 title : "编辑用户",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/sectionEdit')}"+'?uid='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){

@@ -70,17 +70,17 @@ class Section extends Common
     public function sectionEdit()
     {
         if($this->request->isPost()){
-            $course_name=$this->request->post('course_name');
+            $section_name=$this->request->post('section_name');
             $id=$this->request->post('id');
-            $course_icon=$this->request->post('course_icon');
+            $section_icon=$this->request->post('section_icon');
             $course_id=$this->request->post('course_id');
             $status=$this->request->post('status');
-            $course_order=$this->request->post('course_order');
+            $section_order=$this->request->post('section_order');
             $data['course_id']=$course_id;
-            $data['name']=$course_name;
-            $data['icon']=$course_icon;
+            $data['name']=$section_name;
+            $data['icon']=$section_icon;
             $data['is_show']=$status;
-            $data['order']=$course_order;
+            $data['order']=$section_order;
             $data['update_time']=time();
             $res=model('section')->where('id',$id)->update($data);
             if($res){
@@ -90,16 +90,12 @@ class Section extends Common
             }
         }else{
             $id=$this->request->param('uid');
-            $section_data=model('seciton')->where('id',$id)->find();
+            $section_data=model('section')->where('id',$id)->find();
             $course_data=Course::getCourseInfo([]);
             $this->assign('course_data',$course_data);
-            $this->assign('course_data',$section_data);
+            $this->assign('section_data',$section_data);
             return $this->fetch();
         }
-    }
-    public function update()
-    {
-
     }
     public function sectionDelete()
     {

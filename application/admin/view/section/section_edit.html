@@ -7,8 +7,11 @@
             <select name="course_id" lay-filter="course">
                 <option value=""></option>
                 {foreach $course_data as $v}
-                {if($v[''])}
+                {if($v['id']==$section_data['course_id'])}
+                <option selected value="{$v.id}">{$v.name}</option>
+                {else}
                 <option value="{$v.id}">{$v.name}</option>
+                {/if}
                 {/foreach}
             </select>
         </div>
@@ -16,31 +19,36 @@
     <div class="layui-form-item">
         <label class="layui-form-label">章节名称</label>
         <div class="layui-input-block">
-            <input type="text" name="section_name" placeholder="" autocomplete="off" class="layui-input">
+            <input type="text" name="section_name" placeholder="" value="{$section_data.name}" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">图标：</label>
         <div class="layui-input-inline">
             　　　　　<!--存放上传后图片路径-->
-            <input type="text" name="section_icon"  id="inputsectionurl" placeholder="图标地址" value="" class="layui-input">
+            <input type="text" name="section_icon"  id="inputsectionurl" placeholder="图标地址" value="{$section_data['icon']}" class="layui-input">
         </div>
         <button type="button" class="layui-btn" id="upload_section"><i class="layui-icon"></i>上传图标</button>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">是否启用</label>
         <div class="layui-input-block">
+            {if($section_data['is_show']==1)}
             <input type="checkbox"  name="status"  checked lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+            {else}
+            <input type="checkbox"  name="status"   lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+            {/if}
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">排序</label>
         <div class="layui-input-block">
-            <input type="text" name="section_order" placeholder="请输入"  value="1" class="layui-input">
+            <input type="text" name="section_order" placeholder="请输入"  value="{$section_data['order']}" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
+            <input type="hidden" value="{$section_data['id']}" name="id">
             <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
@@ -101,7 +109,7 @@
             data.field.status=status;
             console.log(JSON.stringify(data.field));
             $.ajax({
-                url: "{:url('/admin/sectionAdd')}",
+                url: "{:url('/admin/sectionEdit')}",
                 type: "post",
                 dataType: "json",
                 data: data.field,
