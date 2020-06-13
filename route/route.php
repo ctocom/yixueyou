@@ -24,7 +24,7 @@ Route::group('index', [
     'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
-])->middleware(app\index\middleware\CheckLogin::class);
+]);
 
 //免登录
 Route::group('index', [
@@ -116,7 +116,7 @@ Route::group('admin', [
     'soundList'=>'admin/StudyMaterial/soundList',//录音列表
     'soundAdd'=>'admin/StudyMaterial/soundAdd',//录音添加
     'soundUpload'=>'admin/StudyMaterial/soundUpload',//录音上传
-])->ext('html');
+])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 //->middleware(app\admin\middleware\CheckAuth::class)
 /**
  * miss路由
