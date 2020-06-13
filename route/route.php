@@ -105,6 +105,9 @@ Route::group('admin', [
     'studentList$'=>'admin/Student/studentList',//学生列表
     'studentDelete$'=>'admin/Student/studentDelete',//章节删除
 
+    'paperList$'=>'admin/Paper/paperList',//学生列表
+    'paperDelete$'=>'admin/Paper/paperDelete',//学生删除
+
     'videoList$'=>'admin/StudyMaterial/videoList',//视频列表
     'videoUpload$'=>'admin/StudyMaterial/videoUpload',//视频上传
     'bannerUpload$'=>'admin/StudyMaterial/bannerUpload',//视频封面图上传
@@ -113,8 +116,8 @@ Route::group('admin', [
     'soundList'=>'admin/StudyMaterial/soundList',//录音列表
     'soundAdd'=>'admin/StudyMaterial/soundAdd',//录音添加
     'soundUpload'=>'admin/StudyMaterial/soundUpload',//录音上传
-])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
-
+])->ext('html');
+//->middleware(app\admin\middleware\CheckAuth::class)
 /**
  * miss路由
  * 没有定义的路由全部使用该路由

@@ -46,14 +46,6 @@ class Login extends Controller
         $user_info['last_login_ip']=$last_login_ip;
         if($res)
         {
-//            $student_info = array(
-//                'student_id'  => $user_info['id'],
-//                'student_name' => $user_info['name'],
-//                'student_account' => $user_info['account'],
-//            );
-//            Session::set('student_id',$user_info['id']);
-//            Session::set('student_name',$user_info['name']);
-//            Session::set('user_token',$token);
             $user_info=UserModel::where(['account'=>$account])->find();
             $user_info=$user_info->hidden(['password','seconds_password']);
             show($user_info,200,'登录成功');
