@@ -30,27 +30,32 @@ class Login extends Controller
         if($user_info['password']!=md5($user_password)){
             show([],0,'账号或密码错误');
         }
+        //更新token
+        $token=createToken($user_info['id']);
         $last_login_ip=request()->ip();
         $last_login_time=time();
         //更新登录信息
         $data = [
             'last_login_ip' => $last_login_ip,
             'last_login_time' => $last_login_time,
+            'token'            =>$token,
+            'expire_time'             =>strtotime('+1day')
         ];
         $res=UserModel::where(['id'=>$user_info['id']])->update($data);
-        $user_info=$user_info->hidden(['password','seconds_password']);
         $user_info['last_login_time']=$last_login_time;
         $user_info['last_login_ip']=$last_login_ip;
         if($res)
         {
-            $student_info = array(
-                'student_id'  => $user_info['id'],
-                'student_name' => $user_info['name'],
-                'student_account' => $user_info['account'],
-            );
-            Session::set('student_id',$user_info['id']);
-            Session::set('student_name',$user_info['name']);
-            Session::set('student_info',$student_info);
+//            $student_info = array(
+//                'student_id'  => $user_info['id'],
+//                'student_name' => $user_info['name'],
+//                'student_account' => $user_info['account'],
+//            );
+//            Session::set('student_id',$user_info['id']);
+//            Session::set('student_name',$user_info['name']);
+//            Session::set('user_token',$token);
+            $user_info=UserModel::where(['account'=>$account])->find();
+            $user_info=$user_info->hidden(['password','seconds_password']);
             show($user_info,200,'登录成功');
         }else{
             show($user_info,200,'登录失败');
@@ -130,9 +135,12 @@ class Login extends Controller
     }
     //退出登录
     public function logout(){
-        Session::set('student_id',null);
-        Session::set('student_name',null);
-        Session::set('student_info',null);
-        show([],200,'正在退出账号');
+        $user_token=$this->request->post('user_token','','trim');
+        $res=model('student')->where('token',$user_token)->update(['expire_time'=>time()]);
+        if($res){
+            show([],200,'已退出');
+        }else{
+            show([],0,'退出失败');
+        }
     }
 }

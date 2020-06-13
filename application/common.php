@@ -191,3 +191,10 @@ function download_excel($data, $header = [], $filename = 'output.xlsx')
 {
     return tools\Tools::download_excel($data, $header, $filename );
 }
+//生成token
+function createToken($user_id)
+{
+    $secret='QOFMBNBNFYXZLJGHGHOPOKQWEQEE';
+    $token=md5($user_id.date("Y-m-d").$secret);
+    return $token;
+}

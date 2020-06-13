@@ -11,14 +11,7 @@ class SignIn extends Controller
 
     public function signIn()
     {
-        // 1.验证是否登录
-        if(!Session::has('student_id')){
-            show([],0,'请先登录');
-        }
         $user_id=$this->request->post('user_id');
-        if($user_id!=Session::get('student_id')){
-            show([],0,'用户ID错误');
-        }
         //获取用户信息
         $user_info=model('student')->where('id',$user_id)->find();
         /**

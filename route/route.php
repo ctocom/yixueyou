@@ -9,10 +9,8 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-//接口路由
+//接口路由  需要登录
 Route::group('index', [
-    'index'=>'index/index/index',                                //
-    'login'=>'index/Login/index',
     'logout'=>'index/Login/logout',
     'course'=>'index/StudentCourse/index',//课程分类数据
     'section'=>'index/StudentCourse/section', //章节分类数据
@@ -26,9 +24,13 @@ Route::group('index', [
     'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
+])->middleware(app\index\middleware\CheckLogin::class);
+
+//免登录
+Route::group('index', [
+    'index'=>'index/index/index',                                //
+    'login'=>'index/Login/index',
 ]);
-
-
 
 
 /**
