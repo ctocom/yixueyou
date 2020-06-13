@@ -1,0 +1,116 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">科目名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="course_name" placeholder="" value="{$course_data['name']}" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标：</label>
+        <div class="layui-input-inline">
+            　　　　　<!--存放上传后图片路径-->
+            <input type="text" name="course_icon"  id="inputcourseurl" placeholder="图标地址" value="{$course_data['icon']}" class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" id="upload_course"><i class="layui-icon"></i>上传图标</button>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            {if $course_data['is_show']==1}
+            <input type="checkbox"  name="status"  checked lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+            {else if}
+            <input type="checkbox"  name="status"   lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+            {/if}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="course_order" placeholder="请输入"  value="{$course_data['order']}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="id" value="{$course_data['id']}">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{css href="/form-select/formSelects-v4.css" /}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    layui.use(['form','upload'], function(){
+        var form = layui.form;
+        var upload = layui.upload;
+        form.on('switch(status)', function(data){
+            if(!this.checked)
+            {
+                $("input:checkbox[name='status']").val('off')
+            }
+        });
+        $('#inputcourseurl').click(function () {
+            var url=$("#inputcourseurl").val()
+            previewcourse(url)
+        })
+        function previewcourse(url) {
+            var imgHtml = "<img src='" + url + "'style='max-width:100%;max-height:100%;display:block;margin:0 auto'/>";
+            layer.open({
+                type: 1,
+                shade: 0.8,
+                offset: 'auto',
+                area: ['500px','500px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "图片预览", //不显示标题
+                content: imgHtml
+            });
+        }
+        upload.render({
+            elem: '#upload_course'
+            ,url: "{:url('/admin/courseUpload')}"
+            ,accept: 'images' //图片
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputcourseurl").val(res.data.src);
+                    previewcourse(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+        });
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var status=$("input:checkbox[name='status']").val();
+            if(status=='on'){
+                status=1;
+            }else{
+                status=2;
+            }
+            data.field.status=status;
+            console.log(JSON.stringify(data.field));
+            $.ajax({
+                url: "{:url('/admin/courseEdit')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                    setTimeout(function () {
+                        parent.location.reload();
+                    },500);
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}

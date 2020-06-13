@@ -61,7 +61,7 @@
         //添加用户
         function add(){
             var index = layui.layer.open({
-                title : "添加试题",
+                title : "添加课程",
                 type : 2,
                 content : "{:url('/admin/courseAdd')}",
                 success : function(layero, index){
@@ -83,9 +83,9 @@
         //编辑用户
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑课程",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/courseEdit')}"+'?uid='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){

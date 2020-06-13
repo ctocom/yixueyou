@@ -127,8 +127,8 @@ class Login extends Controller
     }
     //退出登录
     public function logout(){
-        $user_token=$this->request->post('user_token','','trim');
-        $res=model('student')->where('token',$user_token)->update(['expire_time'=>time()]);
+        $user_id=$this->request->post('user_id','','intval');
+        $res=model('student')->where('id',$user_id)->update(['expire_time'=>time()]);
         if($res){
             show([],200,'已退出');
         }else{

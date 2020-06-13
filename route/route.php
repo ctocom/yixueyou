@@ -93,9 +93,16 @@ Route::group('admin', [
 
     'courseList$'=>'admin/Course/courseList',//课目列表
     'courseDelete$'=>'admin/Course/courseDelete',//科目删除
+    'courseAdd$'=>'admin/Course/courseAdd',//科目添加
+    'courseUpload$'=>'admin/Course/courseUpload',//科目图标上传
+    'courseEdit$'=>'admin/Course/courseEdit',//科目图标上传
 
     'sectionList$'=>'admin/Section/sectionList',//章节列表
     'sectionDelete$'=>'admin/Section/sectionDelete',//章节删除
+    'sectionAdd$'=>'admin/Section/sectionAdd',//章节删除
+    'sectionUpload$'=>'admin/Section/sectionUpload',//章节图标上传
+    'sectionUpload$'=>'admin/Section/sectionUpload',//章节图标上传
+    'sectionEdit$'=>'admin/Section/sectionEdit',//章节修改
 
     'unitList$'=>'admin/Unit/unitList',//知识点列表
     'unitDelete$'=>'admin/Unit/unitDelete',//知识点删除

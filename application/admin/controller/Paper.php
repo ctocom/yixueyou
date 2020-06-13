@@ -9,7 +9,7 @@ class Paper extends Common
                 'key' => $this->request->get('key', '', 'trim'),
                 'limit' => $this->request->get('limit', 10, 'intval'),
             ];
-            $list = paper::where('name','like',"%".$data['key']."%")
+            $list = model('paper')::where('name','like',"%".$data['key']."%")
                 ->where('delete_time',0)
                 ->paginate($data['limit'], false, ['query' => $data]);
             $total_list=$list->total();

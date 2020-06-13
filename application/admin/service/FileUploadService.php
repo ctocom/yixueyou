@@ -15,7 +15,7 @@ class FileUploadService
    {
        $info = $fileInfo->validate(['size'=>$size,'ext'=>$ext])->move($adress);
        if($info){
-           $msg=['code'=>200,'msg'=>'上传成功','data'=>['src'=>'/study_material/'.$file.'/'.$info->getSaveName()]];
+           $msg=['code'=>200,'msg'=>'上传成功','data'=>['src'=>'/uploads/'.$file.'/'.$info->getSaveName()]];
        }else{
            $msg=['code'=>0,'msg'=>$fileInfo->getError()];
        }

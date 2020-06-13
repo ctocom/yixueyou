@@ -35,12 +35,12 @@ class StudyMaterial extends Common
     }
     public function videoUpload(){
             $file = request()->file('file');
-            $msg=FileUploadService::upload($file,1024*1024*200,'mp4','../public/study_material/video','video');
+            $msg=FileUploadService::upload($file,1024*1024*200,'mp4','../public/uploads/study_material/video','study_material/video');
             return $msg;
     }
     public function bannerUpload(){
         $file = request()->file('file');
-        $msg=FileUploadService::upload($file,1024*1024*1,'jpg,png,gif,jpeg','../public/study_material/banner','banner');
+        $msg=FileUploadService::upload($file,1024*1024*1,'jpg,png,gif,jpeg','../public/uploads/study_material/banner','study_material/banner');
         return $msg;
     }
     public function videoAdd(){
@@ -163,7 +163,7 @@ class StudyMaterial extends Common
     }
     public function soundUpload(){
         $file = request()->file('file');
-        $msg=FileUploadService::upload($file,1024*1024*200,'mp3','../public/study_material/mp3','mp3');
+        $msg=FileUploadService::upload($file,1024*1024*200,'mp3','../public/study_material/mp3','study_material/mp3');
         return $msg;
     }
 }
