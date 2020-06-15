@@ -11,7 +11,10 @@ class SignIn extends Controller
 
     public function signIn()
     {
-        $user_id=$this->request->post('user_id');
+        $user_id=$this->request->post('user_id',0,'intval');
+        if(!$user_id) {
+            show([], 0, 'user_id不能为空');
+        }
         //获取用户信息
         $user_info=model('student')->where('id',$user_id)->find();
         /**
@@ -124,11 +127,12 @@ class SignIn extends Controller
         $limit=Config::get('score_rank_limit');
         $list=model('student')
             ->where('score','>',0)
-            ->Field('score,name')
+            ->field('score,name')
             ->order('score','desc')
             ->limit($limit)
             ->select();
-        foreach ($list as $v){
+        foreach ($list as $k=>$v){
+            $v['id']=$k+1;
             $v['score']=bcdiv($v['score'],100);
         }
         show($list,200,'ok');

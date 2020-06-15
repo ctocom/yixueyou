@@ -29,7 +29,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //章节列表
         var tableIns = table.render({
             elem: '#sectionList',
             url : "{:url('/admin/sectionList')}",
@@ -59,7 +59,7 @@
             })
         });
 
-        //添加用户
+        //添加章节
         function add(){
             var index = layui.layer.open({
                 title : "添加章节",
@@ -81,10 +81,10 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑章节
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑章节",
                 type : 2,
                 content : "{:url('/admin/sectionEdit')}"+'?uid='+uid,
                 success : function(layero, index){

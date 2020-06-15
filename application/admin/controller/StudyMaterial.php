@@ -84,7 +84,7 @@ class StudyMaterial extends Common
             return $this->fetch();
         }
     }
-    public function videoDeltete(){
+    public function videoDelete(){
 
     }
     public function videoUpdate(){

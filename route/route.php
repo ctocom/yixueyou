@@ -106,6 +106,7 @@ Route::group('admin', [
 
     'unitList$'=>'admin/Unit/unitList',//知识点列表
     'unitDelete$'=>'admin/Unit/unitDelete',//知识点删除
+    'unitAdd$'=>'admin/Unit/unitAdd',//知识点添加
 
     'unitTask$'=>'admin/UnitList/unitList',//知识点列表
 

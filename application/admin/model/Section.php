@@ -16,7 +16,7 @@ class Section extends Model
     protected $createTime = false;
     public static function getSectionInfo($course_id)
     {
-        $data=model('section')->where(['course_id'=>$course_id,'is_show'=>1,'delete_time'=>0])->select();
+        $data=model('section')->where(['course_id'=>$course_id,'delete_time'=>0])->select();
         return $data;
     }
 }
