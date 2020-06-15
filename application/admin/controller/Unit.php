@@ -8,6 +8,8 @@
 
 namespace app\admin\controller;
 use app\admin\model\Course;
+use app\admin\model\Section;
+use app\admin\service\FileUploadService;
 class Unit extends Common
 {
     public function unitList()
@@ -38,18 +40,20 @@ class Unit extends Common
     public function unitAdd()
     {
         if($this->request->isAjax()){
-            $section_name=$this->request->post('section_name');
-            $section_icon=$this->request->post('section_icon');
+            $unit_name=$this->request->post('unit_name');
+            $unit_icon=$this->request->post('unit_icon');
             $status=$this->request->post('status');
             $course_id=$this->request->post('course_id');
-            $section_order=$this->request->post('section_order');
-            $data['name']=$section_name;
-            $data['icon']=$section_icon;
+            $section_id=$this->request->post('section_id');
+            $unit_order=$this->request->post('unit_order');
+            $data['name']=$unit_name;
+            $data['icon']=$unit_icon;
             $data['course_id']=$course_id;
+            $data['section_id']=$section_id;
             $data['is_show']=$status;
-            $data['order']=$section_order;
+            $data['order']=$unit_order;
             $data['create_time']=time();
-            $res=model('section')->insert($data);
+            $res=model('unit')->insert($data);
             if($res){
                 show([],200,'添加成功');
             }else{
@@ -57,19 +61,56 @@ class Unit extends Common
             }
         }else{
             $course_data=Course::getCourseInfo(['delete_time'=>0]);
-            $section_data=model('section')->where('delete_time',0)->select();
             $this->assign('course_data',$course_data);
-            $this->assign('section_data',$section_data);
             return $this->fetch();
         }
     }
-    public function edit()
-    {
-
+    //知识点图标上传
+    public function unitUpload(){
+        $file = request()->file('file');
+        $msg=FileUploadService::upload($file,1024*1024*1,'jpg,png,gif,jpeg','../public/uploads/icon','icon');
+        return $msg;
     }
-    public function update()
+    //章节数据
+    public function unitSection()
     {
-
+        $course_id=$this->request->post('course_id');
+        $section_data=Section::getSectionInfo($course_id);
+        show($section_data,200,'ok');
+    }
+    public function unitEdit()
+    {
+        if($this->request->isPost()){
+            $unit_name=$this->request->post('unit_name');
+            $id=$this->request->post('id');
+            $unit_icon=$this->request->post('unit_icon');
+            $course_id=$this->request->post('course_id');
+            $section_id=$this->request->post('section_id');
+            $status=$this->request->post('status');
+            $unit_order=$this->request->post('unit_order');
+            $data['course_id']=$course_id;
+            $data['section_id']=$section_id;
+            $data['name']=$unit_name;
+            $data['icon']=$unit_icon;
+            $data['is_show']=$status;
+            $data['order']=$unit_order;
+            $data['update_time']=time();
+            $res=model('unit')->where('id',$id)->update($data);
+            if($res){
+                show([],200,'修改成功');
+            }else{
+                show([],0,'修改失败');
+            }
+        }else{
+            $id=$this->request->param('uid');
+            $section_data=model('section')->select();
+            $unit_data=model('unit')->where('id',$id)->find();
+            $course_data=Course::getCourseInfo([]);
+            $this->assign('course_data',$course_data);
+            $this->assign('section_data',$section_data);
+            $this->assign('unit_data',$unit_data);
+            return $this->fetch();
+        }
     }
     public function unitDelete()
     {

@@ -107,14 +107,21 @@ Route::group('admin', [
     'unitList$'=>'admin/Unit/unitList',//知识点列表
     'unitDelete$'=>'admin/Unit/unitDelete',//知识点删除
     'unitAdd$'=>'admin/Unit/unitAdd',//知识点添加
+    'unitSection$'=>'admin/Unit/unitSection',//知识点添加
+    'unitUpload$'=>'admin/Unit/unitUpload',//知识点图标上传
+    'unitEdit$'=>'admin/Unit/unitEdit',//知识点修改
 
     'unitTask$'=>'admin/UnitList/unitList',//知识点列表
 
     'studentList$'=>'admin/Student/studentList',//学生列表
-    'studentDelete$'=>'admin/Student/studentDelete',//章节删除
+    'studentDelete$'=>'admin/Student/studentDelete',//学生删除
+    'studentAdd$'=>'admin/Student/studentAdd',//学生添加
+    'headUpload$'=>'admin/Student/headUpload',//学生头像上传
 
-    'paperList$'=>'admin/Paper/paperList',//学生列表
-    'paperDelete$'=>'admin/Paper/paperDelete',//学生删除
+    'paperList$'=>'admin/Paper/paperList',//试卷列表
+    'paperDelete$'=>'admin/Paper/paperDelete',//试卷删除
+    'paperAdd$'=>'admin/Paper/paperAdd',//试卷添加
+    'paperEdit$'=>'admin/Paper/paperEdit',//试卷修改
 
     'videoList$'=>'admin/StudyMaterial/videoList',//视频列表
     'videoUpload$'=>'admin/StudyMaterial/videoUpload',//视频上传

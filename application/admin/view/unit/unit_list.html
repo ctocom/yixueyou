@@ -29,7 +29,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //知识点列表
         var tableIns = table.render({
             elem: '#unitList',
             url : "{:url('/admin/unitList')}",
@@ -60,7 +60,7 @@
             })
         });
 
-        //添加用户
+        //添加知识点
         function add(){
             var index = layui.layer.open({
                 title : "添加试题",
@@ -82,12 +82,12 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑知识点
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑知识点",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/unitEdit')}"+'?uid='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){
@@ -107,7 +107,30 @@
         $(".adduser_btn").click(function(){
             add();
         })
-
+        //监听科目
+        form.on('select(course)', function(data){
+            var course=data.value;
+            $.ajax({
+                url: "{:url('/admin/questionSection')}",
+                type: "post",
+                dataType: "json",
+                data: {course_id:course},
+                success: function (res) {
+                    if(res.code==200){
+                        $.each(res.data, function(index, item) {
+                            $('#section').append(new Option(item.name, item.id));
+                        });
+                        if(res.data==''){
+                            $("#section").empty();
+                            $("#section").append(new Option("请选择", ""));
+                            $("#unit").empty();
+                            $("#unit").append(new Option("请选择", ""));
+                        }
+                        layui.form.render("select");
+                    }
+                }
+            })
+        });
         //列表操作
         table.on('tool(unitList)', function(obj){
             var layEvent = obj.event, data = obj.data;

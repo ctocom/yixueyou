@@ -60,14 +60,8 @@ class Login extends Controller
         $new1_password=$this->request->post('new1_password','','trim');
         $new2_password=$this->request->post('new2_password','','trim');
         $student_info=model('student')->where('id',$user_id)->find();
-        if(!Session::has('student_id')){
-            show([],0,'您还没有登录');
-        }
         if(!$user_id){
             show([],0,'用户id必传');
-        }
-        if($user_id!=Session::get('student_id')){
-            show([],0,'用户ID错误');
         }
         if(md5($old_password)!=$student_info['password']){
             show([],0,'旧密码错误');
@@ -100,14 +94,8 @@ class Login extends Controller
         $user_id=$this->request->post('user_id',0,'intval');
         $second1_password=$this->request->post('second1_password','','trim');
         $second2_password=$this->request->post('second2_password','','trim');
-        if(!Session::has('student_id')){
-            show([],0,'您还没有登录');
-        }
         if(!$user_id){
             show([],0,'用户id必传');
-        }
-        if($user_id!=Session::get('student_id')){
-            show([],0,'用户ID错误');
         }
         if(strlen($second1_password)>16 || strlen($second1_password)<6){
             show([],0,'密码长度不能超过16位且不能小于6位');

@@ -7,7 +7,11 @@
             <select name="course_id" lay-filter="course">
                 <option value=""></option>
                 {foreach $course_data as $v}
+                {if $v['id']==$unit_data['course_id']}
+                <option selected value="{$v.id}">{$v.name}</option>
+                {else}
                 <option value="{$v.id}">{$v.name}</option>
+                {/if}
                 {/foreach}
             </select>
         </div>
@@ -17,20 +21,27 @@
         <div class="layui-input-block">
             <select name="section_id" id="section">
                 <option value=""></option>
+                {foreach $section_data as $v}
+                {if $v['id']==$unit_data['section_id']}
+                <option selected value="{$v.id}">{$v.name}</option>
+                {else}
+                <option value="{$v.id}">{$v.name}</option>
+                {/if}
+                {/foreach}
             </select>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">知识点名称</label>
         <div class="layui-input-block">
-            <input type="text" name="unit_name" placeholder="" autocomplete="off" class="layui-input">
+            <input type="text" name="unit_name" value="{$unit_data.name}" placeholder="" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">图标：</label>
         <div class="layui-input-inline">
             　　　　　<!--存放上传后图片路径-->
-            <input type="text" name="unit_icon"  id="inputuniturl" placeholder="图标地址" value="" class="layui-input">
+            <input type="text" name="unit_icon"  id="inputuniturl" placeholder="图标地址" value="{$v.icon}" class="layui-input">
         </div>
         <button type="button" class="layui-btn" id="upload_unit"><i class="layui-icon"></i>上传图标</button>
     </div>
@@ -43,12 +54,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">排序</label>
         <div class="layui-input-block">
-            <input type="text" name="unit_order" placeholder="请输入"  value="1" class="layui-input">
+            <input type="text" name="unit_order" placeholder="请输入"  value="{$unit_data.order}" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <input type="hidden" name="id" value="{$unit_data.id}">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
@@ -100,6 +112,8 @@
         //监听科目
         form.on('select(course)', function(data){
             var course=data.value;
+            $("#section").empty();
+            $("#section").append(new Option("请选择", ""));
             $.ajax({
                 url: "{:url('/admin/unitSection')}",
                 type: "post",
@@ -132,7 +146,7 @@
             data.field.status=status;
             console.log(JSON.stringify(data.field));
             $.ajax({
-                url: "{:url('/admin/unitAdd')}",
+                url: "{:url('/admin/unitEdit')}",
                 type: "post",
                 dataType: "json",
                 data: data.field,

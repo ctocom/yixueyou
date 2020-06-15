@@ -2,48 +2,46 @@
 {block name="main"}
 <form class="layui-form" action="">
     <div class="layui-form-item">
-        <label class="layui-form-label">课程</label>
+        <label class="layui-form-label">监管模式</label>
         <div class="layui-input-block">
-            <select name="course_id" lay-filter="course">
+            <select name="type">
                 <option value=""></option>
-                {foreach $course_data as $v}
-                <option value="{$v.id}">{$v.name}</option>
-                {/foreach}
+                <option value="1">全自主</option>
+                <option value="2">半监管</option>
+                <option value="3">全监管</option>
             </select>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">章节</label>
+        <label class="layui-form-label">账号</label>
         <div class="layui-input-block">
-            <select name="section_id" id="section">
-                <option value=""></option>
-            </select>
+            <input type="text" name="student_account" placeholder="英文或数字组合，最少6位最多16位" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">知识点名称</label>
+        <label class="layui-form-label">用户名</label>
         <div class="layui-input-block">
-            <input type="text" name="unit_name" placeholder="" autocomplete="off" class="layui-input">
+            <input type="text" name="student_name" placeholder="用户名最少一个汉字，最多三个汉字" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">图标：</label>
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="text" name="student_password"  readonly="readonly" value="123456" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">头像：</label>
         <div class="layui-input-inline">
             　　　　　<!--存放上传后图片路径-->
-            <input type="text" name="unit_icon"  id="inputuniturl" placeholder="图标地址" value="" class="layui-input">
+            <input type="text" name="student_head"  id="inputstudenturl" placeholder="头像地址" value="" class="layui-input">
         </div>
-        <button type="button" class="layui-btn" id="upload_unit"><i class="layui-icon"></i>上传图标</button>
+        <button type="button" class="layui-btn" id="upload_head"><i class="layui-icon"></i>上传头像</button>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">是否启用</label>
         <div class="layui-input-block">
             <input type="checkbox"  name="status"  checked lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">排序</label>
-        <div class="layui-input-block">
-            <input type="text" name="unit_order" placeholder="请输入"  value="1" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -67,11 +65,11 @@
                 $("input:checkbox[name='status']").val('off')
             }
         });
-        $('#inputuniturl').click(function () {
-            var url=$("#inputuniturl").val()
-            previewunit(url)
+        $('#inputstudenturl').click(function () {
+            var url=$("#inputstudenturl").val()
+            previewstudent(url)
         })
-        function previewunit(url) {
+        function previewstudent(url) {
             var imgHtml = "<img src='" + url + "'style='max-width:100%;max-height:100%;display:block;margin:0 auto'/>";
             layer.open({
                 type: 1,
@@ -85,41 +83,17 @@
             });
         }
         upload.render({
-            elem: '#upload_unit'
-            ,url: "{:url('/admin/unitUpload')}"
+            elem: '#upload_head'
+            ,url: "{:url('/admin/headUpload')}"
             ,accept: 'images' //图片
             ,done: function(res){
                 if(res.code==200){
-                    $("#inputuniturl").val(res.data.src);
-                    previewunit(res.data.src)
+                    $("#inputstudenturl").val(res.data.src);
+                    previewstudent(res.data.src)
                 }
                 layer.msg(res.msg);
                 return false;
             }
-        });
-        //监听科目
-        form.on('select(course)', function(data){
-            var course=data.value;
-            $.ajax({
-                url: "{:url('/admin/unitSection')}",
-                type: "post",
-                dataType: "json",
-                data: {course_id:course},
-                success: function (res) {
-                    if(res.code==200){
-                        $.each(res.data, function(index, item) {
-                            $('#section').append(new Option(item.name, item.id));
-                        });
-                        if(res.data==''){
-                            $("#section").empty();
-                            $("#section").append(new Option("请选择", ""));
-                            $("#section").empty();
-                            $("#section").append(new Option("请选择", ""));
-                        }
-                        layui.form.render("select");
-                    }
-                }
-            })
         });
         //监听提交
         form.on('submit(formDemo)', function(data){
@@ -132,19 +106,19 @@
             data.field.status=status;
             console.log(JSON.stringify(data.field));
             $.ajax({
-                url: "{:url('/admin/unitAdd')}",
+                url: "{:url('/admin/studentAdd')}",
                 type: "post",
                 dataType: "json",
                 data: data.field,
                 success: function (res) {
                     if(res.code==200){
                         layer.msg(res.msg,{icon:1});
+                        setTimeout(function () {
+                            parent.location.reload();
+                        },500);
                     }else{
                         layer.msg(res.msg,{icon:2});
                     }
-                    setTimeout(function () {
-                        parent.location.reload();
-                    },500);
                 }
             })
             return false;

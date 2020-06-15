@@ -1,0 +1,82 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">知识点</label>
+        <div class="layui-input-block">
+            <select name="unit_id">
+                <option value=""></option>
+                {foreach $unit_data as $v}
+                {if $v['id']==$paper_data['unit_id']}
+                <option  selected value="{$v.id}">{$v.name}</option>
+                {else}
+                <option value="{$v.id}">{$v.name}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">试卷名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="paper_name" placeholder="" value="{$paper_data.name}" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">试卷总分</label>
+        <div class="layui-input-block">
+            <input type="text" name="paper_score" placeholder="" value="{$paper_data.score}" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">试卷及格分</label>
+        <div class="layui-input-block">
+            <input type="text" name="pass_score" placeholder="" value="{$paper_data.pass_score}" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" value="{$paper_data.id}" name="uid">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{css href="/form-select/formSelects-v4.css" /}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    layui.use(['form','upload'], function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var status=$("input:checkbox[name='status']").val();
+            if(status=='on'){
+                status=1;
+            }else{
+                status=2;
+            }
+            data.field.status=status;
+            console.log(JSON.stringify(data.field));
+            $.ajax({
+                url: "{:url('/admin/paperEdit')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                    setTimeout(function () {
+                        parent.location.reload();
+                    },500);
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}
