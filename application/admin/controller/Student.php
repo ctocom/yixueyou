@@ -80,7 +80,7 @@ class Student extends Common
             $data['account']=$student_account;
             $data['name']=$student_name;
             $data['head']=$head;
-            $data['password']=$student_password;
+            $data['password']=md5($student_password);
             $data['score']=0;
             $teacher_info=session('user_auth');
             $data['teacher_id']=$teacher_info['uid'];
@@ -133,30 +133,22 @@ class Student extends Common
             if(!$type){
                 show([],0,'监管模式必须选择');
             }
-            $student_password=$this->request->post('student_password','');
-            if(empty($student_password)){
-                show([],0,'密码不能为空');
-            }
-            if(strlen($student_password) <6 || strlen($student_password) >16){
-                show([],0,'密码最少6位最多16位,数字英文组成');
-            }
             $head=$this->request->post('student_head','');
             $data=[];
             $data['account']=$student_account;
             $data['name']=$student_name;
             $data['head']=$head;
-            $data['password']=$student_password;
             $data['score']=0;
             $teacher_info=session('user_auth');
             $data['teacher_id']=$teacher_info['uid'];
             $data['status']=1;
             $data['type']=$type;
-            $data['create_time']=time();
+            $data['update_time']=time();
             $res=model('student')->insert($data);
             if($res){
-                show([],200,'添加成功');
+                show([],200,'修改成功');
             }else{
-                show([],0,'添加失败');
+                show([],0,'修改失败');
             }
         }else{
             $student_data=model('student')->where('id',$id)->find();

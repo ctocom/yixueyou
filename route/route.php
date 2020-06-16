@@ -117,6 +117,7 @@ Route::group('admin', [
     'studentDelete$'=>'admin/Student/studentDelete',//学生删除
     'studentAdd$'=>'admin/Student/studentAdd',//学生添加
     'headUpload$'=>'admin/Student/headUpload',//学生头像上传
+    'studentEdit$'=>'admin/Student/studentEdit',//学生修改
 
     'paperList$'=>'admin/Paper/paperList',//试卷列表
     'paperDelete$'=>'admin/Paper/paperDelete',//试卷删除
@@ -131,6 +132,10 @@ Route::group('admin', [
     'soundList'=>'admin/StudyMaterial/soundList',//录音列表
     'soundAdd'=>'admin/StudyMaterial/soundAdd',//录音添加
     'soundUpload'=>'admin/StudyMaterial/soundUpload',//录音上传
+
+    'noticeList'=>'admin/StudyMaterial/noticeList',//笔记列表
+    'noticeAdd'=>'admin/StudyMaterial/noticeAdd',//笔记添加
+    'noticeUpload'=>'admin/StudyMaterial/noticeUpload',//笔记上传
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 //->middleware(app\admin\middleware\CheckAuth::class)
 /**

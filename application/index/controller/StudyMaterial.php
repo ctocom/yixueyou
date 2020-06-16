@@ -33,12 +33,11 @@ class StudyMaterial extends Controller
     public function completeMaterial(){
         $unit_list_id=$this->request->post('unit_list_id',0,'intval');
         $user_id=$this->request->post('user_id',0,'intval');
-        $student_id=Session::get('student_id');
-        if($user_id!=$student_id){
-            show([],0,'user_id错误');
-        }
         if(!$unit_list_id){
             show([],0,'unit_list_id必传');
+        }
+        if(!$user_id){
+            show([],0,'user_id必传');
         }
         $last_send_time=model('systemNews')->where('from_user',$user_id)->order('id','desc')->value('send_time');
         if($last_send_time>= strtotime('-1year')){
@@ -68,12 +67,11 @@ class StudyMaterial extends Controller
     public function teachAction(){
         $material_id=$this->request->post('material_id',0,'intval');
         $user_id=$this->request->post('user_id',0,'intval');
-        $student_id=Session::get('student_id');
-        if($user_id!=$student_id){
-            show([],0,'user_id错误');
-        }
         if(!$material_id){
             show([],0,'material_id必传');
+        }
+        if(!$user_id){
+            show([],0,'user_id');
         }
         $student_info=model('student')->field('teacher_id,name')->where('id',$user_id)->find();
         $material_name=model('study_material')->where('id',$material_id)->value('title');

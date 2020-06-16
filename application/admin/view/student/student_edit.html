@@ -6,9 +6,19 @@
         <div class="layui-input-block">
             <select name="type">
                 <option value=""></option>
-                <option value="1">全自主</option>
+                {if $student_data.type==1}
+                <option value="1" selected>全自主</option>
                 <option value="2">半监管</option>
                 <option value="3">全监管</option>
+                {elseif $student_data.type==2}
+                <option value="1">全自主</option>
+                <option value="2" selected>半监管</option>
+                <option value="3">全监管</option>
+                {else}
+                <option value="1">全自主</option>
+                <option value="2">半监管</option>
+                <option value="3" selected>全监管</option>
+                {/if}
             </select>
         </div>
     </div>
@@ -22,12 +32,6 @@
         <label class="layui-form-label">用户名</label>
         <div class="layui-input-block">
             <input type="text" name="student_name" value="{$student_data.name}" placeholder="用户名最少一个汉字，最多三个汉字" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">密码</label>
-        <div class="layui-input-block">
-            <input type="text" name="student_password" value="{$student_data.password}" readonly="readonly"  autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -50,7 +54,8 @@
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <input type="hidden" value="{$student_data.id}" name="uid">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
@@ -110,7 +115,7 @@
             data.field.status=status;
             console.log(JSON.stringify(data.field));
             $.ajax({
-                url: "{:url('/admin/studentAdd')}",
+                url: "{:url('/admin/studentEdit')}",
                 type: "post",
                 dataType: "json",
                 data: data.field,

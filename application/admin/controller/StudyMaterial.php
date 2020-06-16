@@ -166,4 +166,33 @@ class StudyMaterial extends Common
         $msg=FileUploadService::upload($file,1024*1024*200,'mp3','../public/study_material/mp3','study_material/mp3');
         return $msg;
     }
+    public function noticeList(){
+        if($this->request->isAjax()){
+            $data = [
+                'key' => $this->request->get('key', '', 'trim'),
+                'unit_id' => $this->request->get('unit_id', '0', 'intval'),
+                'limit' => $this->request->get('limit', 10, 'intval'),
+            ];
+            $where['delete_time']=0;
+            if($data['unit_id']){
+                $where['unit_id']=$data['unit_id'];
+            }
+            $where['type']=3;
+            $list = model('studyMaterial')
+                ->where('title','like',"%".$data['key']."%")
+                ->where($where)
+                ->paginate($data['limit'], false, ['query' => $data]);
+            $total_list=$list->total();
+            $study_material = [];
+            foreach ($list as $key => $val) {
+                $study_material[$key] = $val;
+                $study_material[$key]['unit_name']=model('unit')->where(['id'=>$val->unit_id])->value('name');
+            }
+            return show($study_material, 0, '', ['count' => $total_list]);
+        }else{
+            $unit=Unit::where('delete_time',0)->select();
+            $this->assign('unit',$unit);
+            return $this->fetch();
+        }
+    }
 }
