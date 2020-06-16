@@ -59,7 +59,6 @@ class StudentCourse extends Controller
             ->field('name,unit_id,complete_num')
             ->join('user_unit uu','u.id = uu.unit_id')
             ->where('uu.user_id',$user_id)
-//            ->order('uu.complete_num','desc')
             ->order('u.order','desc')
             ->select();
         foreach ($unit_info as $k=>$v){

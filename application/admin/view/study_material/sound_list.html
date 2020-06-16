@@ -5,7 +5,7 @@
         <form class="layui-form">
             <div class="layui-inline">
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input searchVal" placeholder="输入视频关键词" />
+                    <input type="text" class="layui-input searchVal" placeholder="输入音频关键词" />
                 </div>
                 <div class="layui-input-inline">
                     <!--<label class="layui-form-label">知识点</label>-->
@@ -25,10 +25,10 @@
     </blockquote>
     <table id="soundList" lay-filter="soundTool"></table>
     <!--操作-->
-    <script type="text/html" id="soundListBar">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
-    </script>
+    <!--<script type="text/html" id="soundListBar">-->
+        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+        <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
+    <!--</script>-->
 </form>
 {/block}
 {block name="script"}
@@ -56,7 +56,7 @@
                 {field: 'file_url', title: '音频',align:'center',event:'showaudio',templet:function (d) {
                         return "<a href='#'>点击预览音频</a>";
                     }},
-                {title: '操作', width:170, templet:'#soundListBar',fixed:"right",align:"center"}
+                // {title: '操作', width:170, templet:'#soundListBar',fixed:"right",align:"center"}
             ]]
         });
 
@@ -86,7 +86,7 @@
         //添加用户
         function add(){
             var index = layui.layer.open({
-                title : "上传视频",
+                title : "上传音频",
                 type : 2,
                 content : "{:url('/admin/soundAdd')}",
                 success : function(layero, index){

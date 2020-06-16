@@ -136,6 +136,10 @@ Route::group('admin', [
     'noticeList'=>'admin/StudyMaterial/noticeList',//笔记列表
     'noticeAdd'=>'admin/StudyMaterial/noticeAdd',//笔记添加
     'noticeUpload'=>'admin/StudyMaterial/noticeUpload',//笔记上传
+
+    'pptList'=>'admin/StudyMaterial/pptList',//ppt列表
+    'pptAdd'=>'admin/StudyMaterial/pptAdd',//ppt添加
+    'pptUpload'=>'admin/StudyMaterial/pptUpload',//ppt上传
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 //->middleware(app\admin\middleware\CheckAuth::class)
 /**

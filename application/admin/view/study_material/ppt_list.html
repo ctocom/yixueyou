@@ -5,7 +5,7 @@
         <form class="layui-form">
             <div class="layui-inline">
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input searchVal" placeholder="输入视频关键词" />
+                    <input type="text" class="layui-input searchVal" placeholder="输入PPT关键词" />
                 </div>
                 <div class="layui-input-inline">
                     <!--<label class="layui-form-label">知识点</label>-->
@@ -23,9 +23,9 @@
             </div>
         </form>
     </blockquote>
-    <table id="videoList" lay-filter="videoTool"></table>
+    <table id="pptList" lay-filter="pptTool"></table>
     <!--操作-->
-    <!--<script type="text/html" id="videoListBar">-->
+    <!--<script type="text/html" id="pptListBar">-->
         <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
         <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
     <!--</script>-->
@@ -40,29 +40,29 @@
 
         //用户列表
         var tableIns = table.render({
-            elem: '#videoList',
-            url : "{:url('/admin/videoList')}",
+            elem: '#pptList',
+            url : "{:url('/admin/pptList')}",
             cellMinWidth : 95,
             page : true,
             limit:10,
             limits:[5,10,15,20],
             height : "full-125",
-            id:'videoList',
+            id:'pptList',
             cols : [[
                 {field: 'id', title: 'Id', width:100, align:"center"},
                 {field: 'unit_name', title: '知识点', align:"center"},
                 {field: 'title', title: '标题',align:'center'},
                 {field: 'introduction', title: '介绍',align:'center'},
-                {field: 'file_url', title: '视频',align:'center',event:'showvideo',templet:function (d) {
-                        return "<a href='#'>点击观看视频</a>";
-                    }},
-                // {title: '操作', width:170, templet:'#videoListBar',fixed:"right",align:"center"}
+                // {field: 'file_url', title: 'PPT',align:'center',event:'showaudio',templet:function (d) {
+                //         return "<a href='#'>点击预览PPT</a>";
+                //     }},
+                // {title: '操作', width:170, templet:'#pptListBar',fixed:"right",align:"center"}
             ]]
         });
 
         //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
         $(".search_btn").on("click",function(){
-            table.reload("videoList",{
+            table.reload("pptList",{
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
@@ -73,7 +73,7 @@
         });
         form.on('select(unit)', function(data){
             unit_id=data.value;
-            table.reload("videoList",{
+            table.reload("pptList",{
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
@@ -86,9 +86,9 @@
         //添加用户
         function add(){
             var index = layui.layer.open({
-                title : "上传视频",
+                title : "上传PPT",
                 type : 2,
-                content : "{:url('/admin/videoAdd')}",
+                content : "{:url('/admin/pptAdd')}",
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){
@@ -130,30 +130,32 @@
         $(".adduser_btn").click(function(){
             add();
         })
-        //视频预览
-        function previewVideo(url) {
-            var html = '<div >';
-            html += '<video  width="300" height="500" controls="controls" autoplay="autoplay">';
-            html += '<source src="'+url+'" type="video/mp4" />';
-            html += '</video>';
-            html += '</div>';
+        //PPT预览
+        function previewaudio(url) {
+            var audioHtml = '<div style="padding:20px;margin:0 auto;">';
+            audioHtml+='<audio src="'+url+'" width="68px" height="68px" controls="controls" autoplay="autoplay"></audio>';
+            audioHtml+='</div>';
             //弹出层
             layer.open({
                 type: 1,
-                skin: 'layui-layer-rim', //加上边框
-                title: "视频预览",
-                content: html
+                shade: 0.8,
+                offset: 'auto',
+                area: ['auto','200px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "PPT预览", //不显示标题
+                content: audioHtml
             });
         }
         //列表操作
-        table.on('tool(videoTool)', function(obj){
+        table.on('tool(pptTool)', function(obj){
             var layEvent = obj.event, data = obj.data;
             if(layEvent === 'edit'){ //编辑
                 edit(data.id);
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
                     $.ajax({
-                        url: "{:url('/admin/videoDelete')}",
+                        url: "{:url('/admin/pptDelete')}",
                         type: "post",
                         dataType: "json",
                         data: {id:data.id},
@@ -172,9 +174,9 @@
                         }
                     })
                 });
-            }else if(layEvent === 'showvideo'){
+            }else if(layEvent==='showaudio'){
                 var url=obj.data.file_url;
-                previewVideo(url)
+                previewaudio(url)
             }
         });
 

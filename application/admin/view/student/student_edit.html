@@ -46,9 +46,9 @@
         <label class="layui-form-label">是否启用</label>
         <div class="layui-input-block">
             {if($student_data.status)==1}
-            <input type="checkbox"  name="status"  checked lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+            <input type="checkbox"  name="status"  value="{$student_data.status}" checked lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
             {else}
-            <input type="checkbox"  name="status" lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+            <input type="checkbox"  name="status" value="{$student_data.status}" lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
             {/if}
         </div>
     </div>

@@ -76,6 +76,7 @@ class Student extends Common
                 show([],0,'密码最少6位最多16位,数字英文组成');
             }
             $head=$this->request->post('student_head','');
+            $status=$this->request->post('status','');
             $data=[];
             $data['account']=$student_account;
             $data['name']=$student_name;
@@ -84,7 +85,7 @@ class Student extends Common
             $data['score']=0;
             $teacher_info=session('user_auth');
             $data['teacher_id']=$teacher_info['uid'];
-            $data['status']=1;
+            $data['status']=$status;
             $data['type']=$type;
             $data['create_time']=time();
             $res=model('student')->insert($data);
@@ -114,7 +115,11 @@ class Student extends Common
                 show([],0,'账号最少6位最多16位,数字或英文组成');
 
             }
-            $student_res=model('student')->where('account',$student_account)->find();
+            $where[]=['id','neq',$id];
+            $where[]=['account','=',$student_account];
+            $student_res=model('student')
+                ->where($where)
+                ->find();
             if($student_res){
                 show([],0,'账号已存在');
             }
@@ -134,17 +139,17 @@ class Student extends Common
                 show([],0,'监管模式必须选择');
             }
             $head=$this->request->post('student_head','');
+            $status=$this->request->post('status',1);
             $data=[];
             $data['account']=$student_account;
             $data['name']=$student_name;
             $data['head']=$head;
-            $data['score']=0;
             $teacher_info=session('user_auth');
             $data['teacher_id']=$teacher_info['uid'];
-            $data['status']=1;
+            $data['status']=$status;
             $data['type']=$type;
             $data['update_time']=time();
-            $res=model('student')->insert($data);
+            $res=model('student')->where('id',$id)->update($data);
             if($res){
                 show([],200,'修改成功');
             }else{
