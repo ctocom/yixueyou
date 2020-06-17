@@ -11,8 +11,12 @@ class StudyMaterial extends Controller
         $unit_id=$this->request->post('unit_id',0,'intval');
         //type =1 视频   type=3 录音  type =4 ppt   type=5 课堂笔记
         $type=$this->request->post('type',1,'intval');
+        $user_id=$this->request->post('user_id',0,'intval');
         if(!$unit_id){
             show([],0,'unit_id不能为空');
+        }
+        if(!$user_id){
+            show([],0,'user_id不能为空');
         }
         $where=[];
         $where['unit_id']=$unit_id;
@@ -22,10 +26,16 @@ class StudyMaterial extends Controller
             ->where($where)
             ->select();
         $domain=Config::get('domain');
+        $student_info=model('student')->where('id',$user_id)->find();
+        $type=1;
+        if($student_info['type']==1){
+            $type=0;
+        }
         foreach ($material as $value){
             $value['create_time']=date('Y-m-d H:i:s', $value['create_time']);
             $value['file_url']=$domain.$value['file_url'];
             $value['banner']=$domain.$value['banner'];
+            $value['button_status']=$type;
         }
         show($material,200,'ok');
     }
@@ -55,6 +65,8 @@ class StudyMaterial extends Controller
         $data['is_read']=0;
         $data['send_time']=time();
         $data['type']=2;
+        $data['unit_id']=$unit_id;
+        $data['unit_name']=$unit_name;
         $data['status']=0;
         $news_res=model('systemNews')->insert($data);
         if($news_res){
@@ -73,7 +85,10 @@ class StudyMaterial extends Controller
         if(!$user_id){
             show([],0,'user_id');
         }
-        $student_info=model('student')->field('teacher_id,name')->where('id',$user_id)->find();
+        $student_info=model('student')->field('teacher_id,name,type')->where('id',$user_id)->find();
+        if($student_info['type']==1){
+            show([],200,'您没有权限要求讲解');
+        }
         $material_name=model('study_material')->where('id',$material_id)->value('title');
         //发送消息给老师
         $data['content']='老师，你好！我是“'.$student_info['name'].'”,'.$material_name.'我还不太懂';

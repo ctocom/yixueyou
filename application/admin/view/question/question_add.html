@@ -31,7 +31,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">题型1</label>
         <div class="layui-input-block">
-            <select name="question_type" lay-verify="required" lay-filter="question_type">
+            <select name="type1" lay-verify="required" lay-filter="question_type">
                 <option value=""></option>
                 <option value="1">应用题</option>
                 <option value="2">理解题</option>
@@ -75,6 +75,9 @@
             <input type="checkbox" name="answer" value="A" title="A">
             <input type="checkbox" name="answer" value="B" title="B">
             <input type="checkbox" name="answer" value="C" title="C">
+            <input type="checkbox" name="answer" value="D" title="D">
+            <input type="checkbox" name="answer" value="E" title="E">
+            <input type="checkbox" name="answer" value="F" title="F">
         </div>
     </div>
     <div class="layui-form-item  box_3" style="display:none">
@@ -198,12 +201,12 @@
                 success: function (res) {
                     if(res.code==200){
                         layer.msg(res.msg,{icon:1});
+                        setTimeout(function () {
+                            parent.location.reload();
+                        },500);
                     }else{
                         layer.msg(res.msg,{icon:2});
                     }
-                    setTimeout(function () {
-                        window.location.href="{:url('admin/questionList')}"
-                    },500);
                 }
             })
             return false;

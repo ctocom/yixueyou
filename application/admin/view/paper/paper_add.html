@@ -62,12 +62,12 @@
                 success: function (res) {
                     if(res.code==200){
                         layer.msg(res.msg,{icon:1});
+                        setTimeout(function () {
+                            parent.location.reload();
+                        },500);
                     }else{
                         layer.msg(res.msg,{icon:2});
                     }
-                    setTimeout(function () {
-                        parent.location.reload();
-                    },500);
                 }
             })
             return false;

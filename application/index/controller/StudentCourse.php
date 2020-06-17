@@ -46,28 +46,26 @@ class StudentCourse extends Controller
             show([],0,'section_id不能为空');
         }
         $user_id=intval($this->request->post('user_id'));
-        if(!$user_id){
-            show([],0,'user_id不能为空');
-        }
+//        if(!$user_id){
+//            show([],0,'user_id不能为空');
+//        }
         //知识点数据
-        $unit_info=Unit::where(['delete_time'=>0])
-            ->alias('u')
-            ->order('u.order','desc')
-            ->select();
-        $unit_rate=Unit::where(['delete_time'=>0])
-            ->alias('u')
-            ->field('name,unit_id,complete_num')
-            ->join('user_unit uu','u.id = uu.unit_id')
-            ->where('uu.user_id',$user_id)
-            ->order('u.order','desc')
-            ->select();
-        foreach ($unit_info as $k=>$v){
-            $v['complete_num']=0;
-        }
-        foreach ($unit_info as $k=>$v){
-            foreach ($unit_rate as $key=>$vv){
-                if($unit_info[$key]['id']==$vv['unit_id']){
-                    $unit_info[$key]['complete_num']=$vv['complete_num'];
+        if($user_id){
+            $unit_info=Unit::where(['delete_time'=>0])
+                ->alias('u')
+                ->join('user_unit uu','u.id = uu.unit_id')
+                ->where('uu.user_id',$user_id)
+//                ->order('u.id','desc')
+                ->order('uu.complete_num','desc')
+                ->select();
+        }else{
+            $unit_info=Unit::where(['delete_time'=>0])
+                ->alias('u')
+                ->order('u.order','desc')
+                ->select();
+            if(!empty($unit_info)){
+                foreach ($unit_info as $k=>$v){
+                    $v['complete_num']=0;
                 }
             }
         }
@@ -82,21 +80,32 @@ class StudentCourse extends Controller
                 ->order('id','asc')
                 ->value('unit_id');
         }
-        $unit_list=UnitList
-            ::alias('u')
-            ->field('u.*,uu.*,uul.*')
-            ->join('user_unit uu','uu.unit_id = u.unit_id')
-            ->join('unit_user_list uul','u.id= uul.unit_list_id')
-            ->where('u.unit_id',$unit_id)
-            ->where('uul.user_id',$user_id)
-            ->select();
+        if($user_id){
+            $unit_list=UnitList
+                ::alias('u')
+                ->field('u.*,uu.*,uul.*')
+                ->join('user_unit uu','uu.unit_id = u.unit_id')
+                ->join('unit_user_list uul','u.id= uul.unit_list_id')
+                ->where('u.unit_id',$unit_id)
+                ->where('uul.user_id',$user_id)
+                ->select();
+        }else{
+            $unit_list=UnitList
+                ::alias('u')
+                ->field('u.*,uu.*')
+                ->join('unit uu','uu.id = u.unit_id')
+                ->where('u.unit_id',$unit_id)
+                ->select();
+        }
         foreach ($unit_list as $v){
+            if(!$user_id){
+                $v['complete_rate']=0;
+            }
             $name=Unit::where(['id'=>$v['unit_id']])->value('name');
             $v['name']=$name;
             $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
         }
         $info=[
-//            'unit_rate'=>$unit_rate
             'unit_list'=>$unit_list,
             'unit_info'=>$unit_info,
         ];
@@ -114,5 +123,4 @@ class StudentCourse extends Controller
             ->select();
         show($unit_list,200,'ok');
     }
-
 }

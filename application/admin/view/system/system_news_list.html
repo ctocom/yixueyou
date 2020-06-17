@@ -16,6 +16,9 @@
     <script type="text/html" id="systemNewsListBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+        {{# if(d.type==2 || d.type==0){ }}
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="audit">审核</a>
+        {{# } }}
     </script>
 </form>
 {/block}
@@ -52,7 +55,16 @@
                         }
                     }},
                 {field: 'is_read', title: '是否读过',align:'center'},
-                {title: '操作', width:170, templet:'#systemNewsListBar',fixed:"right",align:"center"}
+                {field: 'type', title: '是否审核',align:'center',templet:function (d) {
+                        if(d.status==0){
+                            return '未审核';
+                        }else if(d.status==1){
+                            return '已通过';
+                        }else{
+                            return '已驳回';
+                        }
+                    }},
+                {title: '操作', width:170, templet:'#systemNewsListBar',fixed:"right",align:"center",}
             ]]
         });
 
@@ -67,7 +79,6 @@
                 }
             })
         });
-
         //添加用户
         function add(){
             var index = layui.layer.open({
@@ -134,6 +145,53 @@
                             }, function(){
                                 tableIns.reload()
                             });
+                        }
+                    })
+                });
+            }else if(layEvent === 'audit'){
+                layer.confirm('纳尼？', {
+                    btn: ['通过', '驳回'] //可以无限个按钮
+                    ,btn2: function(index, layero){
+                        //按钮【驳回】的回调
+                        $.ajax({
+                            url: "{:url('/admin/systemNewsAudit')}",
+                            type: "post",
+                            dataType: "json",
+                            data: {status:2,id:data.id,user_id:data.from_user},
+                            success: function (res) {
+                                if(res.code==200){
+                                    var icon=1;
+                                }else{
+                                    var icon=2;
+                                }
+                                layer.msg(res.msg, {
+                                    icon: icon,
+                                    time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                                }, function(){
+                                    tableIns.reload()
+                                });
+                            }
+                        })
+                    }
+                }, function(index, layero) {
+                    //按钮【通过】的回调
+                    $.ajax({
+                        url: "{:url('/admin/systemNewsAudit')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {status:1,id:data.id,user_id:data.from_user},
+                        success: function (res) {
+                                if(res.code==200){
+                                    var icon=1;
+                                }else{
+                                    var icon=2;
+                                }
+                                layer.msg(res.msg, {
+                                    icon: icon,
+                                    time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                                }, function(){
+                                    tableIns.reload()
+                                });
                         }
                     })
                 });

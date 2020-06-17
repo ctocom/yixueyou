@@ -59,6 +59,10 @@ Route::group('admin', [
     'SystemNewsInfo$'=>'admin/System/SystemNewsList',                      //系统信息
     'SystemNewsStatus$'=>'admin/System/SystemNewsStatus',                      //系统信息修改阅读状态
     'SystemNewsDelete$'=>'admin/System/SystemNewsDelete',                      //系统信息删除
+    'systemNewsAudit'=>'admin/System/systemNewsAudit',                      //学习状态审核
+
+
+    'paperWord'=>'admin/Word/paperWord',                      //生成试卷
 
     //用户管理
     'userList$'=>'admin/User/userList',                                      //用户列表
@@ -100,7 +104,6 @@ Route::group('admin', [
     'sectionList$'=>'admin/Section/sectionList',//章节列表
     'sectionDelete$'=>'admin/Section/sectionDelete',//章节删除
     'sectionAdd$'=>'admin/Section/sectionAdd',//章节删除
-    'sectionUpload$'=>'admin/Section/sectionUpload',//章节图标上传
     'sectionUpload$'=>'admin/Section/sectionUpload',//章节图标上传
     'sectionEdit$'=>'admin/Section/sectionEdit',//章节修改
 

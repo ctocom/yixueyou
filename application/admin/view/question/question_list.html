@@ -16,10 +16,10 @@
     </blockquote>
     <table id="questionList" lay-filter="questionList"></table>
     <!--操作-->
-    <script type="text/html" id="questionListBar">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
-    </script>
+    <!--<script type="text/html" id="questionListBar">-->
+        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+        <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
+    <!--</script>-->
 </form>
 {/block}
 {block name="script"}
@@ -43,7 +43,7 @@
                 {field: 'id', title: '试题Id', width:100, align:"center"},
                 {field: 'name', title: '标题名',align:'center'},
                 {field: 'teacher_name', title: '添加人', width:350},
-                {title: '操作', width:170, templet:'#questionListBar',fixed:"right",align:"center"}
+                // {title: '操作', width:170, templet:'#questionListBar',fixed:"right",align:"center"}
             ]]
         });
 

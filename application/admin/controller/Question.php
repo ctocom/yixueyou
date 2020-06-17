@@ -35,8 +35,10 @@ class Question extends Common
            $data['course_id']=intval($post_data['course']);
            $data['section_id']=intval($post_data['section']);
            $data['unit_id']=intval($post_data['unit']);
-           $data['analysis']=$post_data['unit'];
+           $data['analysis']=$post_data['analysis'];
            $data['title']=$post_data['content'];
+           $data['type1']=$post_data['type1'];
+           $data['radios']=$post_data['question'];
            $answer=$post_data['answer'];
            $answer2=$post_data['answer2'];
            $data['type']=intval($post_data['question_type']);
@@ -60,6 +62,7 @@ class Question extends Common
            $data['name']=$data['title'];
            $user = session('user_auth');
            $data['teacher_id']=$user['uid'];
+           $data['create_time']=time();
            $res=model('question')->save($data);
            if($res){
                show([],200,'添加成功');

@@ -15,9 +15,8 @@
  * @param array $data 被认证的数据
  * @return string       签名
  */
-
+use app\admin\service\Wordmaker;
 use think\exception\HttpResponseException;
-
 if (!function_exists('sign')) {
     function sign($data)
     {
@@ -217,4 +216,51 @@ function isAllChinese($str)
             return false;//不全是中文
         }
     }
+}
+function WordMake( $content,$absolutePath = "",$isEraseLink = true ){
+    $mht = new Wordmaker();
+    if ($isEraseLink){
+        $content = preg_replace('/<a\s*.*?\s*>(\s*.*?\s*)<\/a>/i' , '$1' , $content);   //去掉链接
+    }
+    $images = array();
+    $files = array();
+    $matches = array();
+//这个算法要求src后的属性值必须使用引号括起来
+    if ( preg_match_all('/<img[.\n]*?src\s*?=\s*?[\"\'](.*?)[\"\'](.*?)\/>/i',$content ,$matches ) ){
+        $arrPath = $matches[1];
+        for ( $i=0;$i<count($arrPath);$i++)
+        {
+            $path = $arrPath[$i];
+            $imgPath = trim( $path );
+            if ( $imgPath != "" )
+            {
+                $files[] = $imgPath;
+                if( substr($imgPath,0,7) == 'http://')
+                {
+//绝对链接，不加前缀
+                }
+                else
+                {
+                    $imgPath = $absolutePath.$imgPath;
+                }
+                $images[] = $imgPath;
+            }
+        }
+    }
+    $mht->AddContents("tmp.html",$mht->GetMimeType("tmp.html"),$content);
+    for ( $i=0;$i<count($images);$i++)
+    {
+        $image = $images[$i];
+        if ( @fopen($image , 'r') )
+        {
+            $imgcontent = @file_get_contents( $image );
+            if ( $content )
+                $mht->AddContents($files[$i],$mht->GetMimeType($image),$imgcontent);
+        }
+        else
+        {
+            echo "file:".$image." not exist!<br />";
+        }
+    }
+    return $mht->GetFile();
 }

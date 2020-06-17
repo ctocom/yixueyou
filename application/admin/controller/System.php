@@ -281,7 +281,7 @@ class System extends Common
     }
 
     /**
-     * 管理员信息
+     * 系统消息
      */
     public function SystemNewsList(){
         if($this->request->isAjax()){
@@ -297,38 +297,62 @@ class System extends Common
                 ->order('id','desc')
                 ->paginate($data['limit'], false, ['query' => $data]);
             $total=$list->total();
-            $user_data=[];
+            $system_data=[];
             foreach ($list as $key => $val) {
-                $user_data[$key] = $val;
+                $system_data[$key] = $val;
             }
-            foreach ($user_data as $v){
+            foreach ($system_data as $v){
                 if($v['is_read']==0){
                     $v['is_read']='未读';
                 }else{
                     $v['is_read']='已读';
                 }
             }
-            return show($user_data, 0, '', ['count' => $total]);
+            return show($system_data, 0, '', ['count' => $total]);
         }else{
             return $this->fetch();
         }
     }
     public function systemNewsStatus(){
         $id=$this->request->post('id','0','intval');
-        $res=SystemNews::where('id',$id)->update(['is_read'=>1]);
+        $res=SystemNews::where('id',$id)->update(['is_read'=>1,'read_time'=>time()]);
+        //todo 老师已读  给学生发一条消息
+
         if($res){
             show([],200,'ok');
         }else{
             show([],0,'ok');
         }
     }
-    public function systemNewsdelete(){
+    public function systemNewsDelete(){
         $id=$this->request->post('id','0','intval');
         $res=SystemNews::where('id',$id)->update(['delete_time'=>time()]);
         if($res){
             show([],200,'删除成功');
         }else{
             show([],0,'删除失败');
+        }
+    }
+    public function systemNewsAudit()
+    {
+        $status=$this->request->post('status',0,'intval');
+        $id=$this->request->post('id',0,'intval');
+        $user_id=$this->request->post('user_id',0,'intval');
+        $where=[];
+        $where=[
+            'id'=>$id,
+        ];
+        $res=model('systemNews')->where($where)->update(['status'=>$status]);
+        if($res && $status==1){
+            //todo 审核通过 给学生发送一条信息
+            show([],200,'审核通过');
+        }elseif ($res && $status==2){
+            // todo 驳回  给学生发一条消息
+            show([],200,'驳回成功');
+        }else if(!$res && $status==1){
+            show([],0,'已通过状态不能通过');
+        }else if(!$res && $status==2){
+            show([],0,'已驳回状态不能驳回');
         }
     }
 }
