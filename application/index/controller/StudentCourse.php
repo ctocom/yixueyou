@@ -57,7 +57,19 @@ class StudentCourse extends Controller
                 ->where('uu.user_id',$user_id)
 //                ->order('u.id','desc')
                 ->order('uu.complete_num','desc')
-                ->select();
+                ->select()
+            ->toArray();
+            if(empty($unit_info)){
+                $unit_info=Unit::where(['delete_time'=>0])
+                    ->alias('u')
+                    ->order('u.order','desc')
+                    ->select();
+                if(!empty($unit_info)){
+                    foreach ($unit_info as $k=>$v){
+                        $v['complete_num']=0;
+                    }
+                }
+            }
         }else{
             $unit_info=Unit::where(['delete_time'=>0])
                 ->alias('u')
@@ -80,6 +92,7 @@ class StudentCourse extends Controller
                 ->order('id','asc')
                 ->value('unit_id');
         }
+        $unit_list=[];
         if($user_id){
             $unit_list=UnitList
                 ::alias('u')
@@ -88,7 +101,15 @@ class StudentCourse extends Controller
                 ->join('unit_user_list uul','u.id= uul.unit_list_id')
                 ->where('u.unit_id',$unit_id)
                 ->where('uul.user_id',$user_id)
-                ->select();
+                ->select()->toArray();
+            if(empty($unit_list)){
+                $unit_list2= UnitList
+                    ::alias('u')
+                    ->field('u.*,uu.*')
+                    ->join('unit uu','uu.id = u.unit_id')
+                    ->where('u.unit_id',$unit_id)
+                    ->select();
+            }
         }else{
             $unit_list=UnitList
                 ::alias('u')
@@ -97,13 +118,23 @@ class StudentCourse extends Controller
                 ->where('u.unit_id',$unit_id)
                 ->select();
         }
-        foreach ($unit_list as $v){
-            if(!$user_id){
+        if(empty($unit_list)){
+            $unit_list=$unit_list2;
+            foreach ($unit_list as $v){
                 $v['complete_rate']=0;
+                $name=Unit::where(['id'=>$v['unit_id']])->value('name');
+                $v['name']=$name;
+                $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
             }
-            $name=Unit::where(['id'=>$v['unit_id']])->value('name');
-            $v['name']=$name;
-            $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
+        }else{
+            foreach ($unit_list as $v){
+                if(!$user_id){
+                    $v['complete_rate']=0;
+                }
+                $name=Unit::where(['id'=>$v['unit_id']])->value('name');
+                $v['name']=$name;
+                $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
+            }
         }
         $info=[
             'unit_list'=>$unit_list,

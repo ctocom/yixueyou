@@ -20,22 +20,12 @@ class System extends Controller
             'to_user'=>$student_info['account']
         ];
         $to_user=$student_info['account'];
-        $sub = model('systemNews')
-            ->field('to_user,from_user,content,send_time')
-            ->where('to_user' ,$to_user)
-            ->union('SELECT from_user,to_user,content,send_time FROM think_system_news WHERE to_user = '.$to_user)
-            ->buildSql();
-        $query = Db::table($sub)
-            ->alias('tmp')
-            ->group('tmp.to_user')
-            ->order('tmp.send_time')
-            ->buildSql();
-        $info = DB::table($query)
-            ->alias('t')
-            ->field('t.to_user,name,head,content,send_time')
-            ->join('student u', 't.to_user=u.account', 'LEFT')
+        $system_list=model('systemNews')
+            ->where('to_user',$to_user)
+            ->where('id',max('id'))
+            ->group('to_user')
+            ->order('id','desc')
             ->select();
-        var_dump($info);exit;
         if(!empty($system_list)){
             foreach($system_list as $k=>$v){
                 $v['from_user_name']=model('user')->where('uid',$v['from_user_id'])->value('name');
@@ -46,6 +36,17 @@ class System extends Controller
     //单个好友聊天记录
     public function systemInfo()
     {
-
+        $user_id=$this->request->post('user_id',0,'intval');
+        if(!$user_id){
+            show([],0,'user_id必传');
+        }
+        $from_user_id=$this->request->post('from_user_id',0,'intval');
+        if(!$from_user_id){
+            show([],0,'from_user_id必传');
+        }
+        $chat_list=model('systemNews')
+            ->where('from_user_id',$from_user_id)
+            ->select();
+        show($chat_list,200,'ok');
     }
 }

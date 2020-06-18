@@ -25,6 +25,7 @@ Route::group('index', [
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
     'systemList'=>'index/System/SystemList',//系统消息对话列表
+    'systemInfo'=>'index/System/systemInfo',//系统消息对话记录
 ]);
 
 //免登录
