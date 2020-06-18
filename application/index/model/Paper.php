@@ -9,8 +9,9 @@
 namespace app\index\model;
 use think\Model;
 
-class User extends Model
+class Paper extends Model
 {
     protected $autoWriteTimestamp = true;
     protected $updateTime = false;
+    protected $createTime = false;
 }

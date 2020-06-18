@@ -26,6 +26,9 @@ Route::group('index', [
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
     'systemList'=>'index/System/SystemList',//系统消息对话列表
     'systemInfo'=>'index/System/systemInfo',//系统消息对话记录
+    'recordErrorQuestion'=>'index/Question/recordErrorQuestion',//录入错题
+    'paperQuestion'=>'index/Question/paperQuestion',//试卷内的试题
+    'paperList'=>'index/Question/paperList',//用户试卷列表
 ]);
 
 //免登录

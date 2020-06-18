@@ -20,12 +20,11 @@ class System extends Controller
             'to_user'=>$student_info['account']
         ];
         $to_user=$student_info['account'];
-        $system_list=model('systemNews')
+        $wmsg=model('systemNews')
             ->where('to_user',$to_user)
-            ->where('id',max('id'))
-            ->group('to_user')
             ->order('id','desc')
-            ->select();
+            ->buildSql();
+        $system_list = model('systemNews')->table($wmsg.' a')->group('to_user')->select();
         if(!empty($system_list)){
             foreach($system_list as $k=>$v){
                 $v['from_user_name']=model('user')->where('uid',$v['from_user_id'])->value('name');

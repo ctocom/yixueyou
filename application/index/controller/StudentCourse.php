@@ -49,6 +49,8 @@ class StudentCourse extends Controller
 //        if(!$user_id){
 //            show([],0,'user_id不能为空');
 //        }
+        $section=model('section')->find();
+        $course_name=model('course')->where('id',$section['course_id'])->value('name');
         //知识点数据
         if($user_id){
             $unit_info=Unit::where(['delete_time'=>0])
@@ -137,6 +139,7 @@ class StudentCourse extends Controller
             }
         }
         $info=[
+            'nav_name'=>$course_name.'-'.$section['name'],
             'unit_list'=>$unit_list,
             'unit_info'=>$unit_info,
         ];
