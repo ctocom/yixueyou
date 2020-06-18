@@ -10,6 +10,7 @@ use app\index\model\Course;
 use app\index\model\Section;
 use app\index\model\Unit;
 use app\index\model\UserUnit;
+use think\facade\Config;
 class StudentCourse extends Controller
 {
     //课程数据
@@ -26,6 +27,9 @@ class StudentCourse extends Controller
             show([],0,'course_id不能为空');
         }
         $section_info=Section::where(['is_show'=>1,'delete_time'=>0,'course_id'=>$course_id])->select();
+        foreach ($section_info as $v){
+            $v['icon']=Config::get('domain').$v['icon'];
+        }
         show($section_info,200,'ok');
     }
     //节数据
