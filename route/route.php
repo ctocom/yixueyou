@@ -24,6 +24,7 @@ Route::group('index', [
     'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
+    'systemList'=>'index/System/SystemList',//系统消息对话列表
 ]);
 
 //免登录

@@ -5,7 +5,7 @@
         <form class="layui-form">
             <div class="layui-inline">
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input searchVal" placeholder="输入用户账号" />
+                    <input type="text" class="layui-input searchVal" placeholder="输入发送消息者账号" />
                 </div>
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
             </div>
@@ -29,7 +29,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //消息列表
         var tableIns = table.render({
             elem: '#systemNewsList',
             url : "{:url('/admin/systemNewsInfo')}",
@@ -75,52 +75,33 @@
                     curr: 1 //重新从第 1 页开始
                 },
                 where: {
-                    user_id: $(".searchVal").val()  //搜索的关键字
+                    user: $(".searchVal").val()  //搜索的关键字
                 }
             })
         });
-        //添加用户
-        function add(){
-            var index = layui.layer.open({
-                title : "添加试题",
-                type : 2,
-                content : "{:url('/admin/systemNewsAdd')}",
-                success : function(layero, index){
-                    var body = layui.layer.getChildFrame('body', index);
-                    setTimeout(function(){
-                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
-                            tips: 3
-                        });
-                    },500)
-                }
-            })
-            layui.layer.full(index);
-            window.sessionStorage.setItem("index",index);
-            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-            $(window).on("resize",function(){
-                layui.layer.full(window.sessionStorage.getItem("index"));
-            })
-        }
         //查看详细信息
         function detail(id,content){
-            if(content==null){
-                content='大萨达大所多';
-            }
-            layer.alert('消息内容:&nbsp;'+ content+'<br>')
             $.ajax({
                 url: "{:url('/admin/systemNewsStatus')}",
                 type: "post",
                 dataType: "json",
                 data: {id:id},
                 success: function (res) {
-                    tableIns.reload()
+                    if(res.code==0){
+                        layer.msg(res.msg, {
+                            icon: 2,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        })
+                    }else{
+                        if(content==null){
+                            content='没有消息';
+                        }
+                        layer.alert('消息内容:&nbsp;'+ content+'<br>')
+                        tableIns.reload()
+                    }
                 }
             })
         }
-        $(".adduser_btn").click(function(){
-            add();
-        })
-
         //列表操作
         table.on('tool(systemNewsList)', function(obj){
             var layEvent = obj.event, data = obj.data;
@@ -149,7 +130,7 @@
                     })
                 });
             }else if(layEvent === 'audit'){
-                layer.confirm('纳尼？', {
+                layer.confirm('是否通过？', {
                     btn: ['通过', '驳回'] //可以无限个按钮
                     ,btn2: function(index, layero){
                         //按钮【驳回】的回调

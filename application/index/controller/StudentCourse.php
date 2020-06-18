@@ -112,15 +112,16 @@ class StudentCourse extends Controller
         show($info,200,'ok');
     }
     public function unitListInfo(){
-        $section_id=$this->request->post('section_id',0,'intval');
-        if(!$section_id){
-            show([],0,'section_id必传');
+        $course_id=$this->request->post('course_id',0,'intval');
+        if(!$course_id){
+            show([],0,'course_id必传');
         }
-        $unit_list=model('unit')
-            ->where('section_id',$section_id)
+        $section_list=model('section')
+            ->where('course_id',$course_id)
             ->where('delete_time',0)
+            ->where('is_show',1)
             ->order('order','desc')
             ->select();
-        show($unit_list,200,'ok');
+        show($section_list,200,'ok');
     }
 }

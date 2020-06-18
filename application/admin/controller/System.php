@@ -285,14 +285,16 @@ class System extends Common
      */
     public function SystemNewsList(){
         if($this->request->isAjax()){
-            $user_id=$this->request->get('user_id','0','intval');
-            $data['limit']=$this->request->get('limit','10','intval');
             $where=[];
-            if($user_id){
-                $where['from_user']=$user_id;
-            }
+            $data = [
+                'user' =>$this->request->get('user','','trim'),
+                'limit' => $this->request->get('limit', 10, 'intval'),
+            ];
+            $teacher=session('user_auth');
+            $where['to_user']=$teacher['user'];
             $where['delete_time']=0;
-            $list = SystemNews::where($where)
+            $list = SystemNews::where('from_user','like',"%".$data['user']."%")
+                ->where($where)
                 ->order('is_read','asc')
                 ->order('id','desc')
                 ->paginate($data['limit'], false, ['query' => $data]);
@@ -314,11 +316,38 @@ class System extends Common
         }
     }
     public function systemNewsStatus(){
-        $id=$this->request->post('id','0','intval');
+        $id=$this->request->post('id',0,'intval');
+        $is_read=SystemNews::where('id',$id)->value('is_read');
+        if($is_read){
+            show([],0,'您已查看过');
+        }
         $res=SystemNews::where('id',$id)->update(['is_read'=>1,'read_time'=>time()]);
-        //todo 老师已读  给学生发一条消息
-
-        if($res){
+        //老师已读  给学生发一条消息
+        $system_news=SystemNews::where('id',$id)->find();
+        $teacher_info=model('user')->where('uid',$system_news['to_user'])->find();
+        $student_info=model('student')->where('id',$system_news['from_user'])->find();
+        if($system_news['type']==1){
+            //讲解消息
+            $data['content']='你好！我是'.$teacher_info['name'].','.$system_news['unit_name'].'这条消息我已查看，稍后我会微信联系你';
+            $data['title']=$student_info['name'].'的'.$system_news['unit_name'].'的难点';
+        }else{
+            //学习进度消息
+            $data['content']='你好！我是'.$teacher_info['name'].','.$system_news['unit_name'].'这条消息我已查看，稍后我会审核';
+            $data['title']=$student_info['name'].'的'.$system_news['unit_name'].'的学习进度';
+        }
+        $data['from_user']=$system_news['to_user'];
+        //查询到学生的所属老师id
+        $data['to_user']=$system_news['from_user'];
+        $data['to_user_id']=$system_news['from_user_id'];
+        $data['from_user_id']=$system_news['to_user_id'];
+        $data['is_read']=0;
+        $data['send_time']=time();
+        $data['type']=1;
+        $data['unit_id']=$system_news['unit_id'];
+        $data['unit_name']=$system_news['unit_name'];
+        $data['status']=0;
+        $news_res=model('systemNews')->insert($data);
+        if($news_res && $res){
             show([],200,'ok');
         }else{
             show([],0,'ok');
@@ -337,22 +366,48 @@ class System extends Common
     {
         $status=$this->request->post('status',0,'intval');
         $id=$this->request->post('id',0,'intval');
-        $user_id=$this->request->post('user_id',0,'intval');
-        $where=[];
+        $system_news=model('systemNews')->where('id',$id)->find();
         $where=[
             'id'=>$id,
         ];
+        $status_data=model('systemNews')->where($where)->value('status');
+        if($status_data==$status && $status==1){
+            show([],0,'已通过状态不能通过');
+        }else if($status_data==$status && $status==2){
+            show([],0,'已驳回状态不能驳回');
+        }
+        if($status==2 && $status_data==1){
+            show([],0,'已通过状态不能再次驳回');
+        }
         $res=model('systemNews')->where($where)->update(['status'=>$status]);
+        $data['from_user']=$system_news['to_user'];
+        //查询到学生的所属老师id
+        $data['to_user']=$system_news['from_user'];
+        $data['is_read']=0;
+        $data['send_time']=time();
+        $data['type']=1;
+        $data['to_user_id']=$system_news['from_user_id'];
+        $data['from_user_id']=$system_news['to_user_id'];
+        $data['unit_id']=$system_news['unit_id'];
+        $data['unit_name']=$system_news['unit_name'];
+        $data['status']=0;
         if($res && $status==1){
-            //todo 审核通过 给学生发送一条信息
+            //审核通过 给学生发送一条信息
+            $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已审核成功';
+            $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].'的学习进度';
+            $news_res=model('systemNews')->insert($data);
+            //todo 审核通过需要改变进度
+            $unit_list_id=model('unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
+            $unit_list_status=model('unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>25]);
             show([],200,'审核通过');
         }elseif ($res && $status==2){
-            // todo 驳回  给学生发一条消息
+            //驳回  给学生发一条消息
+            $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已驳回，请完成学习进度再提交';
+            $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].'的学习进度';
+            $news_res=model('systemNews')->insert($data);
             show([],200,'驳回成功');
-        }else if(!$res && $status==1){
-            show([],0,'已通过状态不能通过');
-        }else if(!$res && $status==2){
-            show([],0,'已驳回状态不能驳回');
+        }else{
+            show([],0,'审核失败');
         }
     }
 }
