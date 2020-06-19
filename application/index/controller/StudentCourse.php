@@ -111,7 +111,7 @@ class StudentCourse extends Controller
             if(empty($unit_list)){
                 $unit_list2= UnitList
                     ::alias('u')
-                    ->field('u.*,uu.*')
+                    ->field('u.*,uu.icon')
                     ->join('unit uu','uu.id = u.unit_id')
                     ->where('u.unit_id',$unit_id)
                     ->select();
@@ -119,7 +119,7 @@ class StudentCourse extends Controller
         }else{
             $unit_list=UnitList
                 ::alias('u')
-                ->field('u.*,uu.*')
+                ->field('u.*,uu.icon')
                 ->join('unit uu','uu.id = u.unit_id')
                 ->where('u.unit_id',$unit_id)
                 ->select();
