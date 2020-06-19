@@ -28,6 +28,7 @@ class System extends Controller
         if(!empty($system_list)){
             foreach($system_list as $k=>$v){
                 $v['from_user_name']=model('user')->where('uid',$v['from_user_id'])->value('name');
+                $v['image']=Config::get('domain')->model('user')->where('uid',$v['head'])->value('head');
             }
         }
         show($system_list,200,'ok');
