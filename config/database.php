@@ -17,7 +17,7 @@ return [
     // 数据库名
     'database'        => 'api_yixueyouke_n',
     // 用户名
-    'username'        => 'api_yixueyouke_n',
+    'username'        => 'root',
     // 密码
     'password'        => '5SJGHhkKL57w4Z4A',
     // 端口
