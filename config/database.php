@@ -15,11 +15,11 @@ return [
     // 服务器地址
     'hostname'        => '127.0.0.1',
     // 数据库名
-    'database'        => 'jy',
+    'database'        => 'api_yixueyouke_n',
     // 用户名
-    'username'        => 'was1234321',
+    'username'        => 'api_yixueyouke_n',
     // 密码
-    'password'        => 'root',
+    'password'        => '5SJGHhkKL57w4Z4A',
     // 端口
     'hostport'        => '',
     // 连接dsn
