@@ -82,9 +82,17 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
-    //统计
-    public function studyData()
+    //用户错题列表
+    public function userErrorquestion()
     {
+
+    }
+    public function userPaperAction(){
+        $question_data=question_random_data(3,2);
+        if(!$question_data){
+            show([],0,'题库里面的题太少了');
+        }
+        //随机生成一个试卷
 
     }
 }

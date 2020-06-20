@@ -29,6 +29,7 @@ Route::group('index', [
     'recordErrorQuestion'=>'index/Question/recordErrorQuestion',//录入错题
     'paperQuestion'=>'index/Question/paperQuestion',//试卷内的试题
     'paperList'=>'index/Question/paperList',//用户试卷列表
+    'userPaperAction'=>'index/Question/userPaperAction',//用户试卷生成
 ]);
 
 //免登录

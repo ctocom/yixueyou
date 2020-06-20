@@ -264,3 +264,75 @@ function WordMake( $content,$absolutePath = "",$isEraseLink = true ){
     }
     return $mht->GetFile();
 }
+//学生试题生成
+function question_random_data($num,$min){
+    $model=model('question');
+    $where1=[
+        'type1'=>1,
+        'delete_time'=>0,
+    ];
+    $where2=[
+        'type1'=>2,
+        'delete_time'=>0,
+    ];
+    $where3=[
+        'type1'=>3,
+        'delete_time'=>0,
+    ];
+    $fields="";
+    $question_type1=$model->where($where1)->select()->shuffle()->toArray();
+    $type1_count=count($question_type1);
+    if(empty($question_type1) || $type1_count<$min){
+        return false;
+    }
+    $question_type2=$model->where($where2)->select()->shuffle()->toArray();
+    $type2_count=count($question_type2);
+    if(empty($question_type2) || $type2_count<$min){
+        return false;
+    }
+    $question_type3=$model->where($where3)->select()->shuffle()->toArray();
+    $type3_count=count($question_type3);
+    if(empty($question_type3) || $type3_count<$min){
+        return false;
+    }
+    $list1 = $model->where($where1)->column('id');
+    $rand_list1 = array_rand($list1,$num);//随机抽取3条'
+    $type_array1 = array();
+    foreach ((array)$rand_list1 as $key) {
+
+        $type_array1[] = $list1[$key];
+
+    }
+    $question_type1 = $model->where('id','in',$type_array1)->select()->toArray();
+
+    $list2 = $model->where($where2)->column('id');
+    $rand_list2 = array_rand($list2,$num);//随机抽取3条'
+    $type_array2 = array();
+    foreach ((array)$rand_list2 as $key) {
+
+        $type_array2[] = $list2[$key];
+
+    }
+    $question_type2 = $model->where('id','in',$type_array2)->select()->toArray();
+
+    $list3 = $model->where($where3)->column('id');
+    $rand_list3 = array_rand($list3,$num);//随机抽取3条'
+    $type_array3 = array();
+    foreach ((array)$rand_list3 as $key) {
+
+        $type_array3[] = $list3[$key];
+
+    }
+    $question_type3 = $model->where('id','in',$type_array3)->select()->toArray();
+    $all_question=array_merge($question_type1,$question_type2,$question_type3);
+    shuffle($all_question);
+    return $all_question;
+}
+//随机生后试卷信息
+function paper_random_data($user_id,$unit_id,$section_id)
+{
+    $student_info=model('student')->where('id',$user_id)->find();
+    $unit_info=model('unit')->where('id',$unit_id)->find();
+    $paper_name=$student_info.$unit_info.'的测试';
+
+}
