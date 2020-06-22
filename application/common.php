@@ -329,10 +329,44 @@ function question_random_data($num,$min){
     return $all_question;
 }
 //随机生后试卷信息
-function paper_random_data($user_id,$unit_id,$section_id)
+function paper_random_data($user_id,$unit_id,$unit_list_id,$type)
 {
     $student_info=model('student')->where('id',$user_id)->find();
     $unit_info=model('unit')->where('id',$unit_id)->find();
-    $paper_name=$student_info.$unit_info.'的测试';
-
+    $p_name='的练习卷';
+    if($type==2){
+        $p_name='的错题本';
+    }
+    $paper_name=$student_info['name'].'的'.$unit_info['name'].$p_name;
+    $data['section_id']=$unit_info['section_id'];
+    $data['name']=$paper_name;
+    $data['score']=100;
+    $data['pass_score']=60;
+    $data['pass_score']=60;
+    $data['unit_id']=$unit_id;
+    $data['user_id']=$user_id;
+    $data['unit_list_id']=$unit_list_id;
+    $data['create_time']=time();
+    $data['type']=$type;
+    $paper_insert=model('paper')->insertGetId($data);
+    if($paper_insert){
+        return $paper_insert;
+    }else{
+        return false;
+    }
+}
+function second_array_unique_bykey($arr, $key){
+    $tmp_arr = array();
+    foreach($arr as $k => $v)
+    {
+        if(in_array($v[$key], $tmp_arr))   //搜索$v[$key]是否在$tmp_arr数组中存在，若存在返回true
+        {
+            unset($arr[$k]); //销毁一个变量  如果$tmp_arr中已存在相同的值就删除该值
+        }
+        else {
+            $tmp_arr[$k] = $v[$key];  //将不同的值放在该数组中保存
+        }
+    }
+    //ksort($arr); //ksort函数对数组进行排序(保留原键值key)  sort为不保留key值
+    return $arr;
 }
