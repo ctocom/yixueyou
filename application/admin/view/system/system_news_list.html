@@ -16,7 +16,7 @@
     <script type="text/html" id="systemNewsListBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
-        {{# if(d.type==2 || d.type==0){ }}
+        {{# if(d.type==2 || d.type==0 || d.type==3){ }}
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="audit">审核</a>
         {{# } }}
     </script>

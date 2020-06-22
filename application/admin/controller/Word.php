@@ -24,10 +24,18 @@ class Word extends Common
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word');//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
-        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
-        $fp = fopen('uploads/paper/'.$name.'['.$data[0]['id']."].doc", 'w');//打开生成的文档
+        $url='uploads/paper/'.randomFileName().".doc";
+//        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
+        $fp = fopen($url, 'w');//打开生成的文档
+        //将试卷路径保存到试卷表
+        $res=model('paper')->where('id',1)->update(['paper_url'=>$url]);
         fwrite($fp, $fileContent);//写入包保存文件
         fclose($fp);
-        echo $fp;
+        if($res){
+            echo "生成成功";
+            echo "tp5.abc.com/".$url;
+        }else{
+            echo "生成失败";
+        }
     }
 }

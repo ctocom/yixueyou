@@ -217,6 +217,7 @@ function isAllChinese($str)
         }
     }
 }
+//生成word 文件
 function WordMake( $content,$absolutePath = "",$isEraseLink = true ){
     $mht = new Wordmaker();
     if ($isEraseLink){
@@ -355,18 +356,47 @@ function paper_random_data($user_id,$unit_id,$unit_list_id,$type)
         return false;
     }
 }
-function second_array_unique_bykey($arr, $key){
-    $tmp_arr = array();
-    foreach($arr as $k => $v)
-    {
-        if(in_array($v[$key], $tmp_arr))   //搜索$v[$key]是否在$tmp_arr数组中存在，若存在返回true
-        {
-            unset($arr[$k]); //销毁一个变量  如果$tmp_arr中已存在相同的值就删除该值
+function array_diff_assoc2_deep($Array1, $Array2,$ArrayKey) {
+    $RetAll = array();
+    foreach ($Array1 as $Key => $Val) {
+        $Status = 1;
+        foreach ($Array2 as $K=>$V){
+            $Status = 1;
+            $Str1 = "";
+            $Str2 = "";
+            foreach ($ArrayKey as $C=>$Va){
+                $Str1 .= $Val[$Va];
+                $Str2 .= $V[$Va];
+            }
+
+            if ($Str1 === $Str2){
+                $Status = 2;break;
+            }
         }
-        else {
-            $tmp_arr[$k] = $v[$key];  //将不同的值放在该数组中保存
+        if ($Status == 1){
+            $RetAll[] = $Val;
         }
     }
-    //ksort($arr); //ksort函数对数组进行排序(保留原键值key)  sort为不保留key值
-    return $arr;
+
+    return array_filter($RetAll);
+}
+function randomFileName()
+{
+//生成随机文件名
+    //定义一个包含大小写字母数字的字符串
+    $chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    //把字符串分割成数组
+    $newchars=str_split($chars);
+    //打乱数组
+    shuffle($newchars);
+    //从数组中随机取出15个字符
+    $chars_key=array_rand($newchars,15);
+    //把取出的字符重新组成字符串
+    $fnstr='';
+    for($i=0;$i<15;$i++){
+        $fnstr.=$newchars[$chars_key[$i]];
+    }
+    $fnstr=$fnstr.time();
+    //输出文件名并做MD5加密
+    return md5($fnstr);
 }

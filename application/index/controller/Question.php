@@ -12,6 +12,7 @@ class Question extends Controller
     {
         $section_id=$this->request->post('section_id');
         $user_id=$this->request->post('user_id');
+        $type=$this->request->post('type');
         if(!$user_id){
             show([],0,'user_id必传');
         }
@@ -21,6 +22,7 @@ class Question extends Controller
         $paper_list=model('paper')
             ->where('section_id',$section_id)
             ->where('user_id',$user_id)
+            ->where('type',$type)
             ->select();
         show($paper_list,200,'ok');
     }
@@ -46,6 +48,7 @@ class Question extends Controller
                     'question_id'=>$v,
                     'paper_id'=>$paper_id,
                     'user_id'=>$user_id,
+                    'create_time'=>time()
                 ];
             }
         }
@@ -77,14 +80,19 @@ class Question extends Controller
                 ->update(['complete_num'=>$type]);
             $status_res3=model('unit_list_module')
                 ->where('unit_list_id',$unit_list_id)
+                ->where('type',3)
                 ->update(['is_complete'=>1]);
-//            $data=array_merge($data,$error_info);
-//            $data=second_array_unique_bykey($data,'question_id');
+            $status_res4=model('unit_list_module')
+                ->where('unit_list_id',$unit_list_id)
+                ->where('type',4)
+                ->update(['is_complete'=>1]);
+//            var_dump($error_info);exit;
+//            $data=array_diff_assoc2_deep($data,$error_info,'question_id');
+//            $data=second_array_unique_bykey($data, 'question_id');
         }
-        var_dump($error_info);exit;
         $res=model('studentErrorquestion')->insertAll($data);
         if($res){
-            // todo 录入错题后生成错题本试卷
+            // 录入错题后生成错题本试卷
             $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,2);
             show([],200,'录入成功');
         }else{

@@ -31,7 +31,7 @@ class Index extends Common
         //查询后台未读系统消息
         $admin_info=session('user_auth');
         $system_num=model('system_news')
-            ->where('to_user',$admin_info['uid'])
+            ->where('to_user_id',$admin_info['uid'])
             ->where('is_read',0)
             ->count();
         $this->assign('system_num', $system_num);

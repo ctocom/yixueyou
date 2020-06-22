@@ -53,7 +53,7 @@ class StudentCourse extends Controller
 //        if(!$user_id){
 //            show([],0,'user_id不能为空');
 //        }
-        $section=model('section')->find();
+        $section=model('section')->where('id',$section_id)->find();
         $course_name=model('course')->where('id',$section['course_id'])->value('name');
         //知识点数据
         if($user_id){

@@ -330,10 +330,14 @@ class System extends Common
             //讲解消息
             $data['content']='你好！我是'.$teacher_info['name'].','.$system_news['unit_name'].'这条消息我已查看，稍后我会微信联系你';
             $data['title']=$student_info['name'].'的'.$system_news['unit_name'].'的难点';
-        }else{
+        }else if($system_news['type']==2){
             //学习进度消息
             $data['content']='你好！我是'.$teacher_info['name'].','.$system_news['unit_name'].'这条消息我已查看，稍后我会审核';
             $data['title']=$student_info['name'].'的'.$system_news['unit_name'].'的学习进度';
+        }else{
+            //完成作业消息
+            $data['content']='你好！我是'.$teacher_info['name'].','.$system_news['unit_name'].'这条消息我已查看，稍后我会审核';
+            $data['title']=$student_info['name'].'的'.$system_news['unit_name'].'的作业情况';
         }
         $data['from_user']=$system_news['to_user'];
         //查询到学生的所属老师id
@@ -342,7 +346,7 @@ class System extends Common
         $data['from_user_id']=$system_news['to_user_id'];
         $data['is_read']=0;
         $data['send_time']=time();
-        $data['type']=1;
+        $data['type']=$system_news['type'];
         $data['unit_id']=$system_news['unit_id'];
         $data['unit_name']=$system_news['unit_name'];
         $data['status']=0;
@@ -371,6 +375,11 @@ class System extends Common
             'id'=>$id,
         ];
         $status_data=model('systemNews')->where($where)->value('status');
+        $type=model('systemNews')->where($where)->value('type');
+        $is_read=model('systemNews')->where($where)->value('is_read');
+        if($is_read==0){
+            show([],0,'请查看后再审核');
+        }
         if($status_data==$status && $status==1){
             show([],0,'已通过状态不能通过');
         }else if($status_data==$status && $status==2){
@@ -385,25 +394,34 @@ class System extends Common
         $data['to_user']=$system_news['from_user'];
         $data['is_read']=0;
         $data['send_time']=time();
-        $data['type']=1;
+        $data['type']=$type;
         $data['to_user_id']=$system_news['from_user_id'];
         $data['from_user_id']=$system_news['to_user_id'];
         $data['unit_id']=$system_news['unit_id'];
         $data['unit_name']=$system_news['unit_name'];
         $data['status']=0;
+        $msg='的学习进度';
+        $complete_rat=25;
+        $type=1;
+        if($type==3){
+            $complete_rat=50;
+            $msg='的作业情况';
+            $type=2;
+        }
         if($res && $status==1){
             //审核通过 给学生发送一条信息
             $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已审核成功';
-            $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].'的学习进度';
+            $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].$msg;
             $news_res=model('systemNews')->insert($data);
-            //todo 审核通过需要改变进度
+            //审核通过需要改变进度
             $unit_list_id=model('unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
-            $unit_list_status=model('unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>25]);
+            $unit_list_status=model('unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
+            $unit_list_module=model('unit_list_module')->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->update(['is_complete'=>1]);
             show([],200,'审核通过');
         }elseif ($res && $status==2){
             //驳回  给学生发一条消息
-            $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已驳回，请完成学习进度再提交';
-            $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].'的学习进度';
+            $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已驳回，请完成后再提交';
+            $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].$msg;
             $news_res=model('systemNews')->insert($data);
             show([],200,'驳回成功');
         }else{
