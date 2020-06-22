@@ -22,9 +22,6 @@ class Question extends Controller
             ->where('section_id',$section_id)
             ->where('user_id',$user_id)
             ->select();
-        foreach ($paper_list as $v){
-            $v['paper_name']=model('paper')->where('id',$v['paper_id'])->value('name');
-        }
         show($paper_list,200,'ok');
     }
     //录入错题
