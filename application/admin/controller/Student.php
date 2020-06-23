@@ -68,12 +68,9 @@ class Student extends Common
             if(!$type){
                 show([],0,'监管模式必须选择');
             }
-            $student_password=$this->request->post('student_password','');
-            if(empty($student_password)){
-                show([],0,'密码不能为空');
-            }
-            if(strlen($student_password) <6 || strlen($student_password) >16){
-                show([],0,'密码最少6位最多16位,数字英文组成');
+            $student_password=$this->request->post('student_password');
+            if(strlen($student_password)<6 || strlen($student_password)>16){
+                show([],0,'密码最少6位最多16位,数字或英文组成');
             }
             $head=$this->request->post('student_head','');
             $status=$this->request->post('status','');
@@ -113,7 +110,6 @@ class Student extends Common
             }
             if(!preg_match("/^[a-zA-Z0-9]+$/u",$student_account)){
                 show([],0,'账号最少6位最多16位,数字或英文组成');
-
             }
             $where[]=['id','neq',$id];
             $where[]=['account','=',$student_account];
@@ -138,9 +134,23 @@ class Student extends Common
             if(!$type){
                 show([],0,'监管模式必须选择');
             }
+            $data=[];
+            $student_password1=$this->request->post('student_password1','');
+            $student_password2=$this->request->post('student_password2','');
+            if(!empty($student_password1)){
+                if(strlen($student_password1) <6 || strlen($student_password1) >16){
+                    show([],0,'密码最少6位最多16位,数字英文组成');
+                }
+                $data['password']=md5($student_password1);
+            }
+            if(!empty($student_password2)){
+                if(strlen($student_password2) <6 || strlen($student_password2) >16){
+                    show([],0,'二级密码最少6位最多16位,数字英文组成');
+                }
+                $data['seconds_password']=md5($student_password2);
+            }
             $head=$this->request->post('student_head','');
             $status=$this->request->post('status',1);
-            $data=[];
             $data['account']=$student_account;
             $data['name']=$student_name;
             $data['head']=$head;
@@ -149,6 +159,7 @@ class Student extends Common
             $data['status']=$status;
             $data['type']=$type;
             $data['update_time']=time();
+//            var_dump($data);exit;
             $res=model('student')->where('id',$id)->update($data);
             if($res){
                 show([],200,'修改成功');

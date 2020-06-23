@@ -73,6 +73,7 @@ Route::group('admin', [
 
 
     'paperWord'=>'admin/Word/paperWord',                      //生成试卷
+    'dayin'=>'admin/Word/dayin',                      //生成试卷
 
     //用户管理
     'userList$'=>'admin/User/userList',                                      //用户列表
@@ -141,18 +142,26 @@ Route::group('admin', [
     'videoUpload$'=>'admin/StudyMaterial/videoUpload',//视频上传
     'bannerUpload$'=>'admin/StudyMaterial/bannerUpload',//视频封面图上传
     'videoAdd$'=>'admin/StudyMaterial/videoAdd',//视频添加
+    'videoDelete$'=>'admin/StudyMaterial/videoDelete',//视频删除
+    'videoEdit'=>'admin/StudyMaterial/videoEdit',//视频编辑
 
     'soundList'=>'admin/StudyMaterial/soundList',//录音列表
     'soundAdd'=>'admin/StudyMaterial/soundAdd',//录音添加
     'soundUpload'=>'admin/StudyMaterial/soundUpload',//录音上传
+    'soundDelete'=>'admin/StudyMaterial/soundDelete',//录音删除
+    'soundEdit'=>'admin/StudyMaterial/soundEdit',//录音编辑
 
     'noticeList'=>'admin/StudyMaterial/noticeList',//笔记列表
     'noticeAdd'=>'admin/StudyMaterial/noticeAdd',//笔记添加
     'noticeUpload'=>'admin/StudyMaterial/noticeUpload',//笔记上传
+    'noticeDelete'=>'admin/StudyMaterial/noticeDelete',//笔记删除
+    'noticeEdit'=>'admin/StudyMaterial/noticeEdit',//笔记编辑
 
     'pptList'=>'admin/StudyMaterial/pptList',//ppt列表
     'pptAdd'=>'admin/StudyMaterial/pptAdd',//ppt添加
     'pptUpload'=>'admin/StudyMaterial/pptUpload',//ppt上传
+    'pptDelete'=>'admin/StudyMaterial/pptDelete',//ppt删除
+    'pptEdit'=>'admin/StudyMaterial/pptEdit',//ppt编辑
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 //->middleware(app\admin\middleware\CheckAuth::class)
 /**

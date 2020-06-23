@@ -8,7 +8,9 @@
 
 namespace app\admin\controller;
 
-class Word extends Common
+use think\Controller;
+
+class Word extends Controller
 {
     public function paperWord()
     {
@@ -37,5 +39,9 @@ class Word extends Common
         }else{
             echo "生成失败";
         }
+    }
+    public function dayin()
+    {
+        return $this->fetch('dayin');
     }
 }

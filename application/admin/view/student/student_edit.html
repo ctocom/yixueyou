@@ -35,6 +35,18 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="student_password1" value="" placeholder="不修改的话不填写即可" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">二级密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="student_password2" value="" placeholder="不修改的话不填写即可" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">头像：</label>
         <div class="layui-input-inline">
             　　　　　<!--存放上传后图片路径-->
@@ -107,10 +119,11 @@
         //监听提交
         form.on('submit(formDemo)', function(data){
             var status=$("input:checkbox[name='status']").val();
-            if(status=='on'){
-                status=1;
-            }else{
+            console.log(status)
+            if(status=='off'){
                 status=2;
+            }else{
+                status=1;
             }
             data.field.status=status;
             console.log(JSON.stringify(data.field));

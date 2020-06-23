@@ -25,10 +25,10 @@
     </blockquote>
     <table id="soundList" lay-filter="soundTool"></table>
     <!--操作-->
-    <!--<script type="text/html" id="soundListBar">-->
-        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
-        <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
-    <!--</script>-->
+    <script type="text/html" id="soundListBar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
 </form>
 {/block}
 {block name="script"}
@@ -38,7 +38,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //音频列表
         var tableIns = table.render({
             elem: '#soundList',
             url : "{:url('/admin/soundList')}",
@@ -56,7 +56,7 @@
                 {field: 'file_url', title: '音频',align:'center',event:'showaudio',templet:function (d) {
                         return "<a href='#'>点击预览音频</a>";
                     }},
-                // {title: '操作', width:170, templet:'#soundListBar',fixed:"right",align:"center"}
+                {title: '操作', width:170, templet:'#soundListBar',fixed:"right",align:"center"}
             ]]
         });
 
@@ -83,7 +83,7 @@
                 }
             })
         });
-        //添加用户
+        //添加音频
         function add(){
             var index = layui.layer.open({
                 title : "上传音频",
@@ -105,12 +105,12 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑音频
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑音频",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/soundEdit')}"+'?id='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){
