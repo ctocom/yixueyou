@@ -16,10 +16,10 @@
     </blockquote>
     <table id="questionList" lay-filter="questionList"></table>
     <!--操作-->
-    <!--<script type="text/html" id="questionListBar">-->
-        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
-        <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
-    <!--</script>-->
+    <script type="text/html" id="questionListBar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
 </form>
 {/block}
 {block name="script"}
@@ -29,7 +29,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //试题列表
         var tableIns = table.render({
             elem: '#questionList',
             url : "{:url('/admin/questionList')}",
@@ -42,8 +42,11 @@
             cols : [[
                 {field: 'id', title: '试题Id', width:100, align:"center"},
                 {field: 'name', title: '标题名',align:'center'},
-                {field: 'teacher_name', title: '添加人', width:350},
-                // {title: '操作', width:170, templet:'#questionListBar',fixed:"right",align:"center"}
+                {field: 'teacher_name', title: '添加人', width:100},
+                {field: 'course_name', title: '所属课程', width:100},
+                {field: 'section_name', title: '所属章节', width:100},
+                {field: 'unit_name', title: '所属知识点', width:100},
+                {title: '操作', width:170, templet:'#questionListBar',fixed:"right",align:"center"}
             ]]
         });
 
@@ -59,7 +62,7 @@
             })
         });
 
-        //添加用户
+        //添加试题
         function add(){
             var index = layui.layer.open({
                 title : "添加试题",
@@ -81,12 +84,12 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑试题
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑试题",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/questionEdit')}"+'?id='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){

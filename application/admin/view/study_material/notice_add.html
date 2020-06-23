@@ -69,11 +69,11 @@
         upload.render({
             elem: '#upload_notice'
             ,url: "{:url('/admin/noticeUpload')}"
-            ,accept: 'images' //笔记
+            , exts: 'zip|rar|7z|doc|docx|pdf|txt|xls|ppt|xlsx|pptx|img|jpg|png|gif|bmp|jpeg' //只允许上传压缩文件
             ,done: function(res){
                 if(res.code==200){
                     $("#inputnoticeurl").val(res.data.src);
-                    previewbanner(res.data.src)
+                    layer.msg('上传成功',{icon:1});
                 }
                 layer.msg(res.msg);
                 return false;
@@ -81,7 +81,6 @@
         });
         $('#inputnoticeurl').click(function () {
             var url=$("#inputnoticeurl").val()
-            previewaudio(url)
         })
         upload.render({
             elem: '#upload_banner'

@@ -101,8 +101,9 @@ Route::group('admin', [
     'questionList$'=>'admin/Question/questionList',//试题列表
     'questionAdd$'=>'admin/Question/questionAdd',//试题添加
     'questionSection$'=>'admin/Question/questionSection',//章节下拉
-    'questionUnit$'=>'admin/Question/questionUnit',//知识点下拉
-    'questionDelete$'=>'admin/Question/questionDelete',//知识点下拉
+    'questionUnit$'=>'admin/Question/questionUnit',//试题知识点下拉
+    'questionDelete$'=>'admin/Question/questionDelete',//试题删除
+    'questionEdit$'=>'admin/Question/questionEdit',//试题编辑
 
     'courseList$'=>'admin/Course/courseList',//课目列表
     'courseDelete$'=>'admin/Course/courseDelete',//科目删除

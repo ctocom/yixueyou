@@ -69,11 +69,12 @@
         upload.render({
             elem: '#upload_ppt'
             ,url: "{:url('/admin/pptUpload')}"
-            ,accept: 'images' //PPT
+            ,accept: 'file' //PPT
+            , exts: 'zip|rar|7z|doc|docx|pdf|txt|xls|ppt|xlsx|pptx|img|jpg|png|gif|bmp|jpeg' //只允许上传压缩文件
             ,done: function(res){
                 if(res.code==200){
                     $("#inputppturl").val(res.data.src);
-                    previewbanner(res.data.src)
+                    layer.msg('上传成功',{icon:1});
                 }
                 layer.msg(res.msg);
                 return false;
@@ -81,7 +82,6 @@
         });
         $('#inputppturl').click(function () {
             var url=$("#inputppturl").val()
-            previewaudio(url)
         })
         upload.render({
             elem: '#upload_banner'
@@ -113,22 +113,6 @@
                 content: imgHtml
             });
         }
-        function previewaudio(url) {
-            var audioHtml = '<div style="padding:20px;margin:0 auto;">';
-            audioHtml+='<audio src="'+url+'" width="68px" height="68px" controls="controls" autoplay="autoplay"></audio>';
-            audioHtml+='</div>';
-            //弹出层
-            layer.open({
-                type: 1,
-                shade: 0.8,
-                offset: 'auto',
-                area: ['auto','200px'],
-                shadeClose:true,//点击外围关闭弹窗
-                scrollbar: false,//不现实滚动条
-                title: "PPT预览", //不显示标题
-                content: audioHtml
-            });
-        }
         //监听提交
         form.on('submit(formDemo)', function(data){
             $.ajax({
@@ -139,12 +123,12 @@
                 success: function (res) {
                     if(res.code==200){
                         layer.msg(res.msg,{icon:1});
+                        setTimeout(function () {
+                            parent.location.reload();
+                        },500);
                     }else{
                         layer.msg(res.msg,{icon:2});
                     }
-                    setTimeout(function () {
-                        parent.location.reload();
-                    },500);
                 }
             })
             return false;

@@ -1,0 +1,249 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">科目</label>
+        <div class="layui-input-block">
+            <select name="course"  lay-verify="required" lay-filter="course" id="course">
+                <option value=""></option>
+                {foreach $course_data as $key=>$vo}
+                {if $vo.id==$question_data.course_id}
+                <option selected value="{$vo.id}">{$vo.name}</option>
+                {else}
+                <option value="{$vo.id}">{$vo.name}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">章节</label>
+        <div class="layui-input-block">
+            <select name="section" id="section" lay-verify="required" lay-filter="section">
+                <option value="" ></option>
+                {foreach $section_data as $key=>$vo}
+                {if $vo.id==$question_data.section_id}
+                <option selected value="{$vo.id}">{$vo.name}</option>
+                {else}
+                <option value="{$vo.id}">{$vo.name}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">知识点</label>
+        <div class="layui-input-block">
+            <select name="unit" id="unit" lay-verify="required">
+                <option value=""></option>
+                {foreach $unit_data as $key=>$vo}
+                {if $vo.id==$question_data.unit_id}
+                <option selected value="{$vo.id}">{$vo.name}</option>
+                {else}
+                <option value="{$vo.id}">{$vo.name}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">题型1</label>
+        <div class="layui-input-block">
+            <select name="type1" lay-verify="required" lay-filter="question_type">
+                <option value=""></option>
+                {if $question_data.type==1}
+                <option selected value="1">应用题</option>
+                <option value="2">理解题</option>
+                <option value="3">概念题</option>
+                {elseif($question_data.type==2)}
+                <option value="1">应用题</option>
+                <option selected value="2">理解题</option>
+                <option value="3">概念题</option>
+                {else}
+                <option value="1">应用题</option>
+                <option value="2">理解题</option>
+                <option selected value="3">概念题</option>
+                {/if}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">题型2</label>
+        <div class="layui-input-block">
+            <select name="question_type" lay-verify="required" lay-filter="question_type">
+                <option value=""></option>
+                {foreach $question_type as $key=>$v}
+                {if $question_data.type1==$v.id}
+                <option value="{$v.id}" selected>{$v.name}</option>
+                {else}
+                <option value="{$v.id}">{$v.name}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">题干</label>
+        <textarea  id="title">{$question_data.title}</textarea>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">选项</label>
+        <div class="layui-input-block">
+            <textarea name="question" placeholder="" class="layui-textarea">{$question_data.radios}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item box_1" style="display: none">
+        <label class="layui-form-label">参考答案</label>
+        <div class="layui-input-block">
+            <input type="radio" name="answer" value="A" title="A">
+            <input type="radio" name="answer" value="B" title="B">
+            <input type="radio" name="answer" value="C" title="C">
+            <input type="radio" name="answer" value="D" title="D">
+        </div>
+    </div>
+    <div class="layui-form-item box_2" style="display: none">
+        <label class="layui-form-label">参考答案</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="answer" value="A" title="A">
+            <input type="checkbox" name="answer" value="B" title="B">
+            <input type="checkbox" name="answer" value="C" title="C">
+            <input type="checkbox" name="answer" value="D" title="D">
+            <input type="checkbox" name="answer" value="E" title="E">
+            <input type="checkbox" name="answer" value="F" title="F">
+        </div>
+    </div>
+    <div class="layui-form-item  box_3" style="display:none">
+        <label class="layui-form-label">参考答案</label>
+        <div class="layui-input-block">
+            <textarea name="answer" placeholder="" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item box_4" style="display: none">
+        <label class="layui-form-label">参考答案</label>
+        <div class="layui-input-block">
+            <input type="radio" name="answer" value="1" title="√">
+            <input type="radio" name="answer" value="2" title="×">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">试题解析</label>
+        <div class="layui-input-block">
+            <textarea name="analysis" placeholder="请输入试题解析" class="layui-textarea">{$question_data.analysis}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="id" value="{$question_data.id}">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{css href="/form-select/formSelects-v4.css" /}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    layui.use(['layedit','form'], function(){
+        var layedit = layui.layedit;
+        var form = layui.form;
+        layedit.set({
+            uploadImage:{
+                url:"{:url('/admin/upload')}",
+                type:'post'
+            }
+        });
+        index=layedit.build('title',{
+
+        }); //建立编辑器
+        //监听参考答案下拉菜单
+        form.on('select(question_type)', function(data){
+            $('.box_1').css('display','none');
+            $('.box_2').css('display','none');
+            $('.box_3').css('display','none');
+            $('.box_4').css('display','none');
+            if(data.value==1){
+                $('.box_1').css('display','block');
+            }
+            if(data.value==2){
+                $('.box_2').css('display','block');
+            }
+            if(data.value==3){
+                $('.box_3').css('display','block');
+            }
+            if(data.value==4){
+                $('.box_4').css('display','block');
+            }
+        });
+        //监听科目
+        form.on('select(course)', function(data){
+           var course=data.value;
+            $.ajax({
+                url: "{:url('/admin/questionSection')}",
+                type: "post",
+                dataType: "json",
+                data: {course_id:course},
+                success: function (res) {
+                    if(res.code==200){
+                        $.each(res.data, function(index, item) {
+                            $('#section').append(new Option(item.name, item.id));
+                        });
+                        if(res.data==''){
+                            $("#section").empty();
+                            $("#section").append(new Option("请选择", ""));
+                            $("#unit").empty();
+                            $("#unit").append(new Option("请选择", ""));
+                        }
+                        layui.form.render("select");
+                    }
+                }
+            })
+        });
+        //监听章节
+        form.on('select(section)', function(data){
+            var section_id=data.value;
+            $.ajax({
+                url: "{:url('/admin/questionUnit')}",
+                type: "post",
+                dataType: "json",
+                data: {section_id:section_id},
+                success: function (res) {
+                    if(res.code==200){
+                        $.each(res.data, function(index, item) {
+                            $('#unit').append(new Option(item.name, item.id));
+                        });
+                        layui.form.render("select");
+                    }
+                }
+            })
+        });
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            data.field.content = layedit.getContent(index);
+            var arr = new Array();
+            $("input:checkbox[name='answer']:checked").each(function(i){
+                arr[i] = $(this).val();
+            });
+            data.field.answer2 = arr.join("||");
+            console.log(JSON.stringify(data.field));
+            $.ajax({
+                url: "{:url('/admin/questionEdit')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                        setTimeout(function () {
+                            parent.location.reload();
+                        },500);
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}
