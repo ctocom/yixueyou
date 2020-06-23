@@ -11,6 +11,7 @@ class Question extends Controller
     public function paperList()
     {
         $section_id=$this->request->post('section_id');
+        $unit_list_id=$this->request->post('unit_list_id');
         $user_id=$this->request->post('user_id');
         $type=$this->request->post('type');
         if(!$user_id){
@@ -23,6 +24,7 @@ class Question extends Controller
             ->where('section_id',$section_id)
             ->where('user_id',$user_id)
             ->where('type',$type)
+            ->where('unit_list_id',$unit_list_id)
             ->select();
         show($paper_list,200,'ok');
     }
