@@ -371,17 +371,17 @@ class System extends Common
     {
         $status=$this->request->post('status',0,'intval');
         $id=$this->request->post('id',0,'intval');
-        Db::startTrans();
-        $system_news=Db::table('think_system_news')->where('id',$id)->find();
         $where=[
             'id'=>$id,
         ];
+        $is_read=Db::table('think_system_news')->where($where)->value('is_read');
+        if($is_read==0){
+            show([],0,'请查看后再审核');
+        }
+        Db::startTrans();
+        $system_news=Db::table('think_system_news')->where('id',$id)->find();
         $status_data=Db::table('think_system_news')->where($where)->value('status');
         $type=Db::table('think_system_news')->where($where)->value('type');
-        $is_read=Db::table('think_system_news')->where($where)->value('is_read');
-//        if($is_read==0){
-//            show([],0,'请查看后再审核');
-//        }
         if($status_data==$status && $status==1){
             show([],0,'已通过状态不能通过');
         }else if($status_data==$status && $status==2){
@@ -429,22 +429,23 @@ class System extends Common
             foreach ($question_data as $k=>$v){
                 $question_data[$k]['paper_id']=$paper_id;
                 $question_data[$k]['question_id']=$v['id'];
+                $question_data[$k]['user_id']=$system_news['from_user_id'];
                 unset($question_data[$k]['id']);
             }
             $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
             if($news_res && $unit_list_id && $unit_list_status && $unit_list_module && $question_data && $paper_question_add){
                 Db::commit();
                 $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
-                var_dump($paper_action);exit;
-                if(!$paper_action){
-                    show([],0,'学生试卷内没有题');
+                if($paper_action){
+                    show([],200,'审核通过');
+                }else{
+                    show([],0,'审核失败');
                 }
-                show([],200,'审核通过');
             }else{
                 Db::rollback();
                 show([],0,'审核失败');
             }
-            } catch (\Exception $e){
+            } catch (\think\Exception $e){
                 Db::rollback();
                 show([],$e->getCode(),$e->getMessage());
             }
