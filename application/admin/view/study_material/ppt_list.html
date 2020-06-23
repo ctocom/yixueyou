@@ -38,7 +38,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //ppt列表
         var tableIns = table.render({
             elem: '#pptList',
             url : "{:url('/admin/pptList')}",
@@ -83,7 +83,7 @@
                 }
             })
         });
-        //添加用户
+        //添加ppt
         function add(){
             var index = layui.layer.open({
                 title : "上传PPT",
@@ -105,12 +105,12 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑ppt
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑ppt",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/pptEdit')}"+'?id='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){

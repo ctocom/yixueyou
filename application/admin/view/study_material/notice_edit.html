@@ -1,0 +1,157 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">知识点</label>
+        <div class="layui-input-block">
+            <select name="unit" lay-verify="required" >
+                <option value=""></option>
+                {foreach $unit as $v}
+                {if $v.id==$notice_data.unit_id}
+                <option selected value="{$v.id}">{$v.name}</option>
+                {else}
+                <option value="{$v.id}">{$v.name}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$notice_data.title}" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">笔记简介</label>
+        <div class="layui-input-block">
+            <textarea name="introduction"  class="layui-textarea">{$notice_data.introduction}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">封面图：</label>
+        <div class="layui-input-inline">
+            　　　　　<!--存放上传后图片路径-->
+            <input type="text" name="banner" value="{$notice_data.banner}" id="inputbannerurl" placeholder="图片地址" class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" id="upload_banner"><i class="layui-icon"></i>上传封面</button>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">笔记：</label>
+        <div class="layui-input-inline">
+            　　　　　<!--存放上传后笔记路径-->
+            <input type="text" name="notice"  id="inputnoticeurl" value="{$notice_data.file_url}"  class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" id="upload_notice"><i class="layui-icon"></i>上传笔记</button>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" value="{$notice_data.id}" name="id">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即修改</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{css href="/form-select/formSelects-v4.css" /}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    layui.use(['layedit','form','upload'], function(){
+        var layedit = layui.layedit;
+        var form = layui.form;
+        var upload = layui.upload;
+
+        layedit.set({
+            uploadImage:{
+                url:"{:url('/admin/upload')}",
+                type:'post'
+            }
+        });
+        index=layedit.build('title',{
+
+        }); //建立编辑器
+        upload.render({
+            elem: '#upload_notice'
+            ,url: "{:url('/admin/noticeUpload')}"
+            ,accept: 'notice' //笔记
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputnoticeurl").val(res.data.src);
+                    previewnotice(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+        });
+        $('#inputnoticeurl').click(function () {
+            var url=$("#inputnoticeurl").val()
+            previewnotice(url)
+        })
+        function previewnotice(url) {
+            var html = '<div class="shownotice">';
+            html += '<notice  width="300" height="500" controls="controls" autoplay="autoplay">';
+            html += '<source src="'+url+'" type="notice/mp4" />';
+            html += '</notice>';
+            html += '</div>';
+            //弹出层
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                title: "笔记预览",
+                content: html
+            });
+        }
+        upload.render({
+            elem: '#upload_banner'
+            ,url: "{:url('/admin/bannerUpload')}"
+            ,exts:"jpg|png|gif|bmp|jpeg"
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputbannerurl").val(res.data.src);
+                    previewbanner(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+        });
+        $('#inputbannerurl').click(function () {
+            var url=$("#inputbannerurl").val()
+            previewbanner(url)
+        })
+        function previewbanner(url) {
+            var imgHtml = "<img src='" + url + "'style='max-width:100%;max-height:100%;display:block;margin:0 auto'/>";
+            layer.open({
+                type: 1,
+                shade: 0.8,
+                offset: 'auto',
+                area: ['500px','500px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "图片预览", //不显示标题
+                content: imgHtml
+            });
+        }
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $.ajax({
+                url: "{:url('/admin/noticeEdit')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                    setTimeout(function () {
+                        parent.location.reload();
+                    },500);
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}

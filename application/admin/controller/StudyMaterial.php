@@ -94,7 +94,48 @@ class StudyMaterial extends Common
         }
     }
     public function videoEdit(){
-
+        $id=$this->request->param('id',0);
+        if($this->request->isAjax()){
+            $unit_id=$this->request->post('unit',0,'intval');
+            $title=$this->request->post('title','','trim');
+            $introduction=$this->request->post('introduction','','trim');
+            $banner=$this->request->post('banner','','trim');
+            $video=$this->request->post('video','','trim');
+            if(!$unit_id){
+                show([],0,'知识点id必传');
+            }
+            if(empty($title)){
+                show([],0,'视频标题必填');
+            }
+            if(empty($introduction)){
+                show([],0,'视频介绍必填');
+            }
+            if(empty($banner)){
+                show([],0,'视频封面必须上传');
+            }
+            if(empty($video)){
+                show([],0,'视频必须上传');
+            }
+            $data['unit_id']=$unit_id;
+            $data['title']=$title;
+            $data['introduction']=$introduction;
+            $data['banner']=$banner;
+            $data['file_url']=$video;
+            $data['type']=1;
+            $data['create_time']=time();
+            $res=model('studyMaterial')->where('id',$id)->update($data);
+            if($res){
+                show([],200,'修改成功');
+            }else{
+                show([],0,'修改失败');
+            }
+        }else{
+            $unit=Unit::where('delete_time',0)->select();
+            $video_data=model('study_material')->where('id',$id)->find();
+            $this->assign('video_data',$video_data);
+            $this->assign('unit',$unit);
+            return $this->fetch();
+        }
     }
 
     public function soundList(){
@@ -181,6 +222,50 @@ class StudyMaterial extends Common
         $msg=FileUploadService::upload($file,1024*1024*200,'mp3','../public/uploads/study_material/mp3','study_material/mp3');
         return $msg;
     }
+    public function soundEdit(){
+        $id=$this->request->param('id',0);
+        if($this->request->isAjax()){
+            $unit_id=$this->request->post('unit',0,'intval');
+            $title=$this->request->post('title','','trim');
+            $introduction=$this->request->post('introduction','','trim');
+            $banner=$this->request->post('banner','','trim');
+            $sound=$this->request->post('sound','','trim');
+            if(!$unit_id){
+                show([],0,'知识点id必传');
+            }
+            if(empty($title)){
+                show([],0,'音频标题必填');
+            }
+            if(empty($introduction)){
+                show([],0,'音频介绍必填');
+            }
+            if(empty($banner)){
+                show([],0,'音频封面必须上传');
+            }
+            if(empty($sound)){
+                show([],0,'音频必须上传');
+            }
+            $data['unit_id']=$unit_id;
+            $data['title']=$title;
+            $data['introduction']=$introduction;
+            $data['banner']=$banner;
+            $data['file_url']=$sound;
+            $data['type']=3;
+            $data['create_time']=time();
+            $res=model('studyMaterial')->where('id',$id)->update($data);
+            if($res){
+                show([],200,'修改成功');
+            }else{
+                show([],0,'修改失败');
+            }
+        }else{
+            $unit=Unit::where('delete_time',0)->select();
+            $sound_data=model('study_material')->where('id',$id)->find();
+            $this->assign('sound_data',$sound_data);
+            $this->assign('unit',$unit);
+            return $this->fetch();
+        }
+    }
     //笔记列表
     public function noticeList(){
         if($this->request->isAjax()){
@@ -266,6 +351,50 @@ class StudyMaterial extends Common
             show([],0,'删除失败');
         }
     }
+    public function noticeEdit(){
+        $id=$this->request->param('id',0);
+        if($this->request->isAjax()){
+            $unit_id=$this->request->post('unit',0,'intval');
+            $title=$this->request->post('title','','trim');
+            $introduction=$this->request->post('introduction','','trim');
+            $banner=$this->request->post('banner','','trim');
+            $notice=$this->request->post('notice','','trim');
+            if(!$unit_id){
+                show([],0,'知识点id必传');
+            }
+            if(empty($title)){
+                show([],0,'笔记标题必填');
+            }
+            if(empty($introduction)){
+                show([],0,'笔记介绍必填');
+            }
+            if(empty($banner)){
+                show([],0,'笔记封面必须上传');
+            }
+            if(empty($notice)){
+                show([],0,'笔记必须上传');
+            }
+            $data['unit_id']=$unit_id;
+            $data['title']=$title;
+            $data['introduction']=$introduction;
+            $data['banner']=$banner;
+            $data['file_url']=$notice;
+            $data['type']=5;
+            $data['create_time']=time();
+            $res=model('studyMaterial')->where('id',$id)->update($data);
+            if($res){
+                show([],200,'修改成功');
+            }else{
+                show([],0,'修改失败');
+            }
+        }else{
+            $unit=Unit::where('delete_time',0)->select();
+            $notice_data=model('study_material')->where('id',$id)->find();
+            $this->assign('notice_data',$notice_data);
+            $this->assign('unit',$unit);
+            return $this->fetch();
+        }
+    }
     //ppt列表
     public function pptList(){
         if($this->request->isAjax()){
@@ -349,6 +478,50 @@ class StudyMaterial extends Common
             show([],200,'删除成功');
         }else{
             show([],0,'删除失败');
+        }
+    }
+    public function pptEdit(){
+        $id=$this->request->param('id',0);
+        if($this->request->isAjax()){
+            $unit_id=$this->request->post('unit',0,'intval');
+            $title=$this->request->post('title','','trim');
+            $introduction=$this->request->post('introduction','','trim');
+            $banner=$this->request->post('banner','','trim');
+            $ppt=$this->request->post('ppt','','trim');
+            if(!$unit_id){
+                show([],0,'知识点id必传');
+            }
+            if(empty($title)){
+                show([],0,'PPT标题必填');
+            }
+            if(empty($introduction)){
+                show([],0,'PPT介绍必填');
+            }
+            if(empty($banner)){
+                show([],0,'PPT封面必须上传');
+            }
+            if(empty($ppt)){
+                show([],0,'PPT必须上传');
+            }
+            $data['unit_id']=$unit_id;
+            $data['title']=$title;
+            $data['introduction']=$introduction;
+            $data['banner']=$banner;
+            $data['file_url']=$ppt;
+            $data['type']=4;
+            $data['create_time']=time();
+            $res=model('studyMaterial')->where('id',$id)->update($data);
+            if($res){
+                show([],200,'修改成功');
+            }else{
+                show([],0,'修改失败');
+            }
+        }else{
+            $unit=Unit::where('delete_time',0)->select();
+            $ppt_data=model('study_material')->where('id',$id)->find();
+            $this->assign('ppt_data',$ppt_data);
+            $this->assign('unit',$unit);
+            return $this->fetch();
         }
     }
 }

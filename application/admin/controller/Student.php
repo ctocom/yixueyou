@@ -68,6 +68,10 @@ class Student extends Common
             if(!$type){
                 show([],0,'监管模式必须选择');
             }
+            $student_password=$this->request->post('student_password');
+            if(strlen($student_password)<6 || strlen($student_password)>16){
+                show([],0,'密码最少6位最多16位,数字或英文组成');
+            }
             $head=$this->request->post('student_head','');
             $status=$this->request->post('status','');
             $data=[];

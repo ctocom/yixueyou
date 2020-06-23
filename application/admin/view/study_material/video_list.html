@@ -38,7 +38,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //用户列表
+        //视频列表
         var tableIns = table.render({
             elem: '#videoList',
             url : "{:url('/admin/videoList')}",
@@ -83,7 +83,7 @@
                 }
             })
         });
-        //添加用户
+        //添加视频
         function add(){
             var index = layui.layer.open({
                 title : "上传视频",
@@ -105,12 +105,12 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑视频
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑视频",
                 type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
+                content : "{:url('/admin/videoEdit')}"+'?id='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){
