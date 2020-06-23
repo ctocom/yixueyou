@@ -71,6 +71,7 @@ Route::group('admin', [
 
 
     'paperWord'=>'admin/Word/paperWord',                      //生成试卷
+    'dayin'=>'admin/Word/dayin',                      //生成试卷
 
     //用户管理
     'userList$'=>'admin/User/userList',                                      //用户列表
