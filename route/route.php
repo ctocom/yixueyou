@@ -139,18 +139,22 @@ Route::group('admin', [
     'videoUpload$'=>'admin/StudyMaterial/videoUpload',//视频上传
     'bannerUpload$'=>'admin/StudyMaterial/bannerUpload',//视频封面图上传
     'videoAdd$'=>'admin/StudyMaterial/videoAdd',//视频添加
+    'videoDelete$'=>'admin/StudyMaterial/videoDelete',//视频删除
 
     'soundList'=>'admin/StudyMaterial/soundList',//录音列表
     'soundAdd'=>'admin/StudyMaterial/soundAdd',//录音添加
     'soundUpload'=>'admin/StudyMaterial/soundUpload',//录音上传
+    'soundDelete'=>'admin/StudyMaterial/soundDelete',//录音删除
 
     'noticeList'=>'admin/StudyMaterial/noticeList',//笔记列表
     'noticeAdd'=>'admin/StudyMaterial/noticeAdd',//笔记添加
     'noticeUpload'=>'admin/StudyMaterial/noticeUpload',//笔记上传
+    'noticeDelete'=>'admin/StudyMaterial/noticeDelete',//笔记删除
 
     'pptList'=>'admin/StudyMaterial/pptList',//ppt列表
     'pptAdd'=>'admin/StudyMaterial/pptAdd',//ppt添加
     'pptUpload'=>'admin/StudyMaterial/pptUpload',//ppt上传
+    'pptDelete'=>'admin/StudyMaterial/pptDelete',//ppt删除
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');
 //->middleware(app\admin\middleware\CheckAuth::class)
 /**

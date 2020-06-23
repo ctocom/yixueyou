@@ -85,7 +85,13 @@ class StudyMaterial extends Common
         }
     }
     public function videoDelete(){
-
+        $id=$this->request->post('id',0,'intval');
+        $res=model('study_material')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
     }
     public function videoEdit(){
 
@@ -159,6 +165,15 @@ class StudyMaterial extends Common
             $unit=Unit::where('delete_time',0)->select();
             $this->assign('unit',$unit);
             return $this->fetch();
+        }
+    }
+    public function soundDelete(){
+        $id=$this->request->post('id',0,'intval');
+        $res=model('study_material')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
         }
     }
     public function soundUpload(){
@@ -242,6 +257,15 @@ class StudyMaterial extends Common
             return $this->fetch();
         }
     }
+    public function noticeDelete(){
+        $id=$this->request->post('id',0,'intval');
+        $res=model('study_material')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
+    }
     //ppt列表
     public function pptList(){
         if($this->request->isAjax()){
@@ -317,5 +341,14 @@ class StudyMaterial extends Common
         $file = request()->file('file');
         $msg=FileUploadService::upload($file,1024*1024*200,'jpg','../public/uploads/study_material/ppt','study_material/ppt');
         return $msg;
+    }
+    public function pptDelete(){
+        $id=$this->request->post('id',0,'intval');
+        $res=model('study_material')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],0,'删除失败');
+        }
     }
 }

@@ -25,10 +25,10 @@
     </blockquote>
     <table id="noticeList" lay-filter="noticeTool"></table>
     <!--操作-->
-    <!--<script type="text/html" id="noticeListBar">-->
-        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
-        <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
-    <!--</script>-->
+    <script type="text/html" id="noticeListBar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
 </form>
 {/block}
 {block name="script"}
@@ -56,7 +56,7 @@
                 // {field: 'file_url', title: '笔记',align:'center',event:'showaudio',templet:function (d) {
                 //         return "<a href='#'>点击预览笔记</a>";
                 //     }},
-                // {title: '操作', width:170, templet:'#noticeListBar',fixed:"right",align:"center"}
+                {title: '操作', width:170, templet:'#noticeListBar',fixed:"right",align:"center"}
             ]]
         });
 
