@@ -16,7 +16,11 @@ class StudentCourse extends Controller
     //课程数据
     public function index()
     {
-       $course_info=Course::where(['is_show'=>1,'delete_time'=>0])->select();
+       $course_info=Course::where(['is_show'=>1,'delete_time'=>0])->order('order','asc')->select();
+       $domain=Config::get('domain');
+       foreach ($course_info as $v){
+           $v['icon']=$domain.$v['icon'];
+       }
        show($course_info,200,'ok');
     }
     //章数据
@@ -26,7 +30,7 @@ class StudentCourse extends Controller
         if(!$course_id){
             show([],0,'course_id不能为空');
         }
-        $section_info=Section::where(['is_show'=>1,'delete_time'=>0,'course_id'=>$course_id])->select();
+        $section_info=Section::where(['is_show'=>1,'delete_time'=>0,'course_id'=>$course_id])->order('order','asc')->select();
         foreach ($section_info as $v){
             $v['icon']=Config::get('domain').$v['icon'];
         }
@@ -39,7 +43,7 @@ class StudentCourse extends Controller
         if(!$section_id){
             show([],0,'section_id不能为空');
         }
-        $unit_info=Unit::where(['delete_time'=>0,'section_id'=>$section_id])->select();
+        $unit_info=Unit::where(['delete_time'=>0,'section_id'=>$section_id])->order('order','asc')->select();
         show($unit_info,200,'ok');
     }
     //节任务队列数据

@@ -14,7 +14,8 @@ use app\admin\model\LoginLog;
 use app\admin\model\SystemNews;
 use think\facade\App;
 use think\facade\Cache;
-
+use app\admin\controller\Word;
+use think\Db;
 class System extends Common
 {
     /**
@@ -370,16 +371,17 @@ class System extends Common
     {
         $status=$this->request->post('status',0,'intval');
         $id=$this->request->post('id',0,'intval');
-        $system_news=model('systemNews')->where('id',$id)->find();
+        Db::startTrans();
+        $system_news=Db::table('think_system_news')->where('id',$id)->find();
         $where=[
             'id'=>$id,
         ];
-        $status_data=model('systemNews')->where($where)->value('status');
-        $type=model('systemNews')->where($where)->value('type');
-        $is_read=model('systemNews')->where($where)->value('is_read');
-        if($is_read==0){
-            show([],0,'请查看后再审核');
-        }
+        $status_data=Db::table('think_system_news')->where($where)->value('status');
+        $type=Db::table('think_system_news')->where($where)->value('type');
+        $is_read=Db::table('think_system_news')->where($where)->value('is_read');
+//        if($is_read==0){
+//            show([],0,'请查看后再审核');
+//        }
         if($status_data==$status && $status==1){
             show([],0,'已通过状态不能通过');
         }else if($status_data==$status && $status==2){
@@ -388,7 +390,7 @@ class System extends Common
         if($status==2 && $status_data==1){
             show([],0,'已通过状态不能再次驳回');
         }
-        $res=model('systemNews')->where($where)->update(['status'=>$status]);
+        $res=Db::table('think_system_news')->where($where)->update(['status'=>$status]);
         $data['from_user']=$system_news['to_user'];
         //查询到学生的所属老师id
         $data['to_user']=$system_news['from_user'];
@@ -409,21 +411,51 @@ class System extends Common
             $type=2;
         }
         if($res && $status==1){
+            try{
             //审核通过 给学生发送一条信息
             $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已审核成功';
             $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].$msg;
-            $news_res=model('systemNews')->insert($data);
+            $news_res=Db::table('think_system_news')->insert($data);
             //审核通过需要改变进度
-            $unit_list_id=model('unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
-            $unit_list_status=model('unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
-            $unit_list_module=model('unit_list_module')->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->update(['is_complete'=>1]);
-            show([],200,'审核通过');
+            $unit_list_id=Db::table('think_unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
+            $unit_list_status=Db::table('think_unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
+            $unit_list_module=Db::table('think_unit_list_module')->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->update(['is_complete'=>1]);
+            //审核作业通过生成学生的试卷
+            $question_data=question_random_data(3,2);
+            if(empty($question_data)){
+                show([],0,'题库的试题太少了');
+            }
+            $paper_id=paper_random_data($system_news['from_user_id'],$system_news['unit_id'],$unit_list_id,1);
+            foreach ($question_data as $k=>$v){
+                $question_data[$k]['paper_id']=$paper_id;
+                $question_data[$k]['question_id']=$v['id'];
+                unset($question_data[$k]['id']);
+            }
+            $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
+            if($news_res && $unit_list_id && $unit_list_status && $unit_list_module && $question_data && $paper_question_add){
+                Db::commit();
+                $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
+                var_dump($paper_action);exit;
+                if(!$paper_action){
+                    show([],0,'学生试卷内没有题');
+                }
+                show([],200,'审核通过');
+            }else{
+                Db::rollback();
+                show([],0,'审核失败');
+            }
+            } catch (\Exception $e){
+                Db::rollback();
+                show([],$e->getCode(),$e->getMessage());
+            }
         }elseif ($res && $status==2){
             //驳回  给学生发一条消息
             $data['content']='你好！我是'.$system_news['to_user'].',“'.$system_news['unit_name'].'”已驳回，请完成后再提交';
             $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].$msg;
-            $news_res=model('systemNews')->insert($data);
-            show([],200,'驳回成功');
+            $news_res=Db::table('think_system_news')->insert($data);
+            if($news_res){
+                show([],200,'驳回成功');
+            }
         }else{
             show([],0,'审核失败');
         }

@@ -329,7 +329,7 @@ function question_random_data($num,$min){
     shuffle($all_question);
     return $all_question;
 }
-//随机生后试卷信息
+//生后试卷信息
 function paper_random_data($user_id,$unit_id,$unit_list_id,$type)
 {
     $student_info=model('student')->where('id',$user_id)->find();
