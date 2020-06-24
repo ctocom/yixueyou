@@ -5,6 +5,8 @@ namespace app\index\controller;
 use think\facade\Config;
 use think\Controller;
 use think\Db;
+use think\Model;
+
 class Question extends Controller
 {
     //用户的试卷列表
@@ -40,12 +42,57 @@ class Question extends Controller
             show([],0,'paper_id必传');
         }
         if(empty($question_str)){
-            show([],0,'question_str必传');
+//            show([],0,'question_str必传');
+            $unit_id=model('paper')->where('id',$paper_id)->value('unit_id');
+            if(!$unit_id){
+                show([],0,'paper_id不存在');
+            }
+            $unit_list_id=model('paper')->where('id',$paper_id)->value('unit_list_id');
+            if(!$unit_list_id){
+                show([],0,'unit_list_id不存在');
+            }
+            $type=model('unit_list')->where('id',$unit_list_id)->value('type');
+            #修改队列状态和知识点状态
+            $status_res1=model('unit_user_list')
+                ->where('unit_list_id',$unit_list_id)
+                ->where('type',$type)
+                ->update(['complete_rate'=>100]);
+            $status_res2=model('user_unit')
+                ->where('unit_id',$unit_id)
+                ->update(['complete_num'=>$type]);
+            $status_res3=model('unit_list_module')
+                ->where('unit_list_id',$unit_list_id)
+                ->where('type',3)
+                ->update(['is_complete'=>1]);
+            $status_res4=model('unit_list_module')
+                ->where('unit_list_id',$unit_list_id)
+                ->where('type',4)
+                ->update(['is_complete'=>1]);
+            $where=[];
+            $where=[
+                'name'=>'score_config',
+                'status'=>1
+            ];
+//            $score=db('config')->field('value')->where($where)->find();
+//            $score=(array)$score;
+//
+//            if($score){
+//                $user_score=model('student')->where('id',$user_id)->setInc('score',bcmul($integral,100));
+//            }
+            show([],200,'全部正确，已达标');
+
         }
+
+
+
         $question_arr=explode(',',$question_str);
         $data=[];
+        $arr=model('studentErrorquestion')->field('question_id')->where('user_id',$user_id)->select()->toArray();
         if(is_array($question_arr)){
             foreach ($question_arr as $v){
+                if(in_array($v,$arr)){
+                    continue;
+                }
                 $data[]=[
                     'question_id'=>$v,
                     'paper_id'=>$paper_id,
@@ -54,6 +101,7 @@ class Question extends Controller
                 ];
             }
         }
+
         //录入错题时检测是否是第二遍，如果是第二遍，直接达标
         $error_info=model('student_errorquestion')
             ->field('question_id,paper_id,user_id')
@@ -95,7 +143,7 @@ class Question extends Controller
         $res=model('studentErrorquestion')->insertAll($data);
         if($res){
             // 录入错题后生成错题本试卷
-            $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,2);
+//            $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,2);
             show([],200,'录入成功');
         }else{
             show([],0,'录入失败');
@@ -162,6 +210,28 @@ class Question extends Controller
         if(!$section_id){
             show([],0,'section_id必传');
         }
+        if(!$unit_list_id){
+            show([],0,'unit_list_id必传');
+        }
+
+          //判断是否有试卷
+        $where='';
+        $where=[
+            'user_id'=>$user_id,
+            'unit_list_id'=>$unit_list_id,
+            'unit_id'=>$unit_id
+        ];
+        $paper_count=model('paper')->where($where)->count();
+        if($paper_count==1){
+            $paper_id=model('paper')->where($where)->field('id')->find();
+            $where='';
+            $where=[
+                'paper_id'=>$paper_id,
+            ];
+            $paper_data=model('paper_question')->where($where)->select();
+            show($paper_data,200,'ok');
+        }
+
         $question_data=question_random_data(3,2);
         if(!$question_data){
             show([],0,'题库里面的题太少了');
