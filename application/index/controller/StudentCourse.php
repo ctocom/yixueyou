@@ -54,9 +54,6 @@ class StudentCourse extends Controller
             show([],0,'section_id不能为空');
         }
         $user_id=intval($this->request->post('user_id'));
-//        if(!$user_id){
-//            show([],0,'user_id不能为空');
-//        }
         $section=model('section')->where('id',$section_id)->find();
         $course_name=model('course')->where('id',$section['course_id'])->value('name');
         //知识点数据
@@ -147,7 +144,12 @@ class StudentCourse extends Controller
                 $name=Unit::where(['id'=>$v['unit_id']])->value('name');
                 $v['name']=$name;
                 $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
-
+            }
+        }
+        foreach ($unit_list as $v){
+            $v['icon']=Config::get('domain').$v['icon'];
+            foreach ($v['module'] as $vv){
+                $vv['icon']=Config::get('domain').$vv['icon'];
             }
         }
         $info=[
