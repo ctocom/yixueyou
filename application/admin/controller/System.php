@@ -444,7 +444,7 @@ class System extends Common
             //审核通过需要改变进度
              $unit_list_id=Db::table('think_unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
             if($type==1){
-                Db::table('think_unit_user_list')->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$system_news['from_user_id'],'type'=>$type,'complete_rate'=>$complete_rat]);
+                $unit_list_status=Db::table('think_unit_user_list')->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$system_news['from_user_id'],'type'=>$type,'complete_rate'=>$complete_rat]);
             }else{
                 $unit_list_status=Db::table('think_unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
             }

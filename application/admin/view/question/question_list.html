@@ -41,11 +41,20 @@
             id:'questionListTable',
             cols : [[
                 {field: 'id', title: '试题Id', width:100, align:"center"},
-                {field: 'name', title: '标题名',align:'center'},
+                // {field: 'title', title: '标题名',width:1000},
                 {field: 'teacher_name', title: '添加人', width:100},
                 {field: 'course_name', title: '所属课程', width:100},
                 {field: 'section_name', title: '所属章节', width:100},
                 {field: 'unit_name', title: '所属知识点', width:100},
+                {field: 'type1', title: '所属题型',width:100,templet:function (d) {
+                        if(d.type1==1){
+                            return '应用题';
+                        }else if(d.type1==2){
+                            return '理解题';
+                        }else if(d.type1==3){
+                            return '概念题';
+                        }
+                    }},
                 {title: '操作', width:170, templet:'#questionListBar',fixed:"right",align:"center"}
             ]]
         });
