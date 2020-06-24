@@ -277,5 +277,46 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
+    public function errCount()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+        if(!$user_id){
+            show([],0,'user_id 必填');
+        }
+        $errCount=Model('student_errorquestion')->where('user_id',$user_id)->count();
+        show($errCount,200,'ok');
+    }
+    public function userErr()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+        $type=$this->request->post('type',0,'intval');
+        if(!$user_id){
+            show([],0,'user_id 必填');
+        }
+        if(!$type){
+            show([],0,'type 必填');
+        }
+        $where=[
+            'user_id'=>$user_id,
+            'delete_time'=>0
+        ];
+        $question_id=model('student_errorquestion')->field('question_id')->where($where)->select()->toArray();
+        if(!$question_id){
+            show([],0,'没有错题');
+        }
+        $arr=[];
+        foreach($question_id as $v){
+            $arr[]=$v['question_id'];
+        }
+
+        if($type==1){
+            $err_data=model('question')->field('id,title,type,radios,unit_id')->where('id','in',$arr)->select()->toArray();
+        }else{
+            $err_data=model('question')->field('id,type,unit_id,analysis,options,answer,keyword')->where('id','in',$arr)->select()->toArray();
+        }
+        show($err_data,200,'ok');
+
+
+    }
 
 }
