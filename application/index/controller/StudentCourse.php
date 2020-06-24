@@ -65,6 +65,7 @@ class StudentCourse extends Controller
                 ->alias('u')
                 ->join('user_unit uu','u.id = uu.unit_id')
                 ->where('uu.user_id',$user_id)
+                ->where('u.section_id',$section_id)
 //                ->order('u.id','desc')
                 ->order('uu.complete_num','desc')
                 ->select()
@@ -72,6 +73,7 @@ class StudentCourse extends Controller
             if(empty($unit_info)){
                 $unit_info=Unit::where(['delete_time'=>0])
                     ->alias('u')
+                    ->where('u.section_id',$section_id)
                     ->order('u.order','desc')
                     ->select();
                 if(!empty($unit_info)){
@@ -83,6 +85,7 @@ class StudentCourse extends Controller
         }else{
             $unit_info=Unit::where(['delete_time'=>0])
                 ->alias('u')
+                ->where('u.section_id',$section_id)
                 ->order('u.order','desc')
                 ->select();
             if(!empty($unit_info)){

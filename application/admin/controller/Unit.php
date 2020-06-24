@@ -10,6 +10,8 @@ namespace app\admin\controller;
 use app\admin\model\Course;
 use app\admin\model\Section;
 use app\admin\service\FileUploadService;
+use think\facade\Config;
+
 class Unit extends Common
 {
     public function unitList()
@@ -40,6 +42,7 @@ class Unit extends Common
     public function unitAdd()
     {
         if($this->request->isAjax()){
+            $domain=Config::get('domain');
             $unit_name=$this->request->post('unit_name');
             $unit_icon=$this->request->post('unit_icon');
             $status=$this->request->post('status');
@@ -53,8 +56,29 @@ class Unit extends Common
             $data['is_show']=$status;
             $data['order']=$unit_order;
             $data['create_time']=time();
-            $res=model('unit')->insert($data);
-            if($res){
+            $unit_id=model('unit')->insertGetId($data);
+            if($unit_id){
+                $unit_list_id1=model('unit_list')->insertGetId(['unit_id'=>$unit_id,'type'=>1]);
+                //生成三个循环任务 生成八个模块
+                $module1=[
+                    ['name'=>'学习','unit_list_id'=>$unit_list_id1,'type'=>1,'icon'=>'/uploads/icon/20200624/7be642b2a7198972747e5ec0e4155ce8.png','is_complete'=>0],
+                    ['name'=>'作业','unit_list_id'=>$unit_list_id1,'type'=>2,'icon'=>'/uploads/icon/20200624/8edb1c535c420a08eeaf5bd80b3015fd.png','is_complete'=>0],
+                    ['name'=>'检测','unit_list_id'=>$unit_list_id1,'type'=>3,'icon'=>'/uploads/icon/20200624/fe1a5682c9881374328200b96ebedc91.png','is_complete'=>0],
+                    ['name'=>'达标','unit_list_id'=>$unit_list_id1,'type'=>4,'icon'=>'/uploads/icon/20200624\49484176c1249d3b1b50b7d46a281cb9.png','is_complete'=>0],
+                ];
+                model('unit_list_module')->insertAll($module1);
+                $unit_list_id2=model('unit_list')->insertGetId(['unit_id'=>$unit_id,'type'=>2]);
+                $module2=[
+                    ['name'=>'检测','unit_list_id'=>$unit_list_id2,'type'=>3,'icon'=>'/uploads/icon/20200624/fe1a5682c9881374328200b96ebedc91.png','is_complete'=>0],
+                    ['name'=>'达标','unit_list_id'=>$unit_list_id2,'type'=>4,'icon'=>'/uploads/icon/20200624\49484176c1249d3b1b50b7d46a281cb9.png','is_complete'=>0],
+                ];
+                model('unit_list_module')->insertAll($module2);
+                $unit_list_id3=model('unit_list')->insertGetId(['unit_id'=>$unit_id,'type'=>3]);
+                $module3=[
+                    ['name'=>'检测','unit_list_id'=>$unit_list_id3,'type'=>3,'icon'=>'/uploads/icon/20200624/fe1a5682c9881374328200b96ebedc91.png','is_complete'=>0],
+                    ['name'=>'达标','unit_list_id'=>$unit_list_id3,'type'=>4,'icon'=>'/uploads/icon/20200624\49484176c1249d3b1b50b7d46a281cb9.png','is_complete'=>0],
+                ];
+                model('unit_list_module')->insertAll($module3);
                 show([],200,'添加成功');
             }else{
                 show([],0,'添加失败');

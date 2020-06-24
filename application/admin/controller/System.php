@@ -280,7 +280,32 @@ class System extends Common
             }
         }
     }
-
+    public function scoreConfig()
+    {
+        if($this->request->isPost()){
+            $save = [
+                'value' => [
+                    'study_score' => $this->request->post('study_score', 0, 'intval'),
+                    'homework_score' => $this->request->post('homework_score', 0, 'intval'),
+                    'check_score' => $this->request->post('check_score', 0, 'intval'),
+                    'complete_score' => $this->request->post('complete_score', 0, 'intval'),
+                    'error_notice_score' => $this->request->post('error_notice_score', 0, 'intval'),
+                    'rank_score' => $this->request->post('rank_score', 0, 'intval'),
+                ],
+            ];
+            $res = Config::update($save, ['name' => 'score_config']);
+            if ($res) {
+                cache('score_config', null);
+                show([],'200','修改成功');
+            } else {
+                show([],'0','修改失败');
+            }
+        }else{
+            $data = Config::where('name', 'score_config')->find();
+            $this->assign('data', $data);
+            return $this->fetch();
+        }
+    }
     /**
      * 系统消息
      */
@@ -417,9 +442,15 @@ class System extends Common
             $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].$msg;
             $news_res=Db::table('think_system_news')->insert($data);
             //审核通过需要改变进度
-            $unit_list_id=Db::table('think_unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
-            $unit_list_status=Db::table('think_unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
-            $unit_list_module=Db::table('think_unit_list_module')->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->update(['is_complete'=>1]);
+             $unit_list_id=Db::table('think_unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
+            if($type==1){
+                Db::table('think_unit_user_list')->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$system_news['from_user_id'],'type'=>$type,'complete_rate'=>$complete_rat]);
+            }else{
+                $unit_list_status=Db::table('think_unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
+            }
+            $unit_list_module_id=Db::table('think_unit_list_module')->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->value(['id']);
+            //通过队列模块id添加一条用户的模块进度
+            $unit_user_list_module=Db::table('think_user_unit_list_module')->insert(['user_id'=>$system_news['from_user_id'],'unit_list_module_id'=>$unit_list_module_id,'is_complete'=>1]);
             //审核作业通过生成学生的试卷
             $question_data=question_random_data(3,2);
             if(empty($question_data)){
@@ -433,7 +464,7 @@ class System extends Common
                 unset($question_data[$k]['id']);
             }
             $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
-            if($news_res && $unit_list_id && $unit_list_status && $unit_list_module && $question_data && $paper_question_add){
+            if($news_res && $unit_list_id && $unit_list_status && $unit_list_module_id && $unit_user_list_module && $question_data && $paper_question_add){
                 Db::commit();
                 $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
                 if($paper_action){
