@@ -137,4 +137,8 @@ class SignIn extends Controller
         }
         show($list,200,'ok');
     }
+    public function check_score()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+    }
 }

@@ -4,7 +4,7 @@ namespace app\index\controller;
 
 use think\facade\Config;
 use think\Controller;
-
+use think\Db;
 class Question extends Controller
 {
     //用户的试卷列表
@@ -166,8 +166,28 @@ class Question extends Controller
         if(!$question_data){
             show([],0,'题库里面的题太少了');
         }
+
         //随机生成一个试卷
         $paper_res=paper_random_data($user_id,$unit_id,$section_id,$unit_list_id,1);
-        show($paper_res,200,'ok');
+        foreach ($question_data as $k=>$v){
+            $question_data[$k]['paper_id']=$paper_res;
+            $question_data[$k]['question_id']=$v['id'];
+            $question_data[$k]['user_id']=$user_id;
+            unset($question_data[$k]['id']);
+        }
+
+        $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
+//        show($paper_res,200,'ok');
+        $paper_question_list=model('paperQuestion')
+            ->where('user_id',$user_id)
+            ->where('paper_id',$paper_res)
+            ->select();
+        $count_num=count($paper_question_list);
+        $data=[
+            'paper_id'=>$paper_res,
+            'count_num'=>$count_num,
+            'paper_question_list'=>$paper_question_list
+        ];
+        show($data,200,'ok');
     }
 }
