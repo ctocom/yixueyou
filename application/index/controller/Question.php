@@ -73,12 +73,13 @@ class Question extends Controller
                 'name'=>'score_config',
                 'status'=>1
             ];
-//            $score=db('config')->field('value')->where($where)->find();
-//            $score=(array)$score;
-//
-//            if($score){
-//                $user_score=model('student')->where('id',$user_id)->setInc('score',bcmul($integral,100));
-//            }
+            $score=db('config')->where($where)->value('value');
+            $score1=json_decode($score,true);
+            $integral=$score1['complete_score'];
+
+            if($score){
+                $user_score=model('student')->where('id',$user_id)->setInc('score',bcmul($integral,100));
+            }
             show([],200,'全部正确，已达标');
 
         }
@@ -199,7 +200,7 @@ class Question extends Controller
     public function userPaperAction(){
         $user_id=$this->request->post('user_id',0,'intval');
         $unit_id=$this->request->post('unit_id',0,'intval');
-        $section_id=$this->request->post('section_id',0,'intval');
+//        $section_id=$this->request->post('section_id',0,'intval');
         $unit_list_id=$this->request->post('unit_list_id',0,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
@@ -207,9 +208,9 @@ class Question extends Controller
         if(!$unit_id){
             show([],0,'unit_id必传');
         }
-        if(!$section_id){
-            show([],0,'section_id必传');
-        }
+//        if(!$section_id){
+//            show([],0,'section_id必传');
+//        }
         if(!$unit_list_id){
             show([],0,'unit_list_id必传');
         }
@@ -238,7 +239,7 @@ class Question extends Controller
         }
 
         //随机生成一个试卷
-        $paper_res=paper_random_data($user_id,$unit_id,$section_id,$unit_list_id,1);
+        $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,1);
         foreach ($question_data as $k=>$v){
             $question_data[$k]['paper_id']=$paper_res;
             $question_data[$k]['question_id']=$v['id'];
@@ -259,5 +260,10 @@ class Question extends Controller
             'paper_question_list'=>$paper_question_list
         ];
         show($data,200,'ok');
+    }
+    //答案
+    public function paperanswer()
+    {
+
     }
 }
