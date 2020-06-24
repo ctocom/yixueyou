@@ -73,12 +73,13 @@ class Question extends Controller
                 'name'=>'score_config',
                 'status'=>1
             ];
-//            $score=db('config')->field('value')->where($where)->find();
-//            $score=(array)$score;
-//
-//            if($score){
-//                $user_score=model('student')->where('id',$user_id)->setInc('score',bcmul($integral,100));
-//            }
+            $score=db('config')->where($where)->value('value');
+            $score1=json_decode($score,true);
+            $integral=$score1['complete_score'];
+
+            if($score){
+                $user_score=model('student')->where('id',$user_id)->setInc('score',bcmul($integral,100));
+            }
             show([],200,'全部正确，已达标');
 
         }
@@ -149,18 +150,33 @@ class Question extends Controller
             show([],0,'录入失败');
         }
     }
-    //用户试卷内的试题
+    //答案
     public function paperQuestion()
     {
         $paper_id=$this->request->post('paper_id',0,'intval');
         $user_id=$this->request->post('user_id',0,'intval');
+        $seconds_password=$this->request->post('seconds_password','','trim');
+
         if(!$user_id){
             show([],0,'user_id必传');
+        }
+        $pass=model('student')
+            ->where('id',$user_id)
+            ->value('seconds_password');
+        if(!$pass){
+            show([],0,'没有二级密码，请设置。');
         }
         if(!$paper_id){
             show([],0,'paper_id必传');
         }
+        if(!$seconds_password){
+            show([],0,'$seconds_password必传');
+        }
+        if($pass!=md5($seconds_password)){
+            show([],0,'密码错误');
+        }
         $paper_question_list=model('paperQuestion')
+            ->field('type,analysis,options,answer,keyword')
             ->where('user_id',$user_id)
             ->where('paper_id',$paper_id)
             ->select();
@@ -199,7 +215,7 @@ class Question extends Controller
     public function userPaperAction(){
         $user_id=$this->request->post('user_id',0,'intval');
         $unit_id=$this->request->post('unit_id',0,'intval');
-        $section_id=$this->request->post('section_id',0,'intval');
+//        $section_id=$this->request->post('section_id',0,'intval');
         $unit_list_id=$this->request->post('unit_list_id',0,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
@@ -207,9 +223,9 @@ class Question extends Controller
         if(!$unit_id){
             show([],0,'unit_id必传');
         }
-        if(!$section_id){
-            show([],0,'section_id必传');
-        }
+//        if(!$section_id){
+//            show([],0,'section_id必传');
+//        }
         if(!$unit_list_id){
             show([],0,'unit_list_id必传');
         }
@@ -223,12 +239,12 @@ class Question extends Controller
         ];
         $paper_count=model('paper')->where($where)->count();
         if($paper_count==1){
-            $paper_id=model('paper')->where($where)->field('id')->find();
+            $paper_id=model('paper')->where($where)->value('id');
             $where='';
             $where=[
                 'paper_id'=>$paper_id,
             ];
-            $paper_data=model('paper_question')->where($where)->select();
+            $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
             show($paper_data,200,'ok');
         }
 
@@ -238,7 +254,7 @@ class Question extends Controller
         }
 
         //随机生成一个试卷
-        $paper_res=paper_random_data($user_id,$unit_id,$section_id,$unit_list_id,1);
+        $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,1);
         foreach ($question_data as $k=>$v){
             $question_data[$k]['paper_id']=$paper_res;
             $question_data[$k]['question_id']=$v['id'];
@@ -249,6 +265,7 @@ class Question extends Controller
         $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
 //        show($paper_res,200,'ok');
         $paper_question_list=model('paperQuestion')
+            ->field('id,title,type,radios,unit_id')
             ->where('user_id',$user_id)
             ->where('paper_id',$paper_res)
             ->select();
@@ -260,4 +277,46 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
+    public function errCount()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+        if(!$user_id){
+            show([],0,'user_id 必填');
+        }
+        $errCount=Model('student_errorquestion')->where('user_id',$user_id)->count();
+        show($errCount,200,'ok');
+    }
+    public function userErr()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+        $type=$this->request->post('type',0,'intval');
+        if(!$user_id){
+            show([],0,'user_id 必填');
+        }
+        if(!$type){
+            show([],0,'type 必填');
+        }
+        $where=[
+            'user_id'=>$user_id,
+            'delete_time'=>0
+        ];
+        $question_id=model('student_errorquestion')->field('question_id')->where($where)->select()->toArray();
+        if(!$question_id){
+            show([],0,'没有错题');
+        }
+        $arr=[];
+        foreach($question_id as $v){
+            $arr[]=$v['question_id'];
+        }
+
+        if($type==1){
+            $err_data=model('question')->field('id,title,type,radios,unit_id')->where('id','in',$arr)->select()->toArray();
+        }else{
+            $err_data=model('question')->field('id,type,unit_id,analysis,options,answer,keyword')->where('id','in',$arr)->select()->toArray();
+        }
+        show($err_data,200,'ok');
+
+
+    }
+
 }
