@@ -32,7 +32,7 @@ Route::group('index', [
     'paperList'=>'index/Question/paperList',//用户试卷列表
     'userErrorquestionList'=>'index/Question/userErrorquestionList',//用户错题试卷列表
     'userPaperAction'=>'index/Question/userPaperAction',//用户试卷生成
-
+    'check_score'=>'index/SignIn/check_score'//检测积分
 
 ]);
 

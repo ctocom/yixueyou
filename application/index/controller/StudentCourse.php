@@ -144,6 +144,7 @@ class StudentCourse extends Controller
                 $name=Unit::where(['id'=>$v['unit_id']])->value('name');
                 $v['name']=$name;
                 $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select();
+
             }
         }
         $info=[
