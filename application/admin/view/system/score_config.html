@@ -1,0 +1,79 @@
+{extend name="base/base" /}
+{block name="main"}
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>积分配置</legend>
+</fieldset>
+<div class="layui-row layui-tab-content">
+    <div class="layui-col-md6">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">学习积分</label>
+                <div class="layui-input-block">
+                    <input type="text" name="study_score" required lay-verify="required" value="{$data.value.study_score}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">作业积分</label>
+                <div class="layui-input-block">
+                    <input type="text" name="homework_score" required lay-verify="required" value="{$data.value.homework_score}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">检测积分</label>
+                <div class="layui-input-block">
+                    <input type="text" name="check_score" required lay-verify="required" value="{$data.value.check_score}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">达标积分</label>
+                <div class="layui-input-block">
+                    <input type="text" name="complete_score" required lay-verify="required" value="{$data.value.complete_score}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排行积分</label>
+                <div class="layui-input-block">
+                    <input type="text" name="rank_score" required lay-verify="required" value="{$data.value.rank_score}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        //监听提交
+        form.on('submit(save)', function (data) {
+            var obj = $(this);
+            obj.attr("disabled", "disabled").addClass("layui-disabled");
+            $.ajax({
+                url: "{:url('/admin/scoreConfig')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                        setTimeout(function () {
+                            parent.location.reload();
+                        },500);
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}
