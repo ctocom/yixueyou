@@ -261,9 +261,5 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
-    //答案
-    public function paperanswer()
-    {
 
-    }
 }
