@@ -25,7 +25,7 @@
 <h1>试卷</h1>
     {foreach $data as $v}
     <p>
-       {$v['title']}
+       {$v['title']|raw}
     </p>
     <p>
         {$v['radios']}

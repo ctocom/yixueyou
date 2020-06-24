@@ -298,7 +298,7 @@ class StudyMaterial extends Common
     }
     public function noticeUpload(){
         $file = request()->file('file');
-        $msg=FileUploadService::upload($file,1024*1024*200,'jpg','../public/uploads/study_material/notice','study_material/notice');
+        $msg=FileUploadService::upload($file,1024*1024*200,'zip,rar,7z,doc,docx,pdf,txt,xls,ppt,xlsx,pptx,img,jpg,png,gif,bmp,jpeg','../public/uploads/study_material/notice','study_material/notice');
         return $msg;
     }
     public function noticeAdd(){
@@ -468,7 +468,7 @@ class StudyMaterial extends Common
     }
     public function pptUpload(){
         $file = request()->file('file');
-        $msg=FileUploadService::upload($file,1024*1024*200,'jpg','../public/uploads/study_material/ppt','study_material/ppt');
+        $msg=FileUploadService::upload($file,1024*1024*200,'zip,rar,7z,doc,docx,pdf,txt,xls,ppt,xlsx,pptx,img,jpg,png,gif,bmp,jpeg','../public/uploads/study_material/ppt','study_material/ppt');
         return $msg;
     }
     public function pptDelete(){

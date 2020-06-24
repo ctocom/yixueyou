@@ -74,11 +74,11 @@
         upload.render({
             elem: '#upload_ppt'
             ,url: "{:url('/admin/pptUpload')}"
-            ,accept: 'ppt' //ppt
+            , exts: 'zip|rar|7z|doc|docx|pdf|txt|xls|ppt|xlsx|pptx|img|jpg|png|gif|bmp|jpeg' //只允许上传压缩文件
             ,done: function(res){
                 if(res.code==200){
                     $("#inputppturl").val(res.data.src);
-                    previewppt(res.data.src)
+                    layer.msg('上传成功',{icon:1});
                 }
                 layer.msg(res.msg);
                 return false;
@@ -86,22 +86,7 @@
         });
         $('#inputppturl').click(function () {
             var url=$("#inputppturl").val()
-            previewppt(url)
         })
-        function previewppt(url) {
-            var html = '<div class="showppt">';
-            html += '<ppt  width="300" height="500" controls="controls" autoplay="autoplay">';
-            html += '<source src="'+url+'" type="ppt/mp4" />';
-            html += '</ppt>';
-            html += '</div>';
-            //弹出层
-            layer.open({
-                type: 1,
-                skin: 'layui-layer-rim', //加上边框
-                title: "ppt预览",
-                content: html
-            });
-        }
         upload.render({
             elem: '#upload_banner'
             ,url: "{:url('/admin/bannerUpload')}"
