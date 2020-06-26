@@ -57,49 +57,31 @@ class StudentCourse extends Controller
         $section=model('section')->where('id',$section_id)->find();
         $course_name=model('course')->where('id',$section['course_id'])->value('name');
         //知识点数据
-        if($user_id){
-            $unit_info=Unit::where(['delete_time'=>0])
-                ->alias('u')
-                ->join('user_unit uu','u.id = uu.unit_id')
-                ->where('uu.user_id',$user_id)
-                ->where('u.section_id',$section_id)
-                ->order('uu.complete_num','desc')
-                ->select()
-                ->toArray();
-            if(empty($unit_info)){
-                $unit_info=Unit::where(['delete_time'=>0])
-                    ->alias('u')
-                    ->where('u.section_id',$section_id)
-                    ->order('u.order','desc')
-                    ->select()->toArray();
-                if(!empty($unit_info)){
-                    foreach ($unit_info as $k=>$v){
-                        $v['complete_num']=0;
+        $unit_info=Unit::where(['delete_time'=>0])
+            ->alias('u')
+            ->where('u.section_id',$section_id)
+            ->select()
+            ->toArray();
+            $user_unit=UserUnit::where('user_id',$user_id)->select()->toArray();
+            if(!empty($user_unit)){
+                foreach ($unit_info as $k=>$v){
+                    foreach ($user_unit as $kk=>$vv){
+                        if($v['id']==$vv['unit_id']){
+                            $unit_info[$k]['complete_num']=$user_unit[$kk]['complete_num'];
+                        }else{
+                            $unit_info[$k]['complete_num']=0;
+                        }
                     }
                 }
-            }
-        }else{
-            $unit_info=Unit::where(['delete_time'=>0])
-                ->alias('u')
-                ->where('u.section_id',$section_id)
-                ->order('u.order','desc')
-                ->select()->toArray();
-            if(!empty($unit_info)){
+            }else{
                 foreach ($unit_info as $k=>$v){
-                    $v['complete_num']=0;
+                    $unit_info[$k]['complete_num']=0;
                 }
             }
-        }
-        if(empty($unit_info)){
-            $info=[
-                'nav_name'=>$course_name.'-'.$section['name'],
-                'unit_list'=>[],
-                'unit_info'=>[],
-            ];
-            show($info,200,'ok');
-        }
+
+
         //默认查找第一个知识点的队列
-        if(empty($unit_rate)){
+        if(empty($user_unit)){
             //默认
             $unit_id=$unit_info[0]["id"];
         }else{
@@ -109,7 +91,6 @@ class StudentCourse extends Controller
                 ->order('id','asc')
                 ->value('unit_id');
         }
-
         $user_list_module=model('user_unit_list_module')->where('user_id',$user_id)->select()->toArray();
         $unit_list=[];
         $unit_list=UnitList
