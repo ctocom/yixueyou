@@ -350,7 +350,8 @@ class Question extends Controller
             show([],200,'user_id必传');
         }
         //正确率  历史错误的题数/试卷题数乘以试卷数*100%
-        $student_errorquestion_num=model('student_errorquestion')->where('user_id',$user_id)->count();
+        $student_errorquestion_num=model('student_errorquestion')->where('user_id',$user_id)->group('question_id')->select()->toArray();
+        $student_errorquestion_num=count($student_errorquestion_num);
         $paper_num=model('paper')->where('user_id',$user_id)->select()->toArray();
         if(empty($paper_num)){
             $paper_num=0;
@@ -358,14 +359,24 @@ class Question extends Controller
             $paper_num=count($paper_num);
         }
         $question_num=9;
-        $paper_num=bcmul($paper_num,$question_num);
-        $true_rate=bcdiv($student_errorquestion_num,$paper_num);
+        $paper_num=intval(bcmul($paper_num,$question_num));
+        $true_rate=bcdiv($student_errorquestion_num,$paper_num,2);
         //学习时长统计
         $study_time=model('student')->where('id',$user_id)->value('study_time');
         //排行榜统根据学习时长排行
         $student_rank=model('student')->order('study_time')->select();
+        //学习进度统计
+        $unit_num=model('unit')->select()->toArray();
+        $unit_num=intval(bcmul(count($unit_num),3));
+        $study_complete_num=model('user_unit')->where('user_id',$user_id)->column('complete_num');
+        $study_rate=0;
+        foreach ($study_complete_num as $v){
+            $study_rate+=$v;
+        }
+        $study_rate=bcdiv($study_rate,$unit_num,2);
         $data=[
             'true_rate'=>$true_rate,
+            'study_rate'=>$study_rate,
             'study_time'=>$study_time,
             'student_rank'=>$student_rank
         ];
