@@ -51,7 +51,7 @@ class Question extends Controller
             if(!$unit_list_id){
                 show([],0,'unit_list_id不存在');
             }
-            $type=model('unit_list')->where('id',$unit_list_id)->value('type');
+            $type=$unit_list_id;
             #修改队列状态和知识点状态
             $status_res1=model('unit_user_list')
                 ->where('unit_list_id',$unit_list_id)
@@ -60,6 +60,14 @@ class Question extends Controller
             $status_res2=model('user_unit')
                 ->where('unit_id',$unit_id)
                 ->update(['complete_num'=>$type]);
+
+
+            $status_data=model('unit_user_list')
+                ->where('unit_list_id',$unit_list_id)
+                ->where('type',$type)
+                ->update(['complete_rate'=>100]);
+
+
             $status_res3=model('unit_list_module')
                 ->where('unit_list_id',$unit_list_id)
                 ->where('type',3)
@@ -290,16 +298,28 @@ class Question extends Controller
     {
         $user_id=$this->request->post('user_id',0,'intval');
         $type=$this->request->post('type',0,'intval');
+        $user_err=$this->request->post('user_err',0,'intval');
         if(!$user_id){
             show([],0,'user_id 必填');
         }
         if(!$type){
             show([],0,'type 必填');
         }
-        $where=[
-            'user_id'=>$user_id,
-            'delete_time'=>0
-        ];
+        if(!$user_err){
+            show([],0,'user_err 必填');
+        }
+        if($user_err==1){
+            $where=[
+                'user_id'=>$user_id,
+                'delete_time'=>0
+            ];
+        }else{
+            $where=[
+                'user_id'=>$user_id,
+//                'delete_time'=>0
+            ];
+        }
+
         $question_id=model('student_errorquestion')->field('question_id')->where($where)->select()->toArray();
         if(!$question_id){
             show([],0,'没有错题');
