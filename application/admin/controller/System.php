@@ -463,8 +463,11 @@ class System extends Common
                 $question_data[$k]['user_id']=$system_news['from_user_id'];
                 unset($question_data[$k]['id']);
             }
+            //绑定队列和试卷
+            $paper_unit_list=Db::table('paper_unit_list')->insert(['paper_id'=>$paper_id,'unit_list_id'=>$unit_list_id,'unit_id'=>$system_news['unit_id'],'create_time'=>time()]);
+            //添加试题
             $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
-            if($news_res && $unit_list_id && $unit_list_status && $unit_list_module_id && $unit_user_list_module && $question_data && $paper_question_add){
+            if($news_res && $unit_list_id && $paper_unit_list && $unit_list_status && $unit_list_module_id && $unit_user_list_module && $question_data && $paper_question_add){
                 Db::commit();
                 $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
                 if($paper_action){

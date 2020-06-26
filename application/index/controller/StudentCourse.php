@@ -78,8 +78,6 @@ class StudentCourse extends Controller
                     $unit_info[$k]['complete_num']=0;
                 }
             }
-
-
         //默认查找第一个知识点的队列
         if(empty($user_unit)){
             //默认

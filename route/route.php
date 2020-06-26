@@ -33,7 +33,9 @@ Route::group('index', [
     'userErrorquestionList'=>'index/Question/userErrorquestionList',//用户错题试卷列表
     'userPaperAction'=>'index/Question/userPaperAction',//用户试卷生成
     'errCount'=>'index/Question/errCount',//错题数
-    'userErr'=>'index/Question/userErr'//错题本
+    'userErr'=>'index/Question/userErr',//错题本
+    'errorClear'=>'index/Question/errorClear',//错题清零
+    'statisticsStudent'=>'index/Question/statisticsStudent'//统计
 ]);
 
 //免登录

@@ -32,130 +32,112 @@ class Question extends Controller
     }
     //录入错题
     public function recordErrorQuestion(){
-        $paper_id=$this->request->post('paper_id',0,'intval');
+//        $paper_id=$this->request->post('paper_id',0,'intval');
+        $unit_list_id=$this->request->post('unit_list_id',0);
         $question_str=$this->request->post('question_str','');
         $user_id=$this->request->post('user_id',0,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
         }
-        if(!$paper_id){
-            show([],0,'paper_id必传');
-        }
-        if(empty($question_str)){
-//            show([],0,'question_str必传');
-            $unit_id=model('paper')->where('id',$paper_id)->value('unit_id');
-            if(!$unit_id){
-                show([],0,'paper_id不存在');
-            }
-            $unit_list_id=model('paper')->where('id',$paper_id)->value('unit_list_id');
-            if(!$unit_list_id){
-                show([],0,'unit_list_id不存在');
-            }
-            $type=$unit_list_id;
-            #修改队列状态和知识点状态
-            $status_res1=model('unit_user_list')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',$type)
-                ->update(['complete_rate'=>100]);
-            $status_res2=model('user_unit')
-                ->where('unit_id',$unit_id)
-                ->update(['complete_num'=>$type]);
-
-
-            $status_data=model('unit_user_list')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',$type)
-                ->update(['complete_rate'=>100]);
-
-
-            $status_res3=model('unit_list_module')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',3)
-                ->update(['is_complete'=>1]);
-            $status_res4=model('unit_list_module')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',4)
-                ->update(['is_complete'=>1]);
-            $where=[];
-            $where=[
-                'name'=>'score_config',
-                'status'=>1
-            ];
-            $score=db('config')->where($where)->value('value');
-            $score1=json_decode($score,true);
-            $integral=$score1['complete_score'];
-
-            if($score){
-                $user_score=model('student')->where('id',$user_id)->setInc('score',bcmul($integral,100));
-            }
-            show([],200,'全部正确，已达标');
-
-        }
-
-
-
-        $question_arr=explode(',',$question_str);
-        $data=[];
-        $arr=model('studentErrorquestion')->field('question_id')->where('user_id',$user_id)->select()->toArray();
-        if(is_array($question_arr)){
-            foreach ($question_arr as $v){
-                if(in_array($v,$arr)){
-                    continue;
-                }
-                $data[]=[
-                    'question_id'=>$v,
-                    'paper_id'=>$paper_id,
-                    'user_id'=>$user_id,
-                    'create_time'=>time()
-                ];
-            }
-        }
-
-        //录入错题时检测是否是第二遍，如果是第二遍，直接达标
-        $error_info=model('student_errorquestion')
-            ->field('question_id,paper_id,user_id')
-            ->where('user_id',$user_id)
-            ->where('paper_id',$paper_id)
-            ->select()->toArray();
-        $unit_id=model('paper')->where('id',$paper_id)->value('unit_id');
-        if(!$unit_id){
-            show([],0,'paper_id不存在');
-        }
-        $unit_list_id=model('paper')->where('id',$paper_id)->value('unit_list_id');
         if(!$unit_list_id){
-            show([],0,'unit_list_id不存在');
+            show([],0,'unit_list_id必传');
         }
-        if(!empty($error_info)){
-            //改状态为达标
-            #查看该试卷是第几遍知识点
-            $type=model('unit_list')->where('id',$unit_list_id)->value('type');
-            #修改队列状态和知识点状态
-            $status_res1=model('unit_user_list')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',$type)
-                ->update(['complete_rate'=>100]);
-            $status_res2=model('user_unit')
-                ->where('unit_id',$unit_id)
-                ->update(['complete_num'=>$type]);
-            $status_res3=model('unit_list_module')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',3)
-                ->update(['is_complete'=>1]);
-            $status_res4=model('unit_list_module')
-                ->where('unit_list_id',$unit_list_id)
-                ->where('type',4)
-                ->update(['is_complete'=>1]);
-//            var_dump($error_info);exit;
-//            $data=array_diff_assoc2_deep($data,$error_info,'question_id');
-//            $data=second_array_unique_bykey($data, 'question_id');
-        }
-        $res=model('studentErrorquestion')->insertAll($data);
-        if($res){
-            // 录入错题后生成错题本试卷
-//            $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,2);
-            show([],200,'录入成功');
+        $paper_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('paper_id');
+        $unit_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('unit_id');
+        if(empty($question_str)){
+            //没有错误 直接达标
+            //用户知识点直接添加一条记录
+                //第一遍循环为100%
+                $unit_user_list_res=model('unit_user_list')
+                    ->where('unit_list_id',$unit_list_id)
+                    ->where('user_id',$user_id)
+                    ->update(['complete_rate'=>100]);
+                if(!$unit_user_list_res){
+                    show([],0,'unit_list_id参数错误');
+                }
+                //知识点亮一个灯
+                $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                //检测达标模块改为完成
+                $module_id1=model('unit_list_module')
+                    ->where('unit_list_id',$unit_list_id)
+                    ->where('type',3)
+                    ->value('id');
+                $module_id2=model('unit_list_module')
+                    ->where('unit_list_id',$unit_list_id)
+                    ->where('type',4)
+                    ->value('id');
+                $unit_module_arr=[
+                    ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
+                    ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1]
+                ];
+                model('user_unit_list_module')->insertAll($unit_module_arr);
+            show([],200,'全部正确，已达标');
         }else{
-            show([],0,'录入失败');
+            //有错误，判断是否是第一次录错
+            $error_info=model('student_errorquestion')
+                ->field('question_id,paper_id,user_id')
+                ->where('user_id',$user_id)
+                ->where('paper_id',$paper_id)
+                ->where('delete_time',0)
+                ->select()->toArray();
+            $question_arr=explode(',',$question_str);
+            if(empty($error_info)){
+                //第一次录错题
+                foreach ($question_arr as $v){
+                    $data[]=[
+                        'question_id'=>$v,
+                        'paper_id'=>$paper_id,
+                        'user_id'=>$user_id,
+                        'create_time'=>time()
+                    ];
+                }
+                $res=model('studentErrorquestion')->insertAll($data);
+                if($res){
+                    show([],200,'录入成功');
+                }else{
+                    show([],0,'录入失败');
+                }
+            }else{
+                $delete_res=model('studentErrorquestion')
+                    ->where('user_id',$user_id)
+                    ->where('paper_id',$paper_id)
+                    ->update(['delete_time'=>time()]);
+                //第二次录错题  录完达标
+                if(is_array($question_arr)){
+                    foreach ($question_arr as $v){
+                        $data[]=[
+                            'question_id'=>$v,
+                            'paper_id'=>$paper_id,
+                            'user_id'=>$user_id,
+                            'create_time'=>time()
+                        ];
+                    }
+                }
+                $res=model('studentErrorquestion')->insertAll($data);
+                if($res){
+                    //知识点亮一个灯
+                    $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                    //检测达标模块改为完成
+                    $module_id1=model('unit_list_module')
+                        ->where('unit_list_id',$unit_list_id)
+                        ->where('type',3)
+                        ->value('id');
+                    $module_id2=model('unit_list_module')
+                        ->where('unit_list_id',$unit_list_id)
+                        ->where('type',4)
+                        ->value('id');
+                    $unit_module_arr=[
+                        ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
+                        ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1]
+                    ];
+                    model('user_unit_list_module')->insertAll($unit_module_arr);
+                    // todo 加积分
+
+                    show([],200,'录入成功');
+                }else{
+                    show([],0,'录入失败');
+                }
+            }
         }
     }
     //答案
@@ -184,7 +166,7 @@ class Question extends Controller
             show([],0,'密码错误');
         }
         $paper_question_list=model('paperQuestion')
-            ->field('type,analysis,options,answer,keyword')
+            ->field('type,analysis,options,answer,keyword,id')
             ->where('user_id',$user_id)
             ->where('paper_id',$paper_id)
             ->select();
@@ -294,6 +276,7 @@ class Question extends Controller
         $errCount=Model('student_errorquestion')->where('user_id',$user_id)->count();
         show($errCount,200,'ok');
     }
+    //错题本、历史错题打印
     public function userErr()
     {
         $user_id=$this->request->post('user_id',0,'intval');
@@ -328,7 +311,6 @@ class Question extends Controller
         foreach($question_id as $v){
             $arr[]=$v['question_id'];
         }
-
         if($type==1){
             $err_data=model('question')->field('id,title,type,radios,unit_id')->where('id','in',$arr)->select()->toArray();
         }else{
@@ -337,6 +319,57 @@ class Question extends Controller
         show($err_data,200,'ok');
 
 
+    }
+    //错题清零
+    public function errorClear(){
+        $question_str=$this->request->post('question_str','');
+        $user_id=$this->request->post('user_id','');
+        if(!$user_id){
+            show([],0,'user_id必传');
+        }
+        if(empty($question_str)){
+            show([],0,'question_str必传');
+        }
+        $question_arr=explode(',',$question_str);
+        $res=model('student_errorquestion')
+            ->where('user_id',$user_id)
+            ->where('question_id','in',$question_arr)
+            ->update(['delete_time'=>time()]);
+        if($res){
+            // todo 加积分
+
+            show([],200,'错题已清除');
+        }else{
+            show([],0,'错题清除失败');
+        }
+    }
+    //统计
+    public function statisticsStudent(){
+        $user_id=$this->request->post('user_id',0);
+        if(!$user_id){
+            show([],200,'user_id必传');
+        }
+        //正确率  历史错误的题数/试卷题数乘以试卷数*100%
+        $student_errorquestion_num=model('student_errorquestion')->where('user_id',$user_id)->count();
+        $paper_num=model('paper')->where('user_id',$user_id)->select()->toArray();
+        if(empty($paper_num)){
+            $paper_num=0;
+        }else{
+            $paper_num=count($paper_num);
+        }
+        $question_num=9;
+        $paper_num=bcmul($paper_num,$question_num);
+        $true_rate=bcdiv($student_errorquestion_num,$paper_num);
+        //学习时长统计
+        $study_time=model('student')->where('id',$user_id)->value('study_time');
+        //排行榜统根据学习时长排行
+        $student_rank=model('student')->order('study_time')->select();
+        $data=[
+            'true_rate'=>$true_rate,
+            'study_time'=>$study_time,
+            'student_rank'=>$student_rank
+        ];
+        show($data,200,'ok');
     }
 
 }
