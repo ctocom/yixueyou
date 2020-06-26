@@ -46,8 +46,17 @@ class Question extends Controller
         $unit_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('unit_id');
         if(empty($question_str)){
             //没有错误 直接达标
-            //用户知识点直接添加一条记录
-                //第一遍循环为100%
+            $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
+                if($unit_list_type==2){
+                    $complete_num=2;
+                    //知识点亮一个灯
+                    $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>2]);
+                }else if($unit_list_type==3){
+                    $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
+                }else if($unit_list_type==1){
+                    //知识点亮一个灯
+                    $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                }
                 $unit_user_list_res=model('unit_user_list')
                     ->where('unit_list_id',$unit_list_id)
                     ->where('user_id',$user_id)
@@ -55,8 +64,6 @@ class Question extends Controller
                 if(!$unit_user_list_res){
                     show([],0,'unit_list_id参数错误');
                 }
-                //知识点亮一个灯
-                $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
                 //检测达标模块改为完成
                 $module_id1=model('unit_list_module')
                     ->where('unit_list_id',$unit_list_id)
@@ -68,10 +75,10 @@ class Question extends Controller
                     ->value('id');
                 $unit_module_arr=[
                     ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
-                    ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1]
+                    ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
                 ];
                 model('user_unit_list_module')->insertAll($unit_module_arr);
-            show([],200,'全部正确，已达标');
+                show([],200,'全部正确，已达标');
         }else{
             //有错误，判断是否是第一次录错
             $error_info=model('student_errorquestion')
@@ -115,8 +122,24 @@ class Question extends Controller
                 }
                 $res=model('studentErrorquestion')->insertAll($data);
                 if($res){
-                    //知识点亮一个灯
-                    $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                    $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
+                    if($unit_list_type==2){
+                        $complete_num=2;
+                        //知识点亮一个灯
+                        $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>2]);
+                    }else if($unit_list_type==3){
+                        $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
+                    }else if($unit_list_type==1){
+                        //知识点亮一个灯
+                        $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                    }
+                    $unit_user_list_res=model('unit_user_list')
+                        ->where('unit_list_id',$unit_list_id)
+                        ->where('user_id',$user_id)
+                        ->update(['complete_rate'=>100]);
+                    if(!$unit_user_list_res){
+                        show([],0,'unit_list_id参数错误');
+                    }
                     //检测达标模块改为完成
                     $module_id1=model('unit_list_module')
                         ->where('unit_list_id',$unit_list_id)
@@ -128,7 +151,7 @@ class Question extends Controller
                         ->value('id');
                     $unit_module_arr=[
                         ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
-                        ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1]
+                        ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
                     ];
                     model('user_unit_list_module')->insertAll($unit_module_arr);
                     // todo 加积分
