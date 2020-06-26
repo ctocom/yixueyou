@@ -43,7 +43,7 @@ class StudentCourse extends Controller
         if(!$section_id){
             show([],0,'section_id不能为空');
         }
-        $unit_info=Unit::where(['delete_time'=>0,'section_id'=>$section_id])->order('order','asc')->select();
+        $unit_info=Unit::where(['delete_time'=>0,'section_id'=>$section_id])->order('order','asc')->select()->toArray();
         show($unit_info,200,'ok');
     }
     //节任务队列数据
@@ -71,7 +71,7 @@ class StudentCourse extends Controller
                     ->alias('u')
                     ->where('u.section_id',$section_id)
                     ->order('u.order','desc')
-                    ->select();
+                    ->select()->toArray();
                 if(!empty($unit_info)){
                     foreach ($unit_info as $k=>$v){
                         $v['complete_num']=0;
@@ -83,12 +83,20 @@ class StudentCourse extends Controller
                 ->alias('u')
                 ->where('u.section_id',$section_id)
                 ->order('u.order','desc')
-                ->select();
+                ->select()->toArray();
             if(!empty($unit_info)){
                 foreach ($unit_info as $k=>$v){
                     $v['complete_num']=0;
                 }
             }
+        }
+        if(empty($unit_info)){
+            $info=[
+                'nav_name'=>$course_name.'-'.$section['name'],
+                'unit_list'=>[],
+                'unit_info'=>[],
+            ];
+            show($info,200,'ok');
         }
         //默认查找第一个知识点的队列
         if(empty($unit_rate)){
@@ -101,63 +109,59 @@ class StudentCourse extends Controller
                 ->order('id','asc')
                 ->value('unit_id');
         }
+
+        $user_list_module=model('user_unit_list_module')->where('user_id',$user_id)->select()->toArray();
         $unit_list=[];
+        $unit_list=UnitList
+            ::alias('u')
+            ->field('u.*,uu.icon')
+            ->join('unit uu','uu.id = u.unit_id')
+            ->where('u.unit_id',$unit_id)
+            ->select()
+            ->toArray();
+        $user_unit_list=[];
         if($user_id){
-            $user_list_module=model('user_unit_list_module')->where('user_id',$user_id)->select();
-            $unit_list=UnitList
-                ::alias('u')
-                ->field('u.*,uu.icon')
-                ->join('unit uu','uu.id = u.unit_id')
-                ->where('u.unit_id',$unit_id)
-                ->select();
             $user_unit_list=model('unit_user_list')->where('user_id',$user_id)->select()->toArray();
-            if(!empty($user_unit_list)){
-                foreach ($unit_list as $k=>$v){
-                    foreach ($user_unit_list as $kk=>$vv){
-                        if($vv['unit_list_id']==$v['id']){
-                            $unit_list[$k]['complete_rate']=$vv['complete_rate'];
-                        }else{
-                            $unit_list[$k]['complete_rate']=0;
-                        }
-                    }
-                }
-            }else{
-                foreach ($unit_list as $v){
-                    $v['complete_rate']=0;
-                    $name=Unit::where(['id'=>$v['unit_id']])->value('name');
-                    $v['name']=$name;
-                    $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
-                    foreach ($v['module'] as $kk=>$vv){
-                        foreach ($user_list_module as $kkk=>$vvv){
-                            if($vvv['unit_list_module_id']==$vv['id']){
-                                $vv['is_complete']=$vvv['is_complete'];
-                            }else{
-                                $vv['is_complete']=0;
-                            }
-                        }
+        }
+        if(!empty($user_unit_list)){
+            foreach ($unit_list as $k=>$v){
+                foreach ($user_unit_list as $kk=>$vv){
+                    if($vv['unit_list_id']==$v['id']){
+                        $unit_list[$k]['complete_rate']=$vv['complete_rate'];
+                    }else{
+                        $unit_list[$k]['complete_rate']=0;
                     }
                 }
             }
         }else{
-            $unit_list=UnitList
-                ::alias('u')
-                ->field('u.*,uu.icon')
-                ->join('unit uu','uu.id = u.unit_id')
-                ->where('u.unit_id',$unit_id)
-                ->select();
+            foreach ($unit_list as $k=>$v){
+                $unit_list[$k]['complete_rate']=0;
+                $name=Unit::where(['id'=>$v['unit_id']])->value('name');
+                $unit_list[$k]['name']=$name;
+                $unit_list[$k]['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
+                foreach ($unit_list[$k]['module'] as $kk=>$vv){
+                    foreach ($user_list_module as $kkk=>$vvv){
+                        if($vvv['unit_list_module_id']==$vv['id']){
+                            $unit_list[$k]['module'][$kk]['is_complete']=1;
+                        }else{
+                            $unit_list[$k]['module'][$kk]['is_complete']=0;
+                        }
+                    }
+                }
+            }
         }
         if(empty($unit_list)){
             foreach ($unit_list as $v){
                 $v['complete_rate']=0;
                 $name=Unit::where(['id'=>$v['unit_id']])->value('name');
                 $v['name']=$name;
-                $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
-                foreach ($v['module'] as $kk=>$vv){
+                $unit_list[$k]['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
+                foreach ($unit_list[$k]['module'] as $kk=>$vv){
                     foreach ($user_list_module as $kkk=>$vvv){
                         if($vvv['unit_list_module_id']==$vv['id']){
-                            $vv['is_complete']=$vvv['is_complete'];
+                            $unit_list[$k]['module'][$kk]['is_complete']=1;
                         }else{
-                            $vv['is_complete']=0;
+                            $unit_list[$k]['module'][$kk]['is_complete']=0;
                         }
                     }
                 }
@@ -169,15 +173,18 @@ class StudentCourse extends Controller
                 }
                 $name=Unit::where(['id'=>$v['unit_id']])->value('name');
                 $unit_list[$k]['name']=$name;
-                $v['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
-                $module=$v['module'];
-                foreach ($module as $kk=>$vv){
-                    foreach ($user_list_module as $kkk=>$vvv){
-                        if($vvv['unit_list_module_id']==$vv['id']){
-                            $module[$kk]['is_complete']=1;
-                        }else{
-                            $module[$kk]['is_complete']=0;
+                $unit_list[$k]['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
+                foreach ($unit_list[$k]['module'] as $kk=>$vv){
+                    if(!empty($user_list_module)){
+                        foreach ($user_list_module as $kkk=>$vvv){
+                            if($vvv['unit_list_module_id']==$vv['id']){
+                                $unit_list[$k]['module'][$kk]['is_complete']=1;
+                            }else{
+                                $unit_list[$k]['module'][$kk]['is_complete']=0;
+                            }
                         }
+                    }else{
+                        $unit_list[$k]['module'][$kk]['is_complete']=0;
                     }
                 }
             }
