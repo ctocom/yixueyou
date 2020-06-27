@@ -280,6 +280,14 @@ class System extends Common
             }
         }
     }
+
+    /**
+     * 积分配置
+     * @return mixed
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function scoreConfig()
     {
         if($this->request->isPost()){
@@ -291,6 +299,7 @@ class System extends Common
                     'complete_score' => $this->request->post('complete_score', 0, 'intval'),
                     'error_notice_score' => $this->request->post('error_notice_score', 0, 'intval'),
                     'rank_score' => $this->request->post('rank_score', 0, 'intval'),
+                    'good_score' => $this->request->post('good_score', 0, 'intval'),
                 ],
             ];
             $res = Config::update($save, ['name' => 'score_config']);
@@ -341,6 +350,7 @@ class System extends Common
             return $this->fetch();
         }
     }
+    //查看消息
     public function systemNewsStatus(){
         $id=$this->request->post('id',0,'intval');
         $is_read=SystemNews::where('id',$id)->value('is_read');
@@ -392,6 +402,7 @@ class System extends Common
             show([],0,'删除失败');
         }
     }
+    //审核
     public function systemNewsAudit()
     {
         $status=$this->request->post('status',0,'intval');
@@ -452,7 +463,7 @@ class System extends Common
             //通过队列模块id添加一条用户的模块进度
             $unit_user_list_module=Db::table('think_user_unit_list_module')->insert(['user_id'=>$system_news['from_user_id'],'unit_list_module_id'=>$unit_list_module_id,'is_complete'=>1]);
             //审核作业通过生成学生的试卷
-            $question_data=question_random_data(3,2);
+            $question_data=question_random_data(3,2,$system_news['unit_id']);
             if(empty($question_data)){
                 show([],0,'题库的试题太少了');
             }
@@ -470,6 +481,13 @@ class System extends Common
             if($news_res && $unit_list_id && $paper_unit_list && $unit_list_status && $unit_list_module_id && $unit_user_list_module && $question_data && $paper_question_add){
                 Db::commit();
                 $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
+                //完成学习或者作业后加积分
+                $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
+                if($type==1){
+                    $check_score_res=model('student')->where('id',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['study_score'],100)));
+                }else{
+                    $check_score_res=model('student')->where('id',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['homework_score'],100)));
+                }
                 if($paper_action){
                     show([],200,'审核通过');
                 }else{

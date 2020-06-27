@@ -78,6 +78,14 @@ class Question extends Controller
                     ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
                 ];
                 model('user_unit_list_module')->insertAll($unit_module_arr);
+            //加积分
+            //检测完成加积分
+            $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
+            $check_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['check_score'],100)));
+            //达标加积分
+            $complete_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['complete_score'],100)));
+            //满分额外加积分
+            $good_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['good_score'],100)));
                 show([],200,'全部正确，已达标');
         }else{
             //有错误，判断是否是第一次录错
@@ -153,8 +161,12 @@ class Question extends Controller
                         ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
                     ];
                     model('user_unit_list_module')->insertAll($unit_module_arr);
-                    // todo 加积分
-
+                    //加积分
+                    //检测完成加积分
+                    $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
+                    $check_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['check_score'],100)));
+                    //达标加积分
+                    $complete_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['complete_score'],100)));
                     show([],200,'录入成功');
                 }else{
                     show([],0,'录入失败');
