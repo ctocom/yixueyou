@@ -34,7 +34,7 @@ class Question extends Controller
     public function recordErrorQuestion(){
 //        $paper_id=$this->request->post('paper_id',0,'intval');
         $unit_list_id=$this->request->post('unit_list_id',0);
-        $question_str=$this->request->post('question_str','');
+        $question_arr=$this->request->post('question_str','');
         $user_id=$this->request->post('user_id',0,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
@@ -44,7 +44,7 @@ class Question extends Controller
         }
         $paper_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('paper_id');
         $unit_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('unit_id');
-        if(empty($question_str)){
+        if(empty($question_arr)){
             //没有错误 直接达标
             $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
                 if($unit_list_type==2){
@@ -87,7 +87,6 @@ class Question extends Controller
                 ->where('paper_id',$paper_id)
                 ->where('delete_time',0)
                 ->select()->toArray();
-            $question_arr=explode(',',$question_str);
             if(empty($error_info)){
                 //第一次录错题
                 foreach ($question_arr as $v){
@@ -345,15 +344,14 @@ class Question extends Controller
     }
     //错题清零
     public function errorClear(){
-        $question_str=$this->request->post('question_str','');
+        $question_arr=$this->request->post('question_str','');
         $user_id=$this->request->post('user_id','');
         if(!$user_id){
             show([],0,'user_id必传');
         }
-        if(empty($question_str)){
-            show([],0,'question_str必传');
+        if(empty($question_arr)){
+            show([],0,'question_arr必传');
         }
-        $question_arr=explode(',',$question_str);
         $res=model('student_errorquestion')
             ->where('user_id',$user_id)
             ->where('question_id','in',$question_arr)
