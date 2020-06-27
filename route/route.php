@@ -11,11 +11,9 @@
 
 //接口路由  需要登录
 Route::group('index', [
-    'logout'=>'index/Login/logout',
     'course'=>'index/StudentCourse/index',//课程分类数据
     'section'=>'index/StudentCourse/section', //章节分类数据
     'unit'=>'index/StudentCourse/unit', //知识点分类数据
-    'unitList'=>'index/StudentCourse/unitList',
     'updatePassword'=>'index/Login/updatePassword',//修改密码
     'setSecondPassword'=>'index/Login/setSecondPassword',//设置二级密码
     'signIn'=>'index/SignIn/signIn',//用户签到
@@ -36,10 +34,12 @@ Route::group('index', [
     'userErr'=>'index/Question/userErr',//错题本
     'errorClear'=>'index/Question/errorClear',//错题清零
     'statisticsStudent'=>'index/Question/statisticsStudent'//统计
-]);
+])->middleware(app\index\middleware\CheckLogin::class);
 
 //免登录
 Route::group('index', [
+    'unitList'=>'index/StudentCourse/unitList', //知识点循环任务
+    'logout'=>'index/Login/logout',
     'index'=>'index/index/index',                                //
     'login'=>'index/Login/index',
 ]);
