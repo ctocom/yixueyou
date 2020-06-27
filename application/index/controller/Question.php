@@ -244,14 +244,13 @@ class Question extends Controller
         }
 
           //判断是否有试卷
-        $where='';
         $where=[
             'user_id'=>$user_id,
             'unit_list_id'=>$unit_list_id,
             'unit_id'=>$unit_id
         ];
         $paper_count=model('paper')->where($where)->count();
-        if($paper_count==1){
+        if($paper_count!=0){
             $paper_id=model('paper')->where($where)->value('id');
             $where='';
             $where=[
@@ -260,23 +259,24 @@ class Question extends Controller
             $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
             show($paper_data,200,'ok');
         }
-
-        $question_data=question_random_data(3,2);
-        if(!$question_data){
-            show([],0,'题库里面的题太少了');
+        $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
+        if($unit_list_type!=1){
+            $question_data=question_random_data(3,2,$unit_id);
+            if(!$question_data){
+                show([],0,'题库里面的题太少了');
+            }
+            //随机生成一个试卷
+            $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,1);
+            foreach ($question_data as $k=>$v){
+                $question_data[$k]['paper_id']=$paper_res;
+                $question_data[$k]['question_id']=$v['id'];
+                $question_data[$k]['user_id']=$user_id;
+                unset($question_data[$k]['id']);
+            }
+            $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
+        }else{
+            show([],0,'您的学习还没有审核');
         }
-
-        //随机生成一个试卷
-        $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,1);
-        foreach ($question_data as $k=>$v){
-            $question_data[$k]['paper_id']=$paper_res;
-            $question_data[$k]['question_id']=$v['id'];
-            $question_data[$k]['user_id']=$user_id;
-            unset($question_data[$k]['id']);
-        }
-
-        $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
-//        show($paper_res,200,'ok');
         $paper_question_list=model('paperQuestion')
             ->field('id,title,type,radios,unit_id')
             ->where('user_id',$user_id)

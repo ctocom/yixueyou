@@ -266,17 +266,20 @@ function WordMake( $content,$absolutePath = "",$isEraseLink = true ){
     return $mht->GetFile();
 }
 //学生试题生成
-function question_random_data($num,$min){
+function question_random_data($num,$min,$unit_id=1){
     $model=model('question');
     $where1=[
+        'unit_id'=>$unit_id,
         'type1'=>1,
         'delete_time'=>0,
     ];
     $where2=[
+        'unit_id'=>$unit_id,
         'type1'=>2,
         'delete_time'=>0,
     ];
     $where3=[
+        'unit_id'=>$unit_id,
         'type1'=>3,
         'delete_time'=>0,
     ];
