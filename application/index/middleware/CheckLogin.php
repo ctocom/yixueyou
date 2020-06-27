@@ -9,8 +9,8 @@ namespace app\index\middleware;
 class CheckLogin{
     public function handle($request, \Closure $next)
     {
-        $data=$_POST;
-        show($data,0,'ok');
+        $data=file_get_contents(('php://input'),true);
+        show($data,0,'中间价');
         $user_token=!empty($_POST['user_token'])?$_POST['user_token']:show([],0,'user_token必传');
         $user_info=model('student')->where('token',$user_token)->find();
         if($user_info['token']!=$user_token){
