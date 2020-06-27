@@ -54,6 +54,7 @@
                         //***重点***：拼接进度条
                         return '<div class="layui-progress layui-progress-big" lay-showpercent="true"><div class="layui-progress-bar '+ys+'" lay-percent="'+d.complete_rate+'%"></div></div><br>'
                     }},
+                {field: 'type', title: '第几遍',align:'center'},
                 // {title: '操作', width:170, templet:'#unitListBar',fixed:"right",align:"center"}
             ]]
             ,done:function (res,currentCount) {

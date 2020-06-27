@@ -380,8 +380,10 @@ class Question extends Controller
             ->where('question_id','in',$question_arr)
             ->update(['delete_time'=>time()]);
         if($res){
-            // todo 加积分
-
+            // 加积分
+            //清完错题加积分
+            $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
+            $check_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['error_notice_score'],100)));
             show([],200,'错题已清除');
         }else{
             show([],0,'错题清除失败');
