@@ -1,0 +1,171 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form">
+    <!--<blockquote class="layui-elem-quote quoteBox">-->
+        <!--<form class="layui-form">-->
+            <!--<div class="layui-inline">-->
+                <!--<div class="layui-input-inline">-->
+                    <!--<input type="text" class="layui-input searchVal" placeholder="输入科目" />-->
+                <!--</div>-->
+                <!--<a class="layui-btn search_btn" data-type="reload">搜索</a>-->
+            <!--</div>-->
+            <!--<div class="layui-inline">-->
+                <!--<a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>-->
+            <!--</div>-->
+        <!--</form>-->
+    <!--</blockquote>-->
+    <table id="imagesList" lay-filter="imagesList"></table>
+    <!--操作-->
+    <script type="text/html" id="imagesListBar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
+</form>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form','layer','table'],function(){
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery, table = layui.table;
+
+        //知识点列表
+        var tableIns = table.render({
+            elem: '#imagesList',
+            url : "{:url('/admin/imagesList')}",
+            cellMinWidth : 95,
+            page : true,
+            limit:10,
+            limits:[5,10,15,20],
+            height : "full-125",
+            id:'imagesListTable',
+            cols : [[
+                {field: 'id', title: 'Id', width:100, align:"center"},
+                {field: 'name', title: '图片名称',align:'center'},
+                {field: 'img_url', title: '图片',align:'center',event:'showimg',templet:function (d) {
+                        return "<a href='#'>点击预览图片</a>";
+                    }},
+                {field: 'type', title: '类型',align:'center',templet:function (d) {
+                        if(d.type==1){
+                            return '轮播图';
+                        }else if(d.type==2){
+                            return 'banner图';
+                        }else if(d.type==3){
+                            return '四大模块';
+                        }else if(d.type==4){
+                            return '分类图';
+                        }else if(d.type==5){
+                            return '循环任务图';
+                        }
+                    }},
+                {title: '操作', width:170, templet:'#imagesListBar',fixed:"right",align:"center"}
+            ]]
+        });
+
+        //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
+        $(".search_btn").on("click",function(){
+            table.reload("imagesListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    key: $(".searchVal").val()  //搜索的关键字
+                }
+            })
+        });
+
+        //添加知识点
+        function add(){
+            var index = layui.layer.open({
+                title : "添加试题",
+                type : 2,
+                content : "{:url('/admin/imagesAdd')}",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+        //编辑知识点
+        function edit(uid){
+            var index = layui.layer.open({
+                title : "编辑知识点",
+                type : 2,
+                content : "{:url('/admin/imagesEdit')}"+'?uid='+uid,
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+        $(".adduser_btn").click(function(){
+            add();
+        })
+        //列表操作
+        table.on('tool(imagesList)', function(obj){
+            var layEvent = obj.event, data = obj.data;
+            if(layEvent === 'edit'){ //编辑
+                edit(data.id);
+            } else if(layEvent === 'del'){ //删除
+                layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
+                    $.ajax({
+                        url: "{:url('/admin/imagesDelete')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {id:data.id},
+                        success: function (data) {
+                            if(data.code==200){
+                                var icon=1;
+                            }else{
+                                var icon=2;
+                            }
+                            layer.msg(data.msg, {
+                                icon: icon,
+                                time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                tableIns.reload()
+                            });
+                        }
+                    })
+                });
+            }else if(layEvent==='showimg'){
+                var url=obj.data.img_url;
+                previewimg(url)
+            }
+        });
+        function previewimg(url) {
+            var imgHtml = "<img src='" + url + "'style='max-width:100%;max-height:100%;display:block;margin:0 auto'/>";
+            layer.open({
+                type: 1,
+                shade: 0.8,
+                offset: 'auto',
+                area: ['500px','500px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "图片预览", //不显示标题
+                content: imgHtml
+            });
+        }
+    })
+</script>
+{/block}

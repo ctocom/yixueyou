@@ -37,6 +37,7 @@ Route::group('index', [
     'unitList'=>'index/StudentCourse/unitList', //知识点循环任务
     'logout'=>'index/Login/logout',
     'index'=>'index/index/index',                                //
+    'imagesInfo'=>'index/index/imagesInfo',                                //
     'login'=>'index/Login/index',
     'course'=>'index/StudentCourse/index',//课程分类数据
     'section'=>'index/StudentCourse/section', //章节分类数据
@@ -102,6 +103,17 @@ Route::group('admin', [
     //上传管理
     'upload'=>'admin/Upload/index',                                    //上传图片
     'dowload'=>'admin/Upload/dowload',                                    //上传图片
+    'bannerUpload'=>'admin/Upload/bannerUpload',                                    //上传图片
+    'bannerAdd'=>'admin/Upload/bannerAdd',                                    //上传图片
+    'repeatAdd'=>'admin/Upload/repeatAdd',                                    //上传图片
+    'cateAdd'=>'admin/Upload/cateAdd',                                    //上传图片
+    'listAdd'=>'admin/Upload/listAdd',                                    //上传图片
+    'fourAdd'=>'admin/Upload/fourAdd',                                    //上传图片
+    'repeatUpload'=>'admin/Upload/repeatUpload',                                    //上传图片
+    'cateUpload'=>'admin/Upload/cateUpload',                                    //上传图片
+    'listUpload'=>'admin/Upload/listUpload',                                    //上传图片
+    'fourUpload'=>'admin/Upload/fourUpload',                                    //上传图片
+    'imagesList'=>'admin/Upload/imagesList',                                    //上传图片
 
     'questionList$'=>'admin/Question/questionList',//试题列表
     'questionAdd$'=>'admin/Question/questionAdd',//试题添加

@@ -1,0 +1,89 @@
+{extend name="base/base" /}
+{block name="main"}
+<form class="layui-form" action="">
+<div class="layui-form-item">
+    <label class="layui-form-label">图片名称</label>
+    <div class="layui-input-block">
+        <input type="text" name="name" placeholder="" autocomplete="off" class="layui-input">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label class="layui-form-label">图片：</label>
+    <div class="layui-input-inline">
+        　　　　　<!--存放上传后图片路径-->
+        <input type="text" name="image"  id="inputrepeaturl" placeholder="图片地址" value="" class="layui-input">
+    </div>
+    <button type="button" class="layui-btn" id="upload_repeat"><i class="layui-icon"></i>上传图片</button>
+</div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{css href="/form-select/formSelects-v4.css" /}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    layui.use(['form','upload'], function(){
+        var upload = layui.upload;
+        var form = layui.form;
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#upload_repeat' //绑定元素
+            ,url: "{:url('/admin/repeatUpload')}" //上传接口
+            ,exts:"jpg|png|gif|bmp|jpeg"
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputrepeaturl").val(res.data.src);
+                    previewrepeat(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+        $('#inputrepeaturl').click(function () {
+            var url=$("#inputrepeaturl").val()
+            previewrepeat(url)
+        })
+        function previewrepeat(url) {
+            var imgHtml = "<img src='" + url + "'style='max-width:100%;max-height:100%;display:block;margin:0 auto'/>";
+            layer.open({
+                type: 1,
+                shade: 0.8,
+                offset: 'auto',
+                area: ['500px','500px'],
+                shadeClose:true,//点击外围关闭弹窗
+                scrollbar: false,//不现实滚动条
+                title: "图片预览", //不显示标题
+                content: imgHtml
+            });
+        }
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $.ajax({
+                url: "{:url('/admin/repeatAdd')}",
+                type: "post",
+                dataType: "json",
+                data: data.field,
+                success: function (res) {
+                    if(res.code==200){
+                        layer.msg(res.msg,{icon:1});
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                    setTimeout(function () {
+                        parent.location.reload();
+                    },500);
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{/block}
