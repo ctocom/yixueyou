@@ -10,6 +10,7 @@ class CheckLogin{
     public function handle($request, \Closure $next)
     {
         $data=file_get_contents(('php://input'),true);
+        print_r($data);exit;
         $token=$data['user_token'];
         $user_token=!empty($tokne)?$token:show([],0,'user_token必传');
         $user_info=model('student')->where('token',$user_token)->find();
