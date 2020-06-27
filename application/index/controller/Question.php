@@ -176,7 +176,7 @@ class Question extends Controller
             ->where('id',$user_id)
             ->value('seconds_password');
         if(!$pass){
-            show([],0,'没有二级密码，请设置。');
+            show([],100,'没有二级密码，请设置。');
         }
         if(!$paper_id){
             show([],0,'paper_id必传');
@@ -185,7 +185,7 @@ class Question extends Controller
             show([],0,'$seconds_password必传');
         }
         if($pass!=md5($seconds_password)){
-            show([],0,'密码错误');
+            show([],0,'二级密码错误');
         }
         $paper_question_list=model('paperQuestion')
             ->field('type,analysis,options,answer,keyword,id')
@@ -304,6 +304,7 @@ class Question extends Controller
         $user_id=$this->request->post('user_id',0,'intval');
         $type=$this->request->post('type',0,'intval');
         $user_err=$this->request->post('user_err',0,'intval');
+        $seconds_password=$this->request->post('seconds_password',0,'intval');
         if(!$user_id){
             show([],0,'user_id 必填');
         }
@@ -336,6 +337,12 @@ class Question extends Controller
         if($type==1){
             $err_data=model('question')->field('id,title,type,radios,unit_id')->where('id','in',$arr)->select()->toArray();
         }else{
+            $pass=model('student')
+                ->where('id',$user_id)
+                ->value('seconds_password');
+            if($pass!=md5($seconds_password)){
+                show([],0,'二级密码错误');
+            }
             $err_data=model('question')->field('id,type,unit_id,analysis,options,answer,keyword')->where('id','in',$arr)->select()->toArray();
         }
         show($err_data,200,'ok');
