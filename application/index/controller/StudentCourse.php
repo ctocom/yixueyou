@@ -137,10 +137,10 @@ class StudentCourse extends Controller
                 }
             }
         }
-        foreach ($unit_list as $v){
-            $v['icon']=Config::get('domain').$v['icon'];
-            foreach ($v['module'] as $vv){
-                $vv['icon']=Config::get('domain').$vv['icon'];
+        foreach ($unit_list as $k=>$v){
+            $unit_list[$k]['icon']=Config::get('domain').$unit_list[$k]['icon'];
+            foreach ($v['module'] as $kk=>$vv){
+                $unit_list[$k]['module'][$kk]['icon']=Config::get('domain').$v['module'][$kk]['icon'];
             }
         }
         $info=[
