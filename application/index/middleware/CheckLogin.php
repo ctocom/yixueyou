@@ -10,8 +10,9 @@ class CheckLogin{
     public function handle($request, \Closure $next)
     {
         $data=file_get_contents(('php://input'),true);
-        show($data,0,'中间价');
-        $user_token=!empty($_POST['user_token'])?$_POST['user_token']:show([],0,'user_token必传');
+        $data_arr=json($data);
+        $token=$data['user_token'];
+        $user_token=!empty($tokne)?$token:show([],0,'user_token必传');
         $user_info=model('student')->where('token',$user_token)->find();
         if($user_info['token']!=$user_token){
             show([],0,'user_token是无效的');
