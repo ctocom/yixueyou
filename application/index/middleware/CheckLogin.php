@@ -9,8 +9,7 @@ namespace app\index\middleware;
 class CheckLogin{
     public function handle($request, \Closure $next)
     {
-        $data=file_get_contents(('php://input'),true);
-        show($data,000,'sasa');exit;
+        $data=json_decode(file_get_contents(('php://input'),true),true);
         $token=$data['user_token'];
         $user_token=!empty($tokne)?$token:show([],0,'user_token必传');
         $user_info=model('student')->where('token',$user_token)->find();
