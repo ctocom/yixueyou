@@ -256,7 +256,11 @@ class Question extends Controller
                 'paper_id'=>$paper_id,
             ];
             $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
-            show($paper_data,200,'ok');
+            $p_data=[
+                'paper_data'=>$paper_data,
+                'paper_id'=>$paper_id
+            ];
+            show($p_data,200,'ok');
         }
         $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
         if($unit_list_type!=1){
