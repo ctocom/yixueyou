@@ -16,7 +16,6 @@ Route::group('index', [
     'signIn'=>'index/SignIn/signIn',//用户签到
     'signRankList'=>'index/SignIn/signRankList',//用户签到
     'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
-    'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
     'completeHomework'=>'index/StudyMaterial/completeHomework',//完成作业
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
@@ -42,6 +41,7 @@ Route::group('index', [
     'course'=>'index/StudentCourse/index',//课程分类数据
     'section'=>'index/StudentCourse/section', //章节分类数据
     'unit'=>'index/StudentCourse/unit', //知识点分类数据
+    'unitListInfo'=>'index/StudentCourse/unitListInfo',//知识点列表信息
 ]);
 
 
