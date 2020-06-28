@@ -139,7 +139,7 @@ class Question extends Controller
                         $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
                     }else if($unit_list_type==1){
                         //知识点亮一个灯
-                        $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                        $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                     }
                     $unit_user_list_res=model('unit_user_list')
                         ->where('unit_list_id',$unit_list_id)

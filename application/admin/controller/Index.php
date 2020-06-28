@@ -69,4 +69,100 @@ class Index extends Common
         cache('notice_config', $list);
         return $list;
     }
+    public function statistics()
+    {
+        $teacher_info=session('user_auth');
+        $teacher_id=$teacher_info['uid'];
+        if ($this->request->isAjax()){
+            $student_name=model('student')
+                ->where('teacher_id',$teacher_id)
+                ->where('delete_time',0)
+                ->column('name');
+            $student_info=model('student')
+                ->field('name,id')
+                ->where('teacher_id',$teacher_id)
+                ->where('delete_time',0)
+                ->select();
+            $student_id=model('student')
+                ->where('teacher_id',$teacher_id)
+                ->where('delete_time',0)
+                ->column('id');
+            //学生正确率
+            $student_errorquestion_num=model('student_errorquestion')
+                ->where('user_id','in',$student_id)
+                ->select()
+                ->toArray();
+            $new_student_errorquestion=[];
+            foreach ($student_errorquestion_num as $k=>$v){
+                $new_student_errorquestion[$v['user_id']][]=$v;
+            }
+            $new_student_question=[];
+            foreach ($student_id as $k=>$v){
+                if(isset($new_student_errorquestion[$v])){
+                    $new_student_question[]=count($new_student_errorquestion[$v]);
+                }else{
+                    $new_student_question[]=0;
+                }
+            }
+            $paper_num=model('paper')
+                ->where('user_id','in',$student_id)
+                ->select()
+                ->toArray();
+            $new_paper_num=[];
+            foreach ($paper_num as $k=>$v){
+                $new_paper_num[$v['user_id']][]=$v;
+            }
+            $new_user_paper_num=[];
+            foreach ($student_id as $k=>$v){
+                if(isset($new_paper_num[$v])){
+                    $new_user_paper_num[]=count($new_paper_num[$v])*9;
+                }else{
+                    $new_user_paper_num[]=0;
+                }
+            }
+            $true_rate=[];
+            foreach ($student_id as $k=>$v){
+                if(intval($new_user_paper_num[$k])!=0){
+                    $true_rate[]=bcmul(bcdiv(intval($new_student_question[$k]),intval($new_user_paper_num[$k]),2),100);
+                }else{
+                    $true_rate[]=0;
+                }
+            }
+            //学习进度统计
+            $unit_num=model('unit')->select()->toArray();
+            $unit_num=intval(bcmul(count($unit_num),3));
+            $study_complete_num=model('user_unit')
+                ->where('user_id','in',$student_id)
+                ->select();
+            $new_study_complete_num=[];
+            foreach ($study_complete_num as $k=>$v){
+                $new_study_complete_num[$v['user_id']][]=$v;
+            }
+            $new_study_rate=[];
+            foreach ($student_id as $k=>$v){
+                if(isset($new_study_complete_num[$v])){
+                    $new_study_rate[]=count($new_study_complete_num[$v]);
+                }else{
+                    $new_study_rate[]=0;
+                }
+            }
+            $study_rate=[];
+            foreach ($student_id as $k=>$v){
+                if(isset($new_study_rate[$k])){
+                    $study_rate[]=bcmul(bcdiv($new_study_rate[$k],$unit_num,2),100);
+                }else{
+                    $study_rate[]=0;
+                }
+            }
+            $student=[
+                'student_name'=>$student_name,
+                'student_info'=>$student_info,
+                'true_rate'=>$true_rate,
+                'study_rate'=>$study_rate
+            ];
+            show($student,200,'ok');
+        }else{
+            return $this->fetch();
+        }
+    }
 }

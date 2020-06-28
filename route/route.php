@@ -69,6 +69,7 @@ Route::group('admin', [
     //首页
     'index$'=>'admin/Index/index',                                           //首页
     'home'=>'admin/Index/home',
+    'statistics'=>'admin/Index/statistics',
     'SystemNewsInfo$'=>'admin/System/SystemNewsList',                      //系统信息
     'SystemNewsStatus$'=>'admin/System/SystemNewsStatus',                      //系统信息修改阅读状态
     'SystemNewsDelete$'=>'admin/System/SystemNewsDelete',                      //系统信息删除

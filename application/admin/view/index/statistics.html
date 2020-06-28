@@ -1,0 +1,109 @@
+{extend name="base/base" /}
+{block name="main"}
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 1000px;height:500px;"></div>
+<!-- 引入 echarts.js -->
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="/js/echarts.js"></script>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    $.ajax({
+        url: "{:url('/admin/statistics')}",
+        type: "post",
+        dataType: "json",
+        data: {},
+        success: function (res) {
+           var  student_name=res.data.student_name;
+           var  true_rate=res.data.true_rate;
+           var  study_rate=res.data.study_rate;
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '学生进度统计图'
+                },
+                tooltip: {},
+                legend: {
+                    data:['学习进度','正确率'],
+                    textStyle: {
+                        color: '#8db0ef',
+                        fontFamily: 'DINProRegular',
+                    },
+                    //图例标记宽高
+                    itemWidth: 15,
+                    itemHeight: 15,
+                    itemGap: 15,
+                    top: 15,
+                },
+                xAxis: {
+                    data: student_name,
+                },
+                yAxis: {
+                    min:0, //y轴的最小值
+                    max:100, //y轴最大值
+                    interval:20, //值之间的间隔
+                },
+                series: [{
+                    name: '学习进度',
+                    type: 'bar',
+                    data: study_rate,
+                    label:{
+                        normal:{
+                            show:true,
+                            position:'top',//柱状图头顶显示数据
+                            color:'#027fcf'
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+
+                            color: new echarts.graphic.LinearGradient(//柱状图颜色渐变
+                                0, 0,0,1,
+                                [
+                                    {offset: 0, color: '#58b9ed'},
+                                    {offset: 0.5, color: '#203dda'},
+                                    {offset: 1, color: '#3e28d7'}
+                                ]
+                            )
+                        }
+
+                    }
+                },
+                    {
+                        name: '正确率',
+                        type: 'bar',
+                        data: true_rate,
+                        label:{
+                            normal:{
+                                show:true,
+                                position:'top',//柱状图头顶显示数据
+                                color:'#027fcf'
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+
+                                color: new echarts.graphic.LinearGradient(//柱状图颜色渐变
+                                    0, 0,0,1,
+                                    [
+                                        {offset: 0, color: '#58b9ed'},
+                                        {offset: 0.5, color: '#203dda'},
+                                        {offset: 1, color: '#3e28d7'}
+                                    ]
+                                )
+                            }
+
+                        }
+                    },
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        }
+    })
+</script>
+</body>
+{/block}
