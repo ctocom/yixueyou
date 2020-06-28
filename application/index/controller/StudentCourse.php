@@ -62,6 +62,15 @@ class StudentCourse extends Controller
             ->where('u.section_id',$section_id)
             ->select()
             ->toArray();
+        if(empty($unit_info)){
+            $info=[
+                'nav_name'=>$course_name.'-'.$section['name'],
+                'unit_id'=>0,
+                'unit_list'=>[],
+                'unit_info'=>[],
+            ];
+            show($info,200,'ok');
+        }
             $user_unit=UserUnit::where('user_id',$user_id)->select()->toArray();
             if(!empty($user_unit)){
                 foreach ($unit_info as $k=>$v){
