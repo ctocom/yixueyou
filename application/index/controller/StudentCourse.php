@@ -132,7 +132,7 @@ class StudentCourse extends Controller
             }
         }else{
             foreach ($unit_list as $k=>$v){
-                $user_unit_rate=model('unit_user_list')->where('user_id',$user_unit_num)->where('unit_list_id',$v['id'])->find();
+                $user_unit_rate=model('unit_user_list')->where('user_id',$user_id)->where('unit_list_id',$v['id'])->find();
                 if($user_unit_rate){
                     $unit_list[$k]['complete_rate']=$user_unit_rate['complete_rate'];
                 }else{

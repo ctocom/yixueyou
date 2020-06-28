@@ -39,6 +39,12 @@
         <button type="button" class="layui-btn" id="upload_head"><i class="layui-icon"></i>上传头像</button>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            <input type="checkbox"  name="sex"  checked lay-skin="switch" lay-filter="sex" lay-text="男|女">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">是否启用</label>
         <div class="layui-input-block">
             <input type="checkbox"  name="status"  checked lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
@@ -63,6 +69,12 @@
             if(!this.checked)
             {
                 $("input:checkbox[name='status']").val('off')
+            }
+        });
+        form.on('switch(sex)', function(data){
+            if(!this.checked)
+            {
+                $("input:checkbox[name='sex']").val('off')
             }
         });
         $('#inputstudenturl').click(function () {
@@ -98,7 +110,13 @@
         //监听提交
         form.on('submit(formDemo)', function(data){
             var status=$("input:checkbox[name='status']").val();
+            var sex=$("input:checkbox[name='sex']").val();
             if(status=='on'){
+                status=1;
+            }else{
+                status=2;
+            }
+            if(sex=='on'){
                 status=1;
             }else{
                 status=2;
