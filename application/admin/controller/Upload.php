@@ -198,4 +198,38 @@ class Upload extends Common
             return $this->fetch();
         }
     }
+    public function imagesDelete()
+    {
+        $id=$this->request->post('id');
+        $res=model('background_images')->where('id',$id)->update(['delete_time'=>time()]);
+        if($res){
+            show([],200,'删除成功');
+        }else{
+            show([],200,'删除失败');
+        }
+    }
+    public function imagesEdit()
+    {
+        $id=$this->request->param('id');
+        if($this->request->isPost())
+        {
+            $image=$this->request->post('image');
+            $name=$this->request->post('name');
+            $data=[
+                'img_url'=>$image,
+                'name'=>$name,
+                'update_time'=>time()
+            ];
+            $res=model('background_images')->where('id',$id)->update($data);
+            if($res){
+                show([],200,'修改成功');
+            }else{
+                show([],0,'修改失败');
+            }
+        }else{
+            $images_data=model('background_images')->where('id',$id)->find();
+            $this->assign('images_data',$images_data);
+            return $this->fetch();
+        }
+    }
 }

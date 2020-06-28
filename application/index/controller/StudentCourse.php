@@ -82,11 +82,16 @@ class StudentCourse extends Controller
             //默认
             $unit_id=$unit_info[0]["id"];
         }else{
+
             $unit_id= model('user_unit')
                 ->where('user_id',$user_id)
+                ->where('section_id',$section_id)
                 ->order('complete_num','asc')
                 ->order('id','asc')
                 ->value('unit_id');
+            if(!$unit_id){
+                $unit_id=$unit_info[0]["id"];
+            }
         }
         $user_list_module=model('user_unit_list_module')->where('user_id',$user_id)->select()->toArray();
         $unit_list=[];

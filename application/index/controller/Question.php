@@ -44,6 +44,7 @@ class Question extends Controller
         }
         $paper_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('paper_id');
         $unit_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('unit_id');
+        $section_id=model('unit')->where('id',$unit_id)->value('section_id');
         if(empty($question_arr)){
             //没有错误 直接达标
             $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
@@ -55,7 +56,7 @@ class Question extends Controller
                     $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
                 }else if($unit_list_type==1){
                     //知识点亮一个灯
-                    $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id]);
+                    $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                 }
                 $unit_user_list_res=model('unit_user_list')
                     ->where('unit_list_id',$unit_list_id)
@@ -305,6 +306,7 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
+    //错题数
     public function errCount()
     {
         $user_id=$this->request->post('user_id',0,'intval');

@@ -29,7 +29,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
 
-        //知识点列表
+        //图片列表
         var tableIns = table.render({
             elem: '#imagesList',
             url : "{:url('/admin/imagesList')}",
@@ -74,7 +74,7 @@
             })
         });
 
-        //添加知识点
+        //添加图片
         function add(){
             var index = layui.layer.open({
                 title : "添加试题",
@@ -96,12 +96,12 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑知识点
+        //编辑图片
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑知识点",
+                title : "编辑图片",
                 type : 2,
-                content : "{:url('/admin/imagesEdit')}"+'?uid='+uid,
+                content : "{:url('/admin/imagesEdit')}"+'?id='+uid,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     setTimeout(function(){

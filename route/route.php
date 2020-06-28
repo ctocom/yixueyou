@@ -114,6 +114,8 @@ Route::group('admin', [
     'listUpload'=>'admin/Upload/listUpload',                                    //上传图片
     'fourUpload'=>'admin/Upload/fourUpload',                                    //上传图片
     'imagesList'=>'admin/Upload/imagesList',                                    //上传图片
+    'imagesDelete'=>'admin/Upload/imagesDelete',                                    //上传图片
+    'imagesEdit'=>'admin/Upload/imagesEdit',
 
     'questionList$'=>'admin/Question/questionList',//试题列表
     'questionAdd$'=>'admin/Question/questionAdd',//试题添加
