@@ -313,7 +313,10 @@ class Question extends Controller
         if(!$user_id){
             show([],0,'user_id 必填');
         }
-        $errCount=Model('student_errorquestion')->where('user_id',$user_id)->count();
+        $errCount=Model('student_errorquestion')
+            ->where('user_id',$user_id)
+            ->where('delete_time',0)
+            ->count();
         show($errCount,200,'ok');
     }
     //错题本、历史错题打印
