@@ -15,7 +15,6 @@ Route::group('index', [
     'setSecondPassword'=>'index/Login/setSecondPassword',//设置二级密码
     'signIn'=>'index/SignIn/signIn',//用户签到
     'signRankList'=>'index/SignIn/signRankList',//用户签到
-    'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
     'completeMaterial'=>'index/StudyMaterial/completeMaterial',//完成学习内容
     'completeHomework'=>'index/StudyMaterial/completeHomework',//完成作业
     'teachAction'=>'index/StudyMaterial/teachAction',//讲解某个知识点
@@ -34,6 +33,7 @@ Route::group('index', [
 
 //免登录
 Route::group('index', [
+    'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
     'unitList'=>'index/StudentCourse/unitList', //知识点循环任务
     'logout'=>'index/Login/logout',
     'index'=>'index/index/index',                                //
