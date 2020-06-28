@@ -34,7 +34,6 @@ class User extends Common
             $list = UserModel::withSearch(['name'], ['name' => $data['key']])
                 ->hidden(['password'])
                 ->paginate($data['limit'], false, ['query' => $data]);
-            $a=$list->total();
             $user_date = [];
             foreach ($list as $key => $val) {
                 $user_date[$key] = $val;
@@ -176,7 +175,6 @@ class User extends Common
         if ($this->request->isPost()) {
             $id = $this->request->post('id', 0, 'intval');
             $title = $this->request->post('title', '', 'trim');
-            echo $id;
             if ($id) {//编辑用户组
                 return AuthGroupService::edit($id, ['title' => $title]);
             } else {//添加用户组

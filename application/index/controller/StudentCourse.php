@@ -71,7 +71,7 @@ class StudentCourse extends Controller
             ];
             show($info,200,'ok');
         }
-            $user_unit=UserUnit::where('user_id',$user_id)->select()->toArray();
+            $user_unit=UserUnit::where('user_id',$user_id)->where('section_id',$section_id)->select()->toArray();
             if(!empty($user_unit)){
                 foreach ($unit_info as $k=>$v){
                     $user_unit_num=model('user_unit')->where('unit_id',$v['id'])->where('user_id',$user_id)->find();
@@ -91,16 +91,27 @@ class StudentCourse extends Controller
             //默认
             $unit_id=$unit_info[0]["id"];
         }else{
-
-            $unit_id= model('user_unit')
-                ->where('user_id',$user_id)
-                ->where('section_id',$section_id)
-                ->order('complete_num','asc')
-                ->order('id','asc')
-                ->value('unit_id');
-            if(!$unit_id){
-                $unit_id=$unit_info[0]["id"];
+            $unit_id_big=Unit::where(['delete_time'=>0])
+                ->alias('u')
+                ->where('u.section_id',$section_id)
+                ->where('u.delete_time',0)
+                ->order('id','desc')
+                ->value('id');
+            $unit_res=model('user_unit')->where('unit_id',$unit_id_big)->find();
+            if(!$unit_res){
+                //第一遍循环
+                $complete_unit_id=model('user_unit')
+                    ->where('complete_num',1)
+                    ->where('section_id',$section_id)
+                    ->where('user_id',$user_id)
+                    ->order('id')->value('unit_id');
+                $unit_id=model('unit_id')
+                    ->where('id','>',$complete_unit_id)
+                    ->where('delete_time',0)
+                    ->order('id')
+                    ->value('id');
             }
+
         }
         $user_list_module=model('user_unit_list_module')->where('user_id',$user_id)->select()->toArray();
         $unit_list=[];

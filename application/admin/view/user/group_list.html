@@ -14,9 +14,9 @@
             </div>
         </form>
     </blockquote>
-    <table id="groupList" lay-filter="groupList"></table>
+    <table id="usersList" lay-filter="usersList"></table>
     <!--操作-->
-    <script type="text/html" id="groupListBar">
+    <script type="text/html" id="usersListBar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="rule">访问控制</a>
     </script>
@@ -73,6 +73,7 @@
             },
             'plugins': ['checkbox']
         });
+
     }
 
     layui.use(['form', 'layer', 'table'], function () {
@@ -82,14 +83,14 @@
 
         //新闻列表
         var tableIns = table.render({
-            elem: '#groupList',
+            elem: '#usersList',
             url: "{:url('/admin/groupList')}",
             cellMinWidth: 95,
             page: true,
             limit: 10,
             limits: [5, 10, 15, 20],
             height: "full-125",
-            id: 'groupListTable',
+            id: 'usersListTable',
             cols: [[
                 {field: 'id', title: 'ID', width: 60, align: "center"},
                 {field: 'title', title: '组名', width: 350},
@@ -103,13 +104,13 @@
                         }
                     }
                 },
-                {title: '操作', width: 170, templet: '#groupListBar', fixed: "right", align: "center"}
+                {title: '操作', width: 170, templet: '#usersListBar', fixed: "right", align: "center"}
             ]]
         });
 
         //搜索
         $(".search_btn").on("click", function () {
-            table.reload("groupListTable", {
+            table.reload("usersListTable", {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
@@ -170,7 +171,7 @@
         }
 
         //列表操作
-        table.on('tool(groupList)', function (obj) {
+        table.on('tool(usersList)', function (obj) {
             var layEvent = obj.event,
                 data = obj.data;
             if (layEvent === 'edit') { //编辑
