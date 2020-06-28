@@ -66,7 +66,7 @@ class Common extends Controller
     }
     public function changeMultiple($num)
     {
-       return bcdiv($num,100);
+       return bcdiv($num,100,0);
     }
     public function paperWord($paper_id,$user_id)
     {
