@@ -64,6 +64,15 @@ class Student extends Common
             if(strlen($student_name)>9 || strlen($student_name)<6){
                 show([],0,'用户名最多三个汉字,最少两个汉字');
             }
+            $age=$this->request->post('age',0);
+            if(!is_numeric($age)){
+                show([],0,'年龄必须为数字');
+            }
+            $sex=$this->request->post('sex',0);
+            $tel=$this->request->post('tel',0);
+            if(!is_numeric($tel) || strlen($tel)!=11){
+                show([],0,'手机号必须为11位纯数字');
+            }
             $type=$this->request->post('type',0);
             if(!$type){
                 show([],0,'监管模式必须选择');
@@ -78,6 +87,9 @@ class Student extends Common
             $data['account']=$student_account;
             $data['name']=$student_name;
             $data['head']=$head;
+            $data['sex']=$sex;
+            $data['age']=$age;
+            $data['tel']=$tel;
             $data['password']=md5($student_password);
             $data['score']=0;
             $teacher_info=session('user_auth');
@@ -130,6 +142,15 @@ class Student extends Common
             if(strlen($student_name)>9 || strlen($student_name)<6){
                 show([],0,'用户名最多三个汉字,最少两个汉字');
             }
+            $age=$this->request->post('age',0);
+            if(!is_numeric($age)){
+                show([],0,'年龄必须为数字');
+            }
+            $sex=$this->request->post('sex',0);
+            $tel=$this->request->post('tel',0);
+            if(!is_numeric($tel) || strlen($tel)!=11){
+                show([],0,'手机号必须为11位纯数字');
+            }
             $type=$this->request->post('type',0);
             if(!$type){
                 show([],0,'监管模式必须选择');
@@ -154,6 +175,9 @@ class Student extends Common
             $data['account']=$student_account;
             $data['name']=$student_name;
             $data['head']=$head;
+            $data['sex']=$sex;
+            $data['age']=$age;
+            $data['tel']=$tel;
             $teacher_info=session('user_auth');
             $data['teacher_id']=$teacher_info['uid'];
             $data['status']=$status;

@@ -35,6 +35,12 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-block">
+            <input type="tel" name="tel" value="{$student_data.tel}" placeholder="只能输入11位手机号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">密码</label>
         <div class="layui-input-block">
             <input type="password" name="student_password1" value="" placeholder="不修改的话不填写即可" autocomplete="off" class="layui-input">
@@ -53,6 +59,22 @@
             <input type="text" name="student_head"  id="inputstudenturl" placeholder="头像地址" value="{$student_data.head}" class="layui-input">
         </div>
         <button type="button" class="layui-btn" id="upload_head"><i class="layui-icon"></i>上传头像</button>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            {if($student_data.sex)==1}
+            <input type="checkbox"  name="sex" value="{$student_data.sex}" checked lay-skin="switch" lay-filter="sex" lay-text="男|女">
+            {else}
+            <input type="checkbox"  name="sex" value="{$student_data.sex}"  lay-skin="switch" lay-filter="sex" lay-text="男|女">
+            {/if}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-block">
+            <input type="number" name="age" value="{$student_data.age}" autocomplete="off" class="layui-input">
+        </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">是否启用</label>
@@ -119,13 +141,19 @@
         //监听提交
         form.on('submit(formDemo)', function(data){
             var status=$("input:checkbox[name='status']").val();
-            console.log(status)
+            var sex=$("input:checkbox[name='sex']").val();
+            if(sex=='off'){
+                sex=2;
+            }else{
+                sex=1;
+            }
             if(status=='off'){
                 status=2;
             }else{
                 status=1;
             }
             data.field.status=status;
+            data.field.sex=sex;
             console.log(JSON.stringify(data.field));
             $.ajax({
                 url: "{:url('/admin/studentEdit')}",

@@ -25,6 +25,12 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-block">
+            <input type="tel" name="tel" placeholder="只能输入11位手机号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">密码</label>
         <div class="layui-input-block">
             <input type="text" name="student_password"  readonly="readonly" value="123456" autocomplete="off" class="layui-input">
@@ -42,6 +48,12 @@
         <label class="layui-form-label">性别</label>
         <div class="layui-input-block">
             <input type="checkbox"  name="sex"  checked lay-skin="switch" lay-filter="sex" lay-text="男|女">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-block">
+            <input type="number" name="age"  autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -117,11 +129,12 @@
                 status=2;
             }
             if(sex=='on'){
-                status=1;
+                sex=1;
             }else{
-                status=2;
+                sex=2;
             }
             data.field.status=status;
+            data.field.sex=sex;
             console.log(JSON.stringify(data.field));
             $.ajax({
                 url: "{:url('/admin/studentAdd')}",
