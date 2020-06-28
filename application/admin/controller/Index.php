@@ -73,6 +73,13 @@ class Index extends Common
     {
         $teacher_info=session('user_auth');
         $teacher_id=$teacher_info['uid'];
+        if($teacher_id==1){
+            $where=[];
+        }else{
+            $where=[
+                'teacher_id'=>$teacher_id
+            ];
+        }
         if ($this->request->isAjax()){
             $student_name=model('student')
                 ->where('teacher_id',$teacher_id)
@@ -80,7 +87,7 @@ class Index extends Common
                 ->column('name');
             $student_info=model('student')
                 ->field('name,id')
-                ->where('teacher_id',$teacher_id)
+                ->where($where)
                 ->where('delete_time',0)
                 ->select();
             $student_id=model('student')
