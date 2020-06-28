@@ -110,6 +110,12 @@ class StudentCourse extends Controller
                     ->where('delete_time',0)
                     ->order('id')
                     ->value('id');
+            }else if($unit_res['complete_num']==1){
+                $unit_id=$unit_info[0]["id"];
+            }else if($unit_res['complete_num']==2){
+                $unit_id=$unit_info[0]["id"];
+            }else if($unit_res['complete_num']==3){
+                $unit_id=$unit_info[0]["id"];
             }
 
         }
