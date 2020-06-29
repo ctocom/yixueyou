@@ -58,7 +58,7 @@ class System extends Controller
             ->select()
             ->toArray();
         $chat_list=array_merge($chat_list1,$chat_list2);
-        $chat_list=sort($chat_list,'send_time');
+        $chat_list= array_sort($chat_list,'send_time');
         show($chat_list,200,'ok');
     }
 }
