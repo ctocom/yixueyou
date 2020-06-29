@@ -32,53 +32,47 @@ class Question extends Controller
     }
     //录入错题
     public function recordErrorQuestion(){
-//        $paper_id=$this->request->post('paper_id',0,'intval');
-        $unit_list_id=$this->request->post('unit_list_id',0);
+        $paper_id=$this->request->post('paper_id',0,'intval');
         $question_arr=$this->request->post('question_str','');
         $user_id=$this->request->post('user_id',0,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
         }
-        if(!$unit_list_id){
-            show([],0,'unit_list_id必传');
-        }
-        $paper_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('paper_id');
-        $unit_id=model('paper_unit_list')->where('unit_list_id',$unit_list_id)->value('unit_id');
+        $unit_id=model('paper')->where('id',$paper_id)->value('unit_id');
         $section_id=model('unit')->where('id',$unit_id)->value('section_id');
         if(empty($question_arr)){
             //没有错误 直接达标
-            $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
+            $unit_list_type=model('paper')->where('id',$paper_id)->value('type');
                 if($unit_list_type==2){
-                    $complete_num=2;
-                    //知识点亮一个灯
                     $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>2]);
                 }else if($unit_list_type==3){
                     $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
                 }else if($unit_list_type==1){
+                    $unit_list_id=model('paper')->where('id',$paper_id)->value('unit_list_id');
+                    $unit_user_list_res=model('unit_user_list')
+                        ->where('unit_list_id',$unit_list_id)
+                        ->where('user_id',$user_id)
+                        ->update(['complete_rate'=>100]);
+                    //检测达标模块改为完成
+                    $module_id1=model('unit_list_module')
+                        ->where('unit_list_id',$unit_list_id)
+                        ->where('type',3)
+                        ->value('id');
+                    $module_id2=model('unit_list_module')
+                        ->where('unit_list_id',$unit_list_id)
+                        ->where('type',4)
+                        ->value('id');
+                    $unit_module_arr=[
+                        ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
+                        ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
+                    ];
+                    model('user_unit_list_module')->insertAll($unit_module_arr);
                     //知识点亮一个灯
                     $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                 }
-                $unit_user_list_res=model('unit_user_list')
-                    ->where('unit_list_id',$unit_list_id)
-                    ->where('user_id',$user_id)
-                    ->update(['complete_rate'=>100]);
                 if(!$unit_user_list_res){
-                    show([],0,'unit_list_id参数错误');
+                    show([],0,'请联系管理员');
                 }
-                //检测达标模块改为完成
-                $module_id1=model('unit_list_module')
-                    ->where('unit_list_id',$unit_list_id)
-                    ->where('type',3)
-                    ->value('id');
-                $module_id2=model('unit_list_module')
-                    ->where('unit_list_id',$unit_list_id)
-                    ->where('type',4)
-                    ->value('id');
-                $unit_module_arr=[
-                    ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
-                    ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
-                ];
-                model('user_unit_list_module')->insertAll($unit_module_arr);
             //加积分
             //检测完成加积分
             $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
@@ -87,7 +81,7 @@ class Question extends Controller
             $complete_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['complete_score'],100)));
             //满分额外加积分
             $good_score_res=model('student')->where('id',$user_id)->setInc('score',intval(bcmul($score_config['good_score'],100)));
-                show([],200,'全部正确，已达标');
+             show([],200,'全部正确，已达标');
         }else{
             //有错误，判断是否是第一次录错
             $error_info=model('student_errorquestion')
@@ -113,11 +107,11 @@ class Question extends Controller
                     show([],0,'录入失败');
                 }
             }else{
+                //第二次录错题  录完达标
                 $delete_res=model('studentErrorquestion')
                     ->where('user_id',$user_id)
                     ->where('paper_id',$paper_id)
                     ->update(['delete_time'=>time()]);
-                //第二次录错题  录完达标
                 if(is_array($question_arr)){
                     foreach ($question_arr as $v){
                         $data[]=[
@@ -130,7 +124,7 @@ class Question extends Controller
                 }
                 $res=model('studentErrorquestion')->insertAll($data);
                 if($res){
-                    $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
+                    $unit_list_type=model('paper')->where('id',$paper_id)->value('type');
                     if($unit_list_type==2){
                         $complete_num=2;
                         //知识点亮一个灯
@@ -139,29 +133,30 @@ class Question extends Controller
                         $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
                     }else if($unit_list_type==1){
                         //知识点亮一个灯
+                        $unit_list_id=model('paper')->where('id',$paper_id)->value('unit_list_id');
                         $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
+                        //检测达标模块改为完成
+                        $module_id1=model('unit_list_module')
+                            ->where('unit_list_id',$unit_list_id)
+                            ->where('type',3)
+                            ->value('id');
+                        $module_id2=model('unit_list_module')
+                            ->where('unit_list_id',$unit_list_id)
+                            ->where('type',4)
+                            ->value('id');
+                        $unit_module_arr=[
+                            ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
+                            ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
+                        ];
+                        model('user_unit_list_module')->insertAll($unit_module_arr);
+                        $unit_user_list_res=model('unit_user_list')
+                            ->where('unit_list_id',$unit_list_id)
+                            ->where('user_id',$user_id)
+                            ->update(['complete_rate'=>100]);
                     }
-                    $unit_user_list_res=model('unit_user_list')
-                        ->where('unit_list_id',$unit_list_id)
-                        ->where('user_id',$user_id)
-                        ->update(['complete_rate'=>100]);
                     if(!$unit_user_list_res){
-                        show([],0,'unit_list_id参数错误');
+                        show([],0,'请联系管理员');
                     }
-                    //检测达标模块改为完成
-                    $module_id1=model('unit_list_module')
-                        ->where('unit_list_id',$unit_list_id)
-                        ->where('type',3)
-                        ->value('id');
-                    $module_id2=model('unit_list_module')
-                        ->where('unit_list_id',$unit_list_id)
-                        ->where('type',4)
-                        ->value('id');
-                    $unit_module_arr=[
-                        ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
-                        ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
-                    ];
-                    model('user_unit_list_module')->insertAll($unit_module_arr);
                     //加积分
                     //检测完成加积分
                     $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);

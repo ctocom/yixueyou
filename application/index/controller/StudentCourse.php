@@ -62,6 +62,29 @@ class StudentCourse extends Controller
             ->where('u.section_id',$section_id)
             ->select()
             ->toArray();
+        //知识点总数
+        $list_type=0;
+        $unit_num=count($unit_info);
+        $user_unit_num1=model('user_unit')
+            ->where('complete_num',2)
+            ->where('section_id',$section_id)
+            ->where('user_id',$user_id)
+            ->select()
+            ->toArray();
+        $user_unit_num1=count($user_unit_num1);
+        if($unit_num==$user_unit_num1){
+            $list_type=2;
+        }
+        $user_unit_num2=model('user_unit')
+            ->where('complete_num',3)
+            ->where('section_id',$section_id)
+            ->where('user_id',$user_id)
+            ->select()
+            ->toArray();
+        $user_unit_num2=count($user_unit_num2);
+        if($unit_num==$user_unit_num2){
+            $list_type=3;
+        }
         if(empty($unit_info)){
             $info=[
                 'nav_name'=>$course_name.'-'.$section['name'],
@@ -176,6 +199,7 @@ class StudentCourse extends Controller
             'unit_id'=>$unit_id,
             'unit_list'=>$unit_list,
             'unit_info'=>$unit_info,
+            'list_type'=>$list_type,
         ];
         show($info,200,'ok');
     }

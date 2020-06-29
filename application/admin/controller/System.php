@@ -486,7 +486,7 @@ class System extends Common
                 }
             }else{
                 Db::rollback();
-                show([],0,'审核失败');
+                show([],0,'审核失败2');
             }
             } catch (\think\Exception $e){
                 Db::rollback();

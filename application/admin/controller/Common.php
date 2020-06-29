@@ -10,7 +10,6 @@ namespace app\admin\controller;
 
 use app\admin\model\Config;
 use think\Controller;
-use think\Db;
 class Common extends Controller
 {
     public $uid;             //用户id

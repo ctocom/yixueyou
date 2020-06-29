@@ -64,6 +64,7 @@
                 'data': {
                     'method': "GET",
                     'url': "{:url('/admin/ruleList')}",
+                    'dataType':"json"
                 },
             },
             'checkbox': {
@@ -76,7 +77,6 @@
         });
 
     }
-
     layui.use(['form', 'layer', 'table'], function () {
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer,
@@ -195,12 +195,14 @@
                 var status = data.elem.checked ? 1 : 0;
                 id = data.elem.value;
                 $.post("{:url('/admin/disableGroup')}", {id: id, status: status}, function (data) {
+                    console.log(data)
+                    console.log(data.code)
                     var icon = 5;
                     if (data.code) {
                         icon = 6;
                     }
                     layer.msg(data.msg, {icon: icon, time: 1500});
-                });
+                },"json");
             }, 500);
         });
         //新增修改用户组
@@ -220,7 +222,7 @@
                         }
                         layui.layer.closeAll();
                     });
-                })
+                },"json")
             }, 500);
         });
         //保存规则
@@ -241,7 +243,7 @@
                             layui.layer.closeAll();
                         }
                     });
-                });
+                },"json");
             }, 500);
         });
     })
