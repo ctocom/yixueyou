@@ -170,6 +170,7 @@ class StudentCourse extends Controller
         }
         foreach ($unit_list as $k=>$v){
             $unit_list[$k]['icon']=Config::get('domain').$unit_list[$k]['icon'];
+            $unit_list[$k]['name']=model('unit')->where('id',$v['unit_id'])->value('name');
             foreach ($v['module'] as $kk=>$vv){
                 $unit_list[$k]['module'][$kk]['icon']=Config::get('domain').$v['module'][$kk]['icon'];
             }
