@@ -46,8 +46,12 @@ class System extends Controller
         }
         $student_info=model('student')->where('id',$user_id)->find();
         $teacher_info=model('user')->where('uid',$from_user_id)->find();
+        $where1=['to_user_id'=>$student_info['openid'],'from_user_id'=>$teacher_info['uid']];
+        $where2=['to_user_id'=>$teacher_info['uid'],'from_user_id'=>$student_info['openid']];
         $chat_list=model('systemNews')
-            ->where('to_user',$student_info['name'])
+            ->where($where1)
+            ->whereOr($where2)
+            ->order('send_time')
             ->select();
         show($chat_list,200,'ok');
     }
