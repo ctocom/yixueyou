@@ -75,6 +75,7 @@ class StudentCourse extends Controller
         if($unit_num==$user_unit_num1){
             $list_type=2;
         }
+        $list_rate2=bcmul(bcdiv($user_unit_num1,$unit_num,2),100);
         $user_unit_num2=model('user_unit')
             ->where('complete_num',3)
             ->where('section_id',$section_id)
@@ -82,6 +83,7 @@ class StudentCourse extends Controller
             ->select()
             ->toArray();
         $user_unit_num2=count($user_unit_num2);
+        $list_rate3=bcmul(bcdiv($user_unit_num2,$unit_num,2),100);
         if($unit_num==$user_unit_num2){
             $list_type=3;
         }
@@ -197,6 +199,8 @@ class StudentCourse extends Controller
         $info=[
             'nav_name'=>$course_name.'-'.$section['name'],
             'unit_id'=>$unit_id,
+            'list_rate2'=>$list_rate2,
+            'list_rate3'=>$list_rate3,
             'unit_list'=>$unit_list,
             'unit_info'=>$unit_info,
             'list_type'=>$list_type,
