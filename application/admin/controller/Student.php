@@ -96,6 +96,7 @@ class Student extends Common
             $data['teacher_id']=$teacher_info['uid'];
             $data['status']=$status;
             $data['type']=$type;
+            $data['openid']=md5(uniqid(mt_rand(), true));
             $data['create_time']=time();
             $res=model('student')->insert($data);
             if($res){

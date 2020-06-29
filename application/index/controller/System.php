@@ -44,8 +44,10 @@ class System extends Controller
         if(!$from_user_id){
             show([],0,'from_user_id必传');
         }
+        $student_info=model('student')->where('id',$user_id)->find();
+        $teacher_info=model('user')->where('id',$from_user_id)->find();
         $chat_list=model('systemNews')
-            ->where('from_user_id',$from_user_id)
+            ->where('to_user',$student_info['name'])
             ->select();
         show($chat_list,200,'ok');
     }

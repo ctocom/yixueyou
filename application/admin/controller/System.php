@@ -360,8 +360,8 @@ class System extends Common
         $res=SystemNews::where('id',$id)->update(['is_read'=>1,'read_time'=>time()]);
         //老师已读  给学生发一条消息
         $system_news=SystemNews::where('id',$id)->find();
-        $teacher_info=model('user')->where('uid',$system_news['to_user'])->find();
-        $student_info=model('student')->where('id',$system_news['from_user'])->find();
+        $teacher_info=model('user')->where('uid',$system_news['to_user_id'])->find();
+        $student_info=model('student')->where('openid',$system_news['from_user_id'])->find();
         if($system_news['type']==1){
             //讲解消息
             $data['content']='你好！我是'.$teacher_info['name'].','.$system_news['unit_name'].'这条消息我已查看，稍后我会微信联系你';
