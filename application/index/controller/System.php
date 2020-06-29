@@ -45,14 +45,20 @@ class System extends Controller
             show([],0,'from_user_id必传');
         }
         $student_info=model('student')->where('id',$user_id)->find();
-        $teacher_info=model('user')->where('uid',$from_user_id)->find();
-        $where1=['to_user_id'=>$student_info['openid'],'from_user_id'=>$teacher_info['uid']];
-        $where2=['to_user_id'=>$teacher_info['uid'],'from_user_id'=>$student_info['openid']];
-        $chat_list=model('systemNews')
+        $where1=['to_user_id'=>$student_info['openid'],'from_user_id'=>$from_user_id];
+        $where2=['to_user_id'=>$from_user_id,'from_user_id'=>$student_info['openid']];
+        $chat_list1=model('systemNews')
             ->where($where1)
-            ->whereOr($where2)
             ->order('send_time')
-            ->select();
+            ->select()
+            ->toArray();
+        $chat_list2=model('systemNews')
+            ->where($where2)
+            ->order('send_time')
+            ->select()
+            ->toArray();
+        $chat_list=array_merge($chat_list1,$chat_list2);
+        $chat_list=sort($chat_list,'send_time');
         show($chat_list,200,'ok');
     }
 }
