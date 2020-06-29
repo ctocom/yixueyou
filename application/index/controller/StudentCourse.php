@@ -112,10 +112,6 @@ class StudentCourse extends Controller
                     ->value('id');
             }else if($unit_res['complete_num']==1){
                 $unit_id=$unit_info[0]["id"];
-            }else if($unit_res['complete_num']==2){
-                $unit_id=$unit_info[0]["id"];
-            }else if($unit_res['complete_num']==3){
-                $unit_id=$unit_info[0]["id"];
             }
 
         }
@@ -195,5 +191,29 @@ class StudentCourse extends Controller
             ->order('order','desc')
             ->select();
         show($section_list,200,'ok');
+    }
+    //所有未完成第2/3遍的知识点列表
+    public function unitListBefore()
+    {
+        $user_id=$this->request->post('user_id',0,'intval');
+        $section_id=$this->request->post('section_id',0,'intval');
+        $unit_id=$this->request->post('unit_id',0,'intval');
+        $type=$this->request->post('type',0,'intval');
+        if($type==2){
+            $unit_list=model('user_unit')
+                ->where('section_id',$section_id)
+                ->where('user_id',$user_id)
+                ->where('unit_id',$unit_id)
+                ->where('compltet_num',1)
+                ->select()->toArray();
+        }else if($type==3){
+            $unit_list=model('user_unit')
+                ->where('section_id',$section_id)
+                ->where('user_id',$user_id)
+                ->where('unit_id',$unit_id)
+                ->where('compltet_num',2)
+                ->select()->toArray();
+        }
+        show($unit_list,200,'ok');
     }
 }

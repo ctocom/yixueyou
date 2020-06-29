@@ -338,9 +338,6 @@ function paper_random_data($user_id,$unit_id,$unit_list_id,$type)
     $student_info=model('student')->where('id',$user_id)->find();
     $unit_info=model('unit')->where('id',$unit_id)->find();
     $p_name='的练习卷';
-    if($type==2){
-        $p_name='的错题本';
-    }
     $paper_name=$student_info['name'].'的'.$unit_info['name'].$p_name;
     $data['section_id']=$unit_info['section_id'];
     $data['name']=$paper_name;

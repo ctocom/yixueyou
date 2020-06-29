@@ -242,29 +242,52 @@ class Question extends Controller
         $unit_id=$this->request->post('unit_id',0,'intval');
 //        $section_id=$this->request->post('section_id',0,'intval');
         $unit_list_id=$this->request->post('unit_list_id',0,'intval');
+        $type=$this->request->post('type',0,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
         }
         if(!$unit_id){
             show([],0,'unit_id必传');
         }
-//        if(!$section_id){
-//            show([],0,'section_id必传');
-//        }
-        if(!$unit_list_id){
-            show([],0,'unit_list_id必传');
+        if($unit_list_id){
+            //第一遍
+            //检测是否审核学习和作业
+            $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',1)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            if($is_complete1['status']==0){
+                show([],0,'您的学习进度没有被审核');
+            }
+            if($is_complete2['status']==0){
+                show([],0,'您的作业没有被审核');
+            }
+            //判断是否有试卷
+            $where=[
+                'user_id'=>$user_id,
+                'unit_list_id'=>$unit_list_id,
+                'unit_id'=>$unit_id,
+            ];
+            $paper_count=model('paper')->where($where)->count();
+        }else{
+            //第二遍
+            if($type==2){
+                $where=[
+                    'user_id'=>$user_id,
+                    'type'=>2,
+                    'unit_id'=>$unit_id,
+                ];
+                $paper_count=model('paper')->where($where)->count();
+            }else if($type==3){
+                //第三遍
+                $where=[
+                    'user_id'=>$user_id,
+                    'type'=>3,
+                    'unit_id'=>$unit_id,
+                ];
+                $paper_count=model('paper')->where($where)->count();
+            }
         }
-
-          //判断是否有试卷
-        $where=[
-            'user_id'=>$user_id,
-            'unit_list_id'=>$unit_list_id,
-            'unit_id'=>$unit_id
-        ];
-        $paper_count=model('paper')->where($where)->count();
         if($paper_count!=0){
             $paper_id=model('paper')->where($where)->value('id');
-            $where='';
             $where=[
                 'paper_id'=>$paper_id,
             ];
@@ -275,23 +298,18 @@ class Question extends Controller
             ];
             show($p_data,200,'ok');
         }
-        $unit_list_type=model('unit_list')->where('id',$unit_list_id)->value('type');
-        if($unit_list_type!=1){
-            $question_data=question_random_data(3,2,$unit_id);
-            if(!$question_data){
-                show([],0,'题库里面的题太少了');
-            }
-            //随机生成一个试卷
-            $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,1);
-            foreach ($question_data as $k=>$v){
-                $question_data[$k]['paper_id']=$paper_res;
-                $question_data[$k]['question_id']=$v['id'];
-                $question_data[$k]['user_id']=$user_id;
-                unset($question_data[$k]['id']);
-            }
-            $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
-        }else{
-            show([],0,'您的学习还没有审核');
+        $question_data=question_random_data(3,2,$unit_id);
+        if(!$question_data) {
+            show([], 0, '题库里面的题太少了');
+        }
+        //随机生成一个试卷
+        $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,$type);
+        foreach ($question_data as $k=>$v) {
+            $question_data[$k]['paper_id'] = $paper_res;
+            $question_data[$k]['question_id'] = $v['id'];
+            $question_data[$k]['user_id'] = $user_id;
+            unset($question_data[$k]['id']);
+            $paper_question_add = Db::table('think_paper_question')->insertAll($question_data);
         }
         $paper_question_list=model('paperQuestion')
             ->field('id,title,type,radios,unit_id')

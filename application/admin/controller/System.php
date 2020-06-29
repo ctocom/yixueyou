@@ -453,34 +453,24 @@ class System extends Common
             $data['title']=$system_news['from_user'].'的'.$system_news['unit_name'].$msg;
             $news_res=Db::table('think_system_news')->insert($data);
             //审核通过需要改变进度
-             $unit_list_id=Db::table('think_unit_list')->where(['unit_id'=>$system_news['unit_id'],'type'=>1])->value('id');
+             $unit_list_id=Db::table('think_unit_list')
+                 ->where(['unit_id'=>$system_news['unit_id'],'type'=>1])
+                 ->value('id');
             if($type==1){
-                $unit_list_status=Db::table('think_unit_user_list')->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$system_news['from_user_id'],'type'=>$type,'complete_rate'=>$complete_rat]);
+                $unit_list_status=Db::table('think_unit_user_list')
+                    ->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$system_news['from_user_id'],'type'=>$type,'complete_rate'=>$complete_rat]);
             }else{
-                $unit_list_status=Db::table('think_unit_user_list')->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])->update(['complete_rate'=>$complete_rat]);
+                $unit_list_status=Db::table('think_unit_user_list')
+                    ->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])
+                    ->update(['complete_rate'=>$complete_rat]);
             }
-            $unit_list_module_id=Db::table('think_unit_list_module')->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->value(['id']);
+            $unit_list_module_id=Db::table('think_unit_list_module')
+                ->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->value(['id']);
             //通过队列模块id添加一条用户的模块进度
-            $unit_user_list_module=Db::table('think_user_unit_list_module')->insert(['user_id'=>$system_news['from_user_id'],'unit_list_module_id'=>$unit_list_module_id,'is_complete'=>1]);
-            //审核作业通过生成学生的试卷
-            $question_data=question_random_data(3,2,$system_news['unit_id']);
-            if(empty($question_data)){
-                show([],0,'题库的试题太少了');
-            }
-            $paper_id=paper_random_data($system_news['from_user_id'],$system_news['unit_id'],$unit_list_id,1);
-            foreach ($question_data as $k=>$v){
-                $question_data[$k]['paper_id']=$paper_id;
-                $question_data[$k]['question_id']=$v['id'];
-                $question_data[$k]['user_id']=$system_news['from_user_id'];
-                unset($question_data[$k]['id']);
-            }
-            //绑定队列和试卷
-            $paper_unit_list=Db::table('think_paper_unit_list')->insert(['paper_id'=>$paper_id,'unit_list_id'=>$unit_list_id,'unit_id'=>$system_news['unit_id'],'create_time'=>time()]);
-            //添加试题
-            $paper_question_add=Db::table('think_paper_question')->insertAll($question_data);
-            if($news_res && $unit_list_id && $paper_unit_list && $unit_list_status && $unit_list_module_id && $unit_user_list_module && $question_data && $paper_question_add){
-                Db::commit();
-                $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
+            $unit_user_list_module=Db::table('think_user_unit_list_module')
+                ->insert(['user_id'=>$system_news['from_user_id'],'unit_list_module_id'=>$unit_list_module_id,'is_complete'=>1]);
+            if($news_res && $unit_list_id  && $unit_list_status && $unit_list_module_id && $unit_user_list_module){
+//                $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
                 //完成学习或者作业后加积分
                 $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
                 if($type==1){
@@ -488,7 +478,8 @@ class System extends Common
                 }else{
                     $check_score_res=model('student')->where('id',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['homework_score'],100)));
                 }
-                if($paper_action){
+                if($check_score_res){
+                    Db::commit();
                     show([],200,'审核通过');
                 }else{
                     show([],0,'审核失败');
