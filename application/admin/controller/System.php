@@ -474,9 +474,9 @@ class System extends Common
                 //完成学习或者作业后加积分
                 $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
                 if($type==1){
-                    $check_score_res=model('student')->where('id',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['study_score'],100)));
+                    $check_score_res=model('student')->where('openid',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['study_score'],100)));
                 }else{
-                    $check_score_res=model('student')->where('id',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['homework_score'],100)));
+                    $check_score_res=model('student')->where('openid',$system_news['from_user_id'])->setInc('score',intval(bcmul($score_config['homework_score'],100)));
                 }
                 if($check_score_res){
                     Db::commit();
@@ -486,7 +486,7 @@ class System extends Common
                 }
             }else{
                 Db::rollback();
-                show([],0,'审核失败2');
+                show([],0,'审核失败');
             }
             } catch (\think\Exception $e){
                 Db::rollback();
