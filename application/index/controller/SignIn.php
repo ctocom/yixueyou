@@ -133,7 +133,7 @@ class SignIn extends Controller
             ->select();
         foreach ($list as $k=>$v){
             $v['id']=$k+1;
-            $v['score']=bcdiv($v['score'],100);
+            $v['score']=bcdiv($v['score'],100,0);
         }
         show($list,200,'ok');
     }
