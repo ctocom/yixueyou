@@ -45,7 +45,7 @@ class System extends Controller
             show([],0,'from_user_id必传');
         }
         $student_info=model('student')->where('id',$user_id)->find();
-        $teacher_info=model('user')->where('id',$from_user_id)->find();
+        $teacher_info=model('user')->where('uid',$from_user_id)->find();
         $chat_list=model('systemNews')
             ->where('to_user',$student_info['name'])
             ->select();
