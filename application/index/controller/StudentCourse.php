@@ -151,13 +151,16 @@ class StudentCourse extends Controller
             ->toArray();
         $user_unit_list=[];
         if($user_id){
-            $user_unit_list=model('unit_user_list')->where('user_id',$user_id)->select()->toArray();
+            $user_unit_list=model('unit_user_list')->where('user_id',$user_id)->find();
+            if($user_unit_list){
+                $user_unit_list=$user_unit_list->toArray();
+            }
         }
-        if(empty($user_unit_list)){
+        if(!$user_unit_list){
             foreach ($unit_list as $k=>$v){
                 $unit_list[$k]['complete_rate']=0;
                 $name=Unit::where(['id'=>$v['unit_id']])->value('name');
-                $v['name']=$name;
+                $unit_list[$k]['name']=$name;
                 $unit_list[$k]['module']=UnitListModule::where(['unit_list_id'=>$v['id']])->select()->toArray();
                 foreach ($unit_list[$k]['module'] as $kk=>$vv){
                     $unit_list_module_res=model('user_unit_list_module')->where('user_id',$user_id)->where('unit_list_module_id',$vv['id'])->find();
@@ -227,6 +230,15 @@ class StudentCourse extends Controller
         $section_id=$this->request->post('section_id',0,'intval');
         $unit_id=$this->request->post('unit_id',0,'intval');
         $type=$this->request->post('type',0,'intval');
+        if(!$type){
+            show([],0,'type必传');
+        }
+        if(!$section_id){
+            show([],0,'section_id必传');
+        }
+        if(!$unit_id){
+            show([],0,'unit_id必传');
+        }
         $unit_list=[];
         if($type==2){
             $unit_list=model('user_unit')
