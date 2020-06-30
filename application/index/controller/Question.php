@@ -155,12 +155,12 @@ class Question extends Controller
                             ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
                         ];
                         model('user_unit_list_module')->insertAll($unit_module_arr);
-                        $unit_user_list_res=model('unit_user_list')
+                        $user_unit_res=model('unit_user_list')
                             ->where('unit_list_id',$unit_list_id)
                             ->where('user_id',$user_id)
                             ->update(['complete_rate'=>100]);
                     }
-                    if(!$unit_user_list_res){
+                    if(!$user_unit_res){
                         show([],0,'请联系管理员');
                     }
                     //加积分
