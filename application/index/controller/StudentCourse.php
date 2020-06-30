@@ -227,6 +227,7 @@ class StudentCourse extends Controller
         $section_id=$this->request->post('section_id',0,'intval');
         $unit_id=$this->request->post('unit_id',0,'intval');
         $type=$this->request->post('type',0,'intval');
+        $unit_list=[];
         if($type==2){
             $unit_list=model('user_unit')
                 ->where('section_id',$section_id)
