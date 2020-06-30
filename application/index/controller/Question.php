@@ -76,9 +76,6 @@ class Question extends Controller
                     //知识点亮一个灯
                     $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                 }
-                if(!$user_unit_res){
-                    show([],0,'请联系管理员');
-                }
             //加积分
             //检测完成加积分
             $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
@@ -159,9 +156,6 @@ class Question extends Controller
                             ->where('unit_list_id',$unit_list_id)
                             ->where('user_id',$user_id)
                             ->update(['complete_rate'=>100]);
-                    }
-                    if(!$user_unit_res){
-                        show([],0,'请联系管理员');
                     }
                     //加积分
                     //检测完成加积分
