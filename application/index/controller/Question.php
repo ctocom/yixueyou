@@ -76,7 +76,7 @@ class Question extends Controller
                     //知识点亮一个灯
                     $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                 }
-                if(!$unit_user_list_res || !$user_unit_res){
+                if(!$user_unit_res){
                     show([],0,'请联系管理员');
                 }
             //加积分
