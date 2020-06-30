@@ -202,6 +202,7 @@ class StudentCourse extends Controller
         $info=[
             'nav_name'=>$course_name.'-'.$section['name'],
             'unit_id'=>$unit_id,
+            'section_id'=>$section_id,
             'list_rate2'=>$list_rate2,
             'list_rate3'=>$list_rate3,
             'list_type'=>$list_type,
