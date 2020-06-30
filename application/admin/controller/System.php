@@ -438,6 +438,7 @@ class System extends Common
         $data['unit_id']=$system_news['unit_id'];
         $data['unit_name']=$system_news['unit_name'];
         $data['status']=0;
+        $user_id=Db::table('think_student')->where('openid',$system_news['from_user_id'])->value('id');
         $msg='的学习进度';
         $complete_rat=25;
         $type=1;
@@ -458,17 +459,17 @@ class System extends Common
                  ->value('id');
             if($type==1){
                 $unit_list_status=Db::table('think_unit_user_list')
-                    ->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$system_news['from_user_id'],'type'=>$type,'complete_rate'=>$complete_rat]);
+                    ->insert(['unit_list_id'=>$unit_list_id,'user_id'=>$user_id,'type'=>$type,'complete_rate'=>$complete_rat]);
             }else{
                 $unit_list_status=Db::table('think_unit_user_list')
-                    ->where(['user_id'=>$system_news['from_user_id'],'unit_list_id'=>$unit_list_id])
+                    ->where(['user_id'=>$user_id,'unit_list_id'=>$unit_list_id])
                     ->update(['complete_rate'=>$complete_rat]);
             }
             $unit_list_module_id=Db::table('think_unit_list_module')
                 ->where(['unit_list_id'=>$unit_list_id,'type'=>$type])->value(['id']);
             //通过队列模块id添加一条用户的模块进度
             $unit_user_list_module=Db::table('think_user_unit_list_module')
-                ->insert(['user_id'=>$system_news['from_user_id'],'unit_list_module_id'=>$unit_list_module_id,'is_complete'=>1]);
+                ->insert(['user_id'=>$user_id,'unit_list_module_id'=>$unit_list_module_id,'is_complete'=>1]);
             if($news_res && $unit_list_id  && $unit_list_status && $unit_list_module_id && $unit_user_list_module){
 //                $paper_action=$this->paperWord($paper_id,$system_news['from_user_id']);
                 //完成学习或者作业后加积分
