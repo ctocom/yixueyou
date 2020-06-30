@@ -22,14 +22,14 @@ Route::group('index', [
     'systemInfo'=>'index/System/systemInfo',//系统消息对话记录
     'recordErrorQuestion'=>'index/Question/recordErrorQuestion',//录入错题
     'paperQuestion'=>'index/Question/paperQuestion',//试卷内的试题
-    'paperList'=>'index/Question/paperList',//用户试卷列表
     'userErrorquestionList'=>'index/Question/userErrorquestionList',//用户错题试卷列表
     'userPaperAction'=>'index/Question/userPaperAction',//用户试卷生成
     'errCount'=>'index/Question/errCount',//错题数
     'userErr'=>'index/Question/userErr',//错题本
     'errorClear'=>'index/Question/errorClear',//错题清零
     'statisticsStudent'=>'index/Question/statisticsStudent',//统计
-    'unitListBefore'=>'index/StudentCourse/unitListBefore'//未完成的知识点列表
+    'unitListBefore'=>'index/StudentCourse/unitListBefore',//未完成的知识点列表
+    'paperQuestionList'=>'index/Question/paperQuestionList',//试卷试题列表
 ])->middleware(app\index\middleware\CheckLogin::class);
 //->middleware(app\index\middleware\CheckLogin::class)
 //免登录

@@ -9,26 +9,26 @@ use think\Model;
 
 class Question extends Controller
 {
-    //用户的试卷列表
-    public function paperList()
+    //用户的试题列表
+    public function paperQuestionList()
     {
-        $section_id=$this->request->post('section_id');
-        $unit_list_id=$this->request->post('unit_list_id');
-        $user_id=$this->request->post('user_id');
-        $type=$this->request->post('type');
+        $paper_id=$this->request->post('paper_id',0);
+        $user_id=$this->request->post('user_id',0);
         if(!$user_id){
             show([],0,'user_id必传');
         }
-        if(!$section_id){
-            show([],0,'section_id必传');
+        if(!$paper_id){
+            show([],0,'paper_id必传');
         }
-        $paper_list=model('paper')
-            ->where('section_id',$section_id)
-            ->where('user_id',$user_id)
-            ->where('type',$type)
-            ->where('unit_list_id',$unit_list_id)
-            ->select();
-        show($paper_list,200,'ok');
+        $where=[
+            'paper_id'=>$paper_id,
+            'user_id'=>$user_id,
+        ];
+        $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
+        $question_data=[
+            'paper_data'=>$paper_data,
+        ];
+        show($question_data,200,'ok');
     }
     //录入错题
     public function recordErrorQuestion(){
