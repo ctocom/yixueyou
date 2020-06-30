@@ -244,6 +244,9 @@ class Question extends Controller
         if(!$unit_id){
             show([],0,'unit_id必传');
         }
+        if(!$type){
+            show([],0,'type必传');
+        }
         if($unit_list_id){
             //第一遍
             //检测是否审核学习和作业
