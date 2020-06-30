@@ -253,6 +253,7 @@ class Question extends Controller
 //        $section_id=$this->request->post('section_id',0,'intval');
         $unit_list_id=$this->request->post('unit_list_id',0,'intval');
         $type=$this->request->post('type',1,'intval');
+        $student_info=model('student')->where('id',$user_id)->find();
         if(!$user_id){
             show([],0,'user_id必传');
         }
@@ -270,8 +271,8 @@ class Question extends Controller
             if(!$list_id_res){
                 show([],0,'unit_list_id参数错误');
             }
-            $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
-            $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',3)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('from_user_id',$student_info['openid'])->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',3)->where('from_user_id',$student_info['openid'])->where('unit_id',$unit_id)->where('delete_time',0)->find();
             if(empty($is_complete1)){
                 show([],0,'您还没有学习呢');
             }
