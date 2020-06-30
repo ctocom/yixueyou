@@ -130,7 +130,7 @@ class Index extends Common
             $true_rate=[];
             foreach ($student_id as $k=>$v){
                 if(intval($new_user_paper_num[$k])!=0){
-                    $true_rate[]=bcmul(bcdiv(intval($new_student_question[$k]),intval($new_user_paper_num[$k]),2),100);
+                    $true_rate[]=bcdiv(intval($new_student_question[$k]),intval($new_user_paper_num[$k]),2);
                 }else{
                     $true_rate[]=0;
                 }

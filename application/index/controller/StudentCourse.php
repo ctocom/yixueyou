@@ -256,6 +256,13 @@ class StudentCourse extends Controller
                 ->where('complete_num',2)
                 ->select()->toArray();
         }
+        if(!empty($unit_list)){
+            foreach ($unit_list as $k=>$v)
+            {
+                $name=model('unit')->where('id',$v['unit_id'])->value('name');
+                $unit_list[$k]['name']=$name;
+            }
+        }
         show($unit_list,200,'ok');
     }
 }
