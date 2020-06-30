@@ -334,7 +334,7 @@ class Question extends Controller
         $data=[
             'paper_id'=>$paper_res,
             'count_num'=>$count_num,
-            'paper_question_list'=>$paper_question_list
+            'paper_data'=>$paper_question_list
         ];
         show($data,200,'ok');
     }
