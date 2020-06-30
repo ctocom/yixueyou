@@ -427,8 +427,8 @@ class Question extends Controller
         if(!$user_id){
             show([],0,'user_id必传');
         }
-        if(empty($question_arr)){
-            show([],0,'question_arr必传');
+        if(empty($question_arr) || !is_array($question_arr)){
+            show([],0,'question_arr参数错误');
         }
         $res=model('student_errorquestion')
             ->where('user_id',$user_id)
