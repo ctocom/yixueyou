@@ -272,8 +272,14 @@ class Question extends Controller
             }
             $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
             $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',3)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            if(!$is_complete1){
+                show([],0,'您还没有学习呢');
+            }
             if($is_complete1['status']==0){
                 show([],0,'您的学习进度没有被审核');
+            }
+            if(!$is_complete2){
+                show([],0,'您还没有完成作业呢');
             }
             if($is_complete2['status']==0){
                 show([],0,'您的作业没有被审核');
