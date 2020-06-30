@@ -29,7 +29,7 @@ Route::group('index', [
     'userErr'=>'index/Question/userErr',//错题本
     'errorClear'=>'index/Question/errorClear',//错题清零
     'statisticsStudent'=>'index/Question/statisticsStudent',//统计
-    'unitListBefore'=>'index/Question/unitListBefore'//未完成的知识点列表
+    'unitListBefore'=>'index/StudentCourse/unitListBefore'//未完成的知识点列表
 ])->middleware(app\index\middleware\CheckLogin::class);
 
 //免登录

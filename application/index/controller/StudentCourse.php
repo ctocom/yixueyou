@@ -201,9 +201,9 @@ class StudentCourse extends Controller
             'unit_id'=>$unit_id,
             'list_rate2'=>$list_rate2,
             'list_rate3'=>$list_rate3,
+            'list_type'=>$list_type,
             'unit_list'=>$unit_list,
             'unit_info'=>$unit_info,
-            'list_type'=>$list_type,
         ];
         show($info,200,'ok');
     }
