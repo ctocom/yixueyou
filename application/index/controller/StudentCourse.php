@@ -245,14 +245,12 @@ class StudentCourse extends Controller
             $unit_list=model('user_unit')
                 ->where('section_id',$section_id)
                 ->where('user_id',$user_id)
-                ->where('unit_id',$unit_id)
                 ->where('complete_num',1)
                 ->select()->toArray();
         }else if($type==3){
             $unit_list=model('user_unit')
                 ->where('section_id',$section_id)
                 ->where('user_id',$user_id)
-                ->where('unit_id',$unit_id)
                 ->where('complete_num',2)
                 ->select()->toArray();
         }
