@@ -247,8 +247,8 @@ class Question extends Controller
         if($unit_list_id){
             //第一遍
             //检测是否审核学习和作业
-            $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',1)->where('unit_id',$unit_id)->where('delete_time',0)->find();
-            $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
+            $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',3)->where('unit_id',$unit_id)->where('delete_time',0)->find();
             if($is_complete1['status']==0){
                 show([],0,'您的学习进度没有被审核');
             }
@@ -304,6 +304,8 @@ class Question extends Controller
             $question_data[$k]['question_id'] = $v['id'];
             $question_data[$k]['user_id'] = $user_id;
             unset($question_data[$k]['id']);
+            unset($question_data[$k]['order']);
+            unset($question_data[$k]['teacher_id']);
             $paper_question_add = Db::table('think_paper_question')->insertAll($question_data);
         }
         $paper_question_list=model('paperQuestion')
