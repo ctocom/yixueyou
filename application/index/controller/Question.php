@@ -310,15 +310,27 @@ class Question extends Controller
         }
         //随机生成一个试卷
         $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,$type);
+        $question_data_all=[];
         foreach ($question_data as $k=>$v) {
-            $question_data[$k]['paper_id'] = $paper_res;
-            $question_data[$k]['question_id'] = $v['id'];
-            $question_data[$k]['user_id'] = $user_id;
-            unset($question_data[$k]['id']);
-            unset($question_data[$k]['order']);
-            unset($question_data[$k]['teacher_id']);
-            $paper_question_add = Db::table('think_paper_question')->insertAll($question_data);
+            $question_data_all[$k]['name']=$v['name'];
+            $question_data_all[$k]['type1']=$v['type1'];
+            $question_data_all[$k]['type']=$v['type'];
+            $question_data_all[$k]['title']=$v['title'];
+            $question_data_all[$k]['radios']=$v['radios'];
+            $question_data_all[$k]['analysis']=$v['analysis'];
+            $question_data_all[$k]['options']=$v['options'];
+            $question_data_all[$k]['answer']=$v['answer'];
+            $question_data_all[$k]['keyword']=$v['keyword'];
+            $question_data_all[$k]['keyword_imp']=$v['keyword_imp'];
+            $question_data_all[$k]['course_id']=$v['course_id'];
+            $question_data_all[$k]['section_id']=$v['section_id'];
+            $question_data_all[$k]['unit_id']=$v['unit_id'];
+            $question_data_all[$k]['score']=$v['score'];
+            $question_data_all[$k]['create_time']=time();
+            $question_data_all[$k]['paper_id']=$paper_res;
+            $question_data_all[$k]['user_id']=$user_id;
         }
+        $paper_question_add = Db::table('think_paper_question')->insertAll($question_data_all);
         $paper_question_list=model('paperQuestion')
             ->field('id,title,type,radios,unit_id')
             ->where('user_id',$user_id)
