@@ -24,6 +24,9 @@ class Index extends Common
         ];
         $images_data=model('background_images')->where($where)->select()->toArray();
         $images_data=array_column($images_data,'img_url');
+        foreach ($images_data as $k=>$v){
+            $images_data[$k]=Config::get('domain').$v;
+        }
         show($images_data,200,'ok');
     }
 }
