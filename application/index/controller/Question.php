@@ -237,15 +237,12 @@ class Question extends Controller
         $unit_id=$this->request->post('unit_id',0,'intval');
 //        $section_id=$this->request->post('section_id',0,'intval');
         $unit_list_id=$this->request->post('unit_list_id',0,'intval');
-        $type=$this->request->post('type',0,'intval');
+        $type=$this->request->post('type',1,'intval');
         if(!$user_id){
             show([],0,'user_id必传');
         }
         if(!$unit_id){
             show([],0,'unit_id必传');
-        }
-        if(!$type){
-            show([],0,'type必传');
         }
         if($unit_list_id){
             //第一遍
