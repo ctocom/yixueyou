@@ -260,6 +260,9 @@ class Question extends Controller
             show([],0,'unit_id必传');
         }
         if($unit_list_id){
+            if($type!=1){
+                show([],0,'type参数错误');
+            }
             //第一遍
             //检测是否审核学习和作业
             //判断unit_list_id是否正确
