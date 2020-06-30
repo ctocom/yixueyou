@@ -55,6 +55,11 @@ class Question extends Controller
                     $user_unit_res= model('user_unit')->where('unit_id',$unit_id)->where('user_id',$user_id)->update(['complete_num'=>3]);
                 }else if($unit_list_type==1){
                     $unit_list_id=model('paper')->where('id',$paper_id)->value('unit_list_id');
+                    //检测该知识点第一盏灯是否亮
+                    $is_complete_num=model('user_unit')->where('user_id',$user_id)->where('unit_id',$unit_id)->where('complete_num',1)->find();
+                    if($is_complete_num){
+                        show([],0,'该知识点已经达标');
+                    }
                     $unit_user_list_res=model('unit_user_list')
                         ->where('unit_list_id',$unit_list_id)
                         ->where('user_id',$user_id)
