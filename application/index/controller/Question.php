@@ -424,7 +424,10 @@ class Question extends Controller
         }
         $question_num=9;
         $paper_num=intval(bcmul($paper_num,$question_num));
-        $true_rate=bcdiv($student_errorquestion_num,$paper_num,2);
+        $true_rate=0;
+        if($paper_num!=0){
+            $true_rate=bcmul(bcdiv($student_errorquestion_num,$paper_num,2),100);
+        }
         //学习时长统计
         $study_time=model('student')->where('id',$user_id)->value('study_time');
         //排行榜统根据学习时长排行
@@ -437,11 +440,15 @@ class Question extends Controller
         foreach ($study_complete_num as $v){
             $study_rate+=$v;
         }
-        $study_rate=bcdiv($study_rate,$unit_num,2);
+        if($unit_num!=0){
+            $study_rate=bcmul(bcdiv($study_rate,$unit_num,2),100);
+        }else{
+            $study_rate=0;
+        }
         $data=[
             'true_rate'=>$true_rate,
             'study_rate'=>$study_rate,
-            'study_time'=>$study_time,
+//            'study_time'=>$study_time,
             'student_rank'=>$student_rank
         ];
         show($data,200,'ok');

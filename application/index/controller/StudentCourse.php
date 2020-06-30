@@ -233,14 +233,14 @@ class StudentCourse extends Controller
                 ->where('section_id',$section_id)
                 ->where('user_id',$user_id)
                 ->where('unit_id',$unit_id)
-                ->where('compltet_num',1)
+                ->where('complete_num',1)
                 ->select()->toArray();
         }else if($type==3){
             $unit_list=model('user_unit')
                 ->where('section_id',$section_id)
                 ->where('user_id',$user_id)
                 ->where('unit_id',$unit_id)
-                ->where('compltet_num',2)
+                ->where('complete_num',2)
                 ->select()->toArray();
         }
         show($unit_list,200,'ok');
