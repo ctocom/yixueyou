@@ -439,13 +439,14 @@ class System extends Common
         $data['unit_name']=$system_news['unit_name'];
         $data['status']=0;
         $user_id=Db::table('think_student')->where('openid',$system_news['from_user_id'])->value('id');
-        $msg='的学习进度';
-        $complete_rat=25;
-        $type=1;
         if($type==3){
             $complete_rat=50;
             $msg='的作业情况';
             $type=2;
+        }else{
+            $msg='的学习进度';
+            $complete_rat=25;
+            $type=1;
         }
         if($res && $status==1){
             try{
