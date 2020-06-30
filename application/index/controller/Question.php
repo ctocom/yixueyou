@@ -38,7 +38,13 @@ class Question extends Controller
         if(!$user_id){
             show([],0,'user_id必传');
         }
+        if(!$paper_id){
+            show([],0,'paper_id必传');
+        }
         $unit_id=model('paper')->where('id',$paper_id)->value('unit_id');
+        if(!$unit_id){
+            show([],0,'paper_id参数错误');
+        }
         $section_id=model('unit')->where('id',$unit_id)->value('section_id');
         if(empty($question_arr)){
             //没有错误 直接达标
@@ -70,7 +76,7 @@ class Question extends Controller
                     //知识点亮一个灯
                     $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                 }
-                if(!$unit_user_list_res){
+                if(!$unit_user_list_res || !$user_unit_res){
                     show([],0,'请联系管理员');
                 }
             //加积分
@@ -247,6 +253,11 @@ class Question extends Controller
         if($unit_list_id){
             //第一遍
             //检测是否审核学习和作业
+            //判断unit_list_id是否正确
+            $list_id_res=model('unit_list')->where('id',$unit_list_id)->find();
+            if(!$list_id_res){
+                show([],0,'unit_list_id参数错误');
+            }
             $is_complete1=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',2)->where('unit_id',$unit_id)->where('delete_time',0)->find();
             $is_complete2=model('system_news')->where('unit_list_id',$unit_list_id)->where('type',3)->where('unit_id',$unit_id)->where('delete_time',0)->find();
             if($is_complete1['status']==0){
