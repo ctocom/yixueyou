@@ -126,10 +126,10 @@ class StudentCourse extends Controller
             if(!$unit_res){
                 //第一遍循环
                 $complete_unit_id=model('user_unit')
-                    ->where('complete_num',1)
                     ->where('section_id',$section_id)
                     ->where('user_id',$user_id)
                     ->order('id')->value('unit_id');
+
                 $unit_id=model('unit')
                     ->where('id','>',$complete_unit_id)
                     ->where('delete_time',0)
