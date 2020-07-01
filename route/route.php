@@ -31,7 +31,7 @@ Route::group('index', [
     'unitListBefore'=>'index/StudentCourse/unitListBefore',//未完成的知识点列表
     'paperQuestionList'=>'index/Question/paperQuestionList',//试卷试题列表
 ])->middleware(app\index\middleware\CheckLogin::class);
-//->middleware(app\index\middleware\CheckLogin::class)
+///->middleware(app\index\middleware\CheckLogin::class)
 //免登录
 Route::group('index', [
     'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
