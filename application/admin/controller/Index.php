@@ -70,6 +70,7 @@ class Index extends Common
         cache('notice_config', $list);
         return $list;
     }
+    //统计
     public function statistics()
     {
         $teacher_info=session('user_auth');
@@ -131,7 +132,7 @@ class Index extends Common
             $true_rate=[];
             foreach ($student_id as $k=>$v){
                 if(intval($new_user_paper_num[$k])!=0){
-                    $true_rate[]=bcdiv(intval($new_student_question[$k]),intval($new_user_paper_num[$k]),2);
+                    $true_rate[]=bcsub(100,bcmul(bcdiv(intval($new_student_question[$k]),intval($new_user_paper_num[$k]),2),100));
                 }else{
                     $true_rate[]=0;
                 }
@@ -141,15 +142,16 @@ class Index extends Common
             $unit_num=intval(bcmul(count($unit_num),3));
             $study_complete_num=model('user_unit')
                 ->where('user_id','in',$student_id)
-                ->select();
+                ->select()->toArray();
             $new_study_complete_num=[];
             foreach ($study_complete_num as $k=>$v){
                 $new_study_complete_num[$v['user_id']][]=$v;
             }
+//            print_r($new_study_complete_num);exit;
             $new_study_rate=[];
             foreach ($student_id as $k=>$v){
                 if(isset($new_study_complete_num[$v])){
-                    $new_study_rate[]=count($new_study_complete_num[$v]);
+                    $new_study_rate[]=array_sum(array_column($new_study_complete_num[$v],'complete_num'));
                 }else{
                     $new_study_rate[]=0;
                 }

@@ -137,5 +137,19 @@ class SignIn extends Controller
         }
         show($list,200,'ok');
     }
-
+    /*
+     * 签到记录
+     */
+    public function signList()
+    {
+        $user_id=$this->request->post('user_id');
+        if(!$user_id){
+            show([],0,'user_id必传');
+        }
+        $user_sign=model('student_sign')->where('user_id',$user_id)->select()->toArray();
+        foreach ($user_sign as $k=>$v){
+            $v['sign_in_time']=date('Y-m-d H:i:s',$v);
+        }
+        show($user_sign,200,'ok');
+    }
 }
