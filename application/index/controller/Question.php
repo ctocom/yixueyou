@@ -131,6 +131,7 @@ class Question extends Controller
 //                    ->where('paper_id',$paper_id)
 //                    ->update(['delete_time'=>time()]);
                 if(is_array($question_arr)){
+                    $data=[];
                     foreach ($question_arr as $v){
                         $err_res=model('studentErrorquestion')->where('question_id',$v)->find();
                         if(!$err_res){
