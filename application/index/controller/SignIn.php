@@ -148,7 +148,7 @@ class SignIn extends Controller
         }
         $user_sign=model('student_sign')->where('user_id',$user_id)->select()->toArray();
         foreach ($user_sign as $k=>$v){
-            $v['sign_in_time']=date('Y-m-d H:i:s',$v);
+            $user_sign[$k]['sign_in_time']=date('Y-m-d H:i:s',$v['sign_in_time']);
         }
         show($user_sign,200,'ok');
     }
