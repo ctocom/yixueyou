@@ -33,6 +33,7 @@ class Index extends Common
         $system_num=model('system_news')
             ->where('to_user',$admin_info['user'])
             ->where('is_read',0)
+            ->where('delete_time',0)
             ->count();
         $this->assign('system_num', $system_num);
         $this->assign('info', $info);
