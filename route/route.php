@@ -32,7 +32,7 @@ Route::group('index', [
     'paperQuestionList'=>'index/Question/paperQuestionList',//试卷试题列表
     'signList'=>'index/SignIn/signList',//积分详情
 ])->middleware(app\index\middleware\CheckLogin::class);
-///->middleware(app\index\middleware\CheckLogin::class)
+//->middleware(app\index\middleware\CheckLogin::class)
 //免登录
 Route::group('index', [
     'studyMaterialList'=>'index/StudyMaterial/studyMaterialList',//知识点学习资料
