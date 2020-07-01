@@ -126,19 +126,24 @@ class Question extends Controller
                 }
             }else{
                 //第二次录错题  录完达标
-                $delete_res=model('studentErrorquestion')
-                    ->where('user_id',$user_id)
-                    ->where('paper_id',$paper_id)
-                    ->update(['delete_time'=>time()]);
+//                $delete_res=model('studentErrorquestion')
+//                    ->where('user_id',$user_id)
+//                    ->where('paper_id',$paper_id)
+//                    ->update(['delete_time'=>time()]);
                 if(is_array($question_arr)){
                     foreach ($question_arr as $v){
-                        $data[]=[
-                            'question_id'=>$v,
-                            'paper_id'=>$paper_id,
-                            'user_id'=>$user_id,
-                            'create_time'=>time()
-                        ];
+                        $err_res=model('studentErrorquestion')->where('question_id',$v)->find();
+                        if(!$err_res){
+                            $data[]=[
+                                'question_id'=>$v,
+                                'paper_id'=>$paper_id,
+                                'user_id'=>$user_id,
+                                'create_time'=>time()
+                            ];
+                        }
                     }
+                }else{
+                    show([],0,'试题参数错误');
                 }
                 $res=model('studentErrorquestion')->insertAll($data);
                 if($res){
