@@ -142,7 +142,10 @@ class Question extends Controller
                 }
                 $res=model('studentErrorquestion')->insertAll($data);
                 if($res){
-                    $unit_list_type=model('paper')->where('id',$paper_id)->value('type');
+                    $unit_list_type=model('paper')->where('paper_id',$paper_id)->where('id',$paper_id)->value('type');
+                    if(!$unit_list_type){
+                        show([],0,'paper_id参数错误');
+                    }
                     if($unit_list_type==2){
                         $complete_num=2;
                         //知识点亮一个灯
