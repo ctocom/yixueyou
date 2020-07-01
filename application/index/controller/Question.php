@@ -143,10 +143,14 @@ class Question extends Controller
                             ];
                         }
                     }
+                    if(!empty($data)){
+                        $res=model('studentErrorquestion')->insertAll($data);
+                    }else{
+                        $res=true;
+                    }
                 }else{
                     show([],0,'试题参数错误');
                 }
-                $res=model('studentErrorquestion')->insertAll($data);
                 if($res){
                     $unit_list_type=model('paper')->where('paper_id',$paper_id)->where('id',$paper_id)->value('type');
                     if(!$unit_list_type){
