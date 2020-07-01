@@ -152,7 +152,7 @@ class Question extends Controller
                     show([],0,'试题参数错误');
                 }
                 if($res){
-                    $unit_list_type=model('paper')->where('paper_id',$paper_id)->where('id',$paper_id)->value('type');
+                    $unit_list_type=model('paper')->where('id',$paper_id)->value('type');
                     if(!$unit_list_type){
                         show([],0,'paper_id参数错误');
                     }
