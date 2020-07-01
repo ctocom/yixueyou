@@ -74,26 +74,27 @@ class Index extends Common
     public function statistics()
     {
         $teacher_info=session('user_auth');
-        $teacher_id=$teacher_info['uid'];
-        if($teacher_id==1){
-            $where=[];
-        }else{
-            $where=[
-                'teacher_id'=>$teacher_id
-            ];
-        }
+        $t_id=$teacher_info['uid'];
         if ($this->request->isAjax()){
+            $teacher_id=explode(',',$this->request->post('teacher_id'));
+            $type=$this->request->post('type',0);
+            if($type==1){
+//                $t_id=model('user')->column('uid');
+                $teacher_id=$t_id;
+            }else{
+                $teacher_id=$teacher_id;
+            }
             $student_name=model('student')
-                ->where('teacher_id',$teacher_id)
+                ->where('teacher_id','in',$teacher_id)
                 ->where('delete_time',0)
                 ->column('name');
             $student_info=model('student')
                 ->field('name,id')
-                ->where($where)
+                ->where('teacher_id','in',$teacher_id)
                 ->where('delete_time',0)
                 ->select();
             $student_id=model('student')
-                ->where('teacher_id',$teacher_id)
+                ->where('teacher_id','in',$teacher_id)
                 ->where('delete_time',0)
                 ->column('id');
             //学生正确率
@@ -172,6 +173,14 @@ class Index extends Common
             ];
             show($student,200,'ok');
         }else{
+            if($t_id==1){
+                $teacher_list=model('user')->where('uid','>',1)->select()->toArray();
+                $this->assign('teacher_list',$teacher_list);
+                $this->assign('type',1);
+            }else{
+                $this->assign('type',2);
+            }
+            //查出所有的老师
             return $this->fetch();
         }
     }
