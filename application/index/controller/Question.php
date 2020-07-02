@@ -24,7 +24,7 @@ class Question extends Controller
             'paper_id'=>$paper_id,
             'user_id'=>$user_id,
         ];
-        $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
+        $paper_data=model('paper_Question')->field('question_id,title,type,radios,unit_id')->where($where)->select();
         $question_data=[
             'paper_data'=>$paper_data,
         ];
@@ -361,6 +361,7 @@ class Question extends Controller
             $question_data_all[$k]['create_time']=time();
             $question_data_all[$k]['paper_id']=$paper_res;
             $question_data_all[$k]['user_id']=$user_id;
+            $question_data_all[$k]['question_id']=$v['id'];
         }
         $paper_question_add = Db::table('think_paper_question')->insertAll($question_data_all);
         $paper_question_list=model('paperQuestion')
