@@ -7,20 +7,24 @@ class UnitList extends Common
     {
         if($this->request->isAjax())
         {
-            $user_id=$this->request->get('user_id','0','intval');
-            $type=$this->request->get('type','0','intval');
-            $complete_rate=$this->request->get('complete_status','-1');
-            $where=[];
+            $user_account=$this->request->get('user_account','','trim');
             $data=[];
-            if($user_id){
-                $where['user_id']=$user_id;
-            }else if($type){
-                $where['type']=$type;
-            }else if($complete_rate>=0){
-                $where['complete_rate']=$complete_rate;
+            $where=[];
+            if($user_account){
+                if(isAllChinese($user_account)){
+                    $user_id=model('student')->where('name',$user_account)->value('id');
+                    $where=[
+                        'user_id'=>$user_id
+                    ];
+                }else{
+                    $user_id=model('student')->where('account',$user_account)->value('id');
+                    $where=[
+                        'user_id'=>$user_id
+                    ];
+                }
             }
             $data['limit']=$this->request->get('limit', 10, 'intval');
-            $list=model('unit_user_list')
+            $list=model('user_unit')
                 ->where($where)
                 ->paginate($data['limit'], false, ['query' => $data]);
             $total=$list->total();
@@ -29,9 +33,19 @@ class UnitList extends Common
                 $unit_data[$key]=$val;
             }
             foreach ($unit_data as $key=>$v){
-                $unit_id=model('unit_list')->where('id',$v['unit_list_id'])->value('unit_id');
                 $unit_data[$key]['user_account']=model('student')->where('id',$v['user_id'])->value('account');
-                $unit_data[$key]['unit_name']=model('unit')->where('id',$unit_id)->value('name');
+                $unit_data[$key]['name']=model('student')->where('id',$v['user_id'])->value('name');
+                $unit_data[$key]['unit_name']=model('unit')->where('id',$v['unit_id'])->value('name');
+                if($v['complete_num']==1){
+                    $unit_data[$key]['complete_num']=33;
+                    $unit_data[$key]['type']='1';
+                }else if($v['complete_num']==2){
+                    $unit_data[$key]['complete_num']=66;
+                    $unit_data[$key]['type']='2';
+                }else{
+                    $unit_data[$key]['complete_num']=100;
+                    $unit_data[$key]['type']='3';
+                }
             }
            return show($unit_data,0,'',['count' => $total]);
         }else{

@@ -5,7 +5,7 @@
         <form class="layui-form">
             <div class="layui-inline">
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input searchVal" placeholder="输入用户账号" />
+                    <input type="text" class="layui-input searchVal" placeholder="输入学生账号或者用户名" />
                 </div>
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
             </div>
@@ -29,7 +29,7 @@
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery, table = layui.table;
         var element = layui.element;
-        //用户列表
+        //知识点列表
         var tableIns = table.render({
             elem: '#unitList',
             url : "{:url('/admin/unitTask')}",
@@ -42,17 +42,18 @@
             cols : [[
                 {field: 'id', title: 'Id', width:100, align:"center"},
                 {field: 'unit_name', title: '知识点名',align:'center'},
+                {field: 'user_account', title: '学生用户名',align:'center'},
                 {field: 'user_account', title: '学生账号',align:'center'},
-                {field: 'complete_rate', title: '进度',align:'center',sort: true,templet: function(d){
+                {field: 'complete_num', title: '进度',align:'center',sort: true,templet: function(d){
                         //***重点***：判断颜色
                         var ys = '';
-                        if(25<d.complete_rate && d.complete_rate<100){
+                        if(66<=d.complete_num && d.complete_num<100){
                             ys='layui-bg-orange'
-                        }else if(0<d.complete_rate && d.complete_rate<=30){
+                        }else if(0<d.complete_num && d.complete_num<=33){
                             ys='layui-bg-red'
                         }
                         //***重点***：拼接进度条
-                        return '<div class="layui-progress layui-progress-big" lay-showpercent="true"><div class="layui-progress-bar '+ys+'" lay-percent="'+d.complete_rate+'%"></div></div><br>'
+                        return '<div class="layui-progress layui-progress-big" lay-showpercent="true"><div class="layui-progress-bar '+ys+'" lay-percent="'+d.complete_num+'%"></div></div><br>'
                     }},
                 {field: 'type', title: '第几遍',align:'center'},
                 // {title: '操作', width:170, templet:'#unitListBar',fixed:"right",align:"center"}
@@ -71,12 +72,12 @@
                     curr: 1 //重新从第 1 页开始
                 },
                 where: {
-                    user_id: $(".searchVal").val()  //搜索的关键字
+                    user_account: $(".searchVal").val()  //搜索的关键字
                 }
             })
         });
 
-        //添加用户
+        //添加知识点
         function add(){
             var index = layui.layer.open({
                 title : "添加试题",
@@ -98,10 +99,10 @@
                 layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
-        //编辑用户
+        //编辑知识点
         function edit(uid){
             var index = layui.layer.open({
-                title : "编辑用户",
+                title : "编辑知识点",
                 type : 2,
                 content : "{:url('/admin/edit')}"+'?uid='+uid,
                 success : function(layero, index){
