@@ -44,6 +44,7 @@ class System extends Controller
         if(!$from_user_id){
             show([],0,'from_user_id必传');
         }
+        $student_openid=model('student')->where('id',$user_id)->value('openid');
         $student_info=model('student')->where('id',$user_id)->find();
         $where1=['to_user_id'=>$student_info['openid'],'from_user_id'=>$from_user_id];
         $where2=['to_user_id'=>$from_user_id,'from_user_id'=>$student_info['openid']];
@@ -58,7 +59,23 @@ class System extends Controller
             ->select()
             ->toArray();
         $chat_list=array_merge($chat_list1,$chat_list2);
-        $chat_list= array_sort($chat_list,'send_time');
+        $a=array_column($chat_list,'send_time');
+        array_multisort($a,SORT_ASC,$chat_list);
+        $domain=Config::get('domain');
+        foreach ($chat_list as $k=>$v){
+            $chat_list[$k]['send_time']=date('Y-m-d H:i:s',$chat_list[$k]['send_time']);
+            if($student_openid==$v['from_user_id']){
+                //发送者是学生
+                $student=model('student')->where('openid',$v['from_user_id'])->find();
+                $chat_list[$k]['head']=$domain.$student['head'];
+                $chat_list[$k]['user_name']=$student['name'];
+            }else{
+                //发送者是老师
+                $teacher=model('user')->where('uid',$v['from_user_id'])->find();
+                $chat_list[$k]['head']=$domain.$teacher['head'];
+                $chat_list[$k]['user_name']=$teacher['name'];
+            }
+        }
         show($chat_list,200,'ok');
     }
 }
