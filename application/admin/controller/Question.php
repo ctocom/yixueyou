@@ -52,7 +52,7 @@ class Question extends Common
 
            }else if($data['type']==2){
                //多选题
-               $data['options']=$answer2;
+               $data['options']=implode('|',$answer);
            }else if($data['type']==3){
                //简答题
                $data['keyword']=$answer;
@@ -103,7 +103,7 @@ class Question extends Common
 
             }else if($data['type']==2){
                 //多选题
-                $data['options']=$answer2;
+                $data['options']=implode('|',$answer);
             }else if($data['type']==3){
                 //简答题
                 $data['keyword']=$answer;
@@ -128,6 +128,9 @@ class Question extends Common
             $course_data=Course::getCourseInfo([]);
             $question_type=QuestionType::getQuestionType();
             $question_data=model('question')->where('id',$id)->find();
+            if($question_data['type']==1){
+                $question_data['options']=explode('|',$question_data['options']);
+            }
             $section_data=model('section')->select();
             $unit_data=model('unit')->select();
             $this->assign('question_data',$question_data);

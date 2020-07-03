@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/TR/REC-html40">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>测试试卷</title>
+    <title>易学优课</title>
     <style>
         @font-face {
             font-family:"Times New Roman";
@@ -22,31 +22,47 @@
     <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:TrackMoves>false</w:TrackMoves><w:TrackFormatting/><w:ValidateAgainstSchemas/><w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid><w:IgnoreMixedContent>false</w:IgnoreMixedContent><w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText><w:DoNotPromoteQF/><w:LidThemeOther>EN-US</w:LidThemeOther><w:LidThemeAsian>ZH-CN</w:LidThemeAsian><w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript><w:Compatibility><w:BreakWrappedTables/><w:SnapToGridInCell/><w:WrapTextWithPunct/><w:UseAsianBreakRules/><w:DontGrowAutofit/><w:SplitPgBreakAndParaMark/><w:DontVertAlignCellWithSp/><w:DontBreakConstrainedForcedTables/><w:DontVertAlignInTxbx/><w:Word11KerningPairs/><w:CachedColBalance/><w:UseFELayout/></w:Compatibility><w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel><m:mathPr><m:mathFont m:val="Cambria Math"/><m:brkBin m:val="before"/><m:brkBinSub m:val="--"/><m:smallFrac m:val="off"/><m:dispDef/><m:lMargin m:val="0"/> <m:rMargin m:val="0"/><m:defJc m:val="centerGroup"/><m:wrapIndent m:val="1440"/><m:intLim m:val="subSup"/><m:naryLim m:val="undOvr"/></m:mathPr></w:WordDocument></xml><![endif]-->
 </head>
 <body>
-<h1>试卷</h1>
-    {foreach $data as $v}
-    <p>
-       {$v['title']|raw}
-    </p>
+<h1>试卷答案</h1>
+<p>判断题  1为正确  2为错误</p>
+    {foreach $data as $k=>$v}
+    ({$k+1}) 、
+    <!--<p>-->
+       <!--{$v['title']|raw}-->
+    <!--</p>-->
     {if ($v['type']==1)}
     <p>
         {$v['radios']}
     </p>
-    {else}
+    {/if}
     {if ($v['type']==2)}
     <p>
         {$v['radios']}
     </p>
-    {else}
-    {if $v['type']==3}
-    <p>
-        {$v['keyword']}
-    </p>
-    {else}
-    {if $v['type']==4}
+    {/if}
+    {if ($v['type']==3)}
     <p>
         {$v['keyword']}
     </p>
     {/if}
+    {if ($v['type']==4)}
+    <p>
+        $v['answer']
+        <!--{if($v['answer']==1)}-->
+        <!--√-->
+        <!--{else}-->
+        <!--×-->
+        <!--{/if]-->
+    </p>
+    {/if}
+    {if ($v['type']==5)}
+    <p>
+        $v['keyword']
+    </p>
+    {/if}
+    试题解析:
+    <p>
+        $v['analysis']
+    </p>
     {/foreach}
 </body>
 </html>

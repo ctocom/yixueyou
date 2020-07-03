@@ -46,6 +46,7 @@ class System extends Controller
         }
         $student_openid=model('student')->where('id',$user_id)->value('openid');
         $student_info=model('student')->where('id',$user_id)->find();
+        $teacher_info=model('teacher')->where('uid',$from_user_id)->find();
         $where1=['to_user_id'=>$student_info['openid'],'from_user_id'=>$from_user_id];
         $where2=['to_user_id'=>$from_user_id,'from_user_id'=>$student_info['openid']];
         $chat_list1=model('systemNews')
@@ -76,6 +77,10 @@ class System extends Controller
                 $chat_list[$k]['user_name']=$teacher['name'];
             }
         }
-        show($chat_list,200,'ok');
+        $data=[
+            'chat_list'=>$chat_list,
+            'user_name'=>$teacher_info['name']
+        ];
+        show($data,200,'ok');
     }
 }

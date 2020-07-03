@@ -74,9 +74,9 @@
                 <option value=""></option>
                 {foreach $question_type as $key=>$v}
                 {if $question_data.type1==$v.id}
-                <option value="{$v.id}" selected>{$v.name}</option>
+                <option value="{$v.id}"  selected>{$v.name}</option>
                 {else}
-                <option value="{$v.id}">{$v.name}</option>
+                <option disabled value="{$v.id}">{$v.name}</option>
                 {/if}
                 {/foreach}
             </select>
@@ -92,39 +92,72 @@
             <textarea name="question" placeholder="" class="layui-textarea">{$question_data.radios}</textarea>
         </div>
     </div>
-    <div class="layui-form-item box_1" style="display: none">
+    {if ($question_data.type)==1}
+    <div class="layui-form-item box_1"  style="display: block">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <input type="radio" name="answer" value="A" title="A">
+            {if ($question_data.radios)=="A"}
+            <input checked type="radio" chekout name="answer" value="A" title="A">
             <input type="radio" name="answer" value="B" title="B">
             <input type="radio" name="answer" value="C" title="C">
             <input type="radio" name="answer" value="D" title="D">
+            {/if}
+            {if ($question_data.radios)=="B"}
+            <input checked type="radio"  name="answer" value="A" title="A">
+            <input type="radio" chekout name="answer" value="B" title="B">
+            <input type="radio" name="answer" value="C" title="C">
+            <input type="radio" name="answer" value="D" title="D">
+            {/if}
+            {if ($question_data.radios)=="C"}
+            <input checked type="radio"  name="answer" value="A" title="A">
+            <input type="radio"  name="answer" value="B" title="B">
+            <input type="radio" chekout name="answer" value="C" title="C">
+            <input type="radio" name="answer" value="D" title="D">
+            {/if}
+            {if ($question_data.radios)=="D"}
+            <input checked type="radio"  name="answer" value="A" title="A">
+            <input type="radio"  name="answer" value="B" title="B">
+            <input type="radio" chekout name="answer" value="C" title="C">
+            <input type="radio" chekout name="answer" value="D" title="D">
+            {/if}
         </div>
     </div>
-    <div class="layui-form-item box_2" style="display: none">
+    {/if}
+    {if ($question_data.type)==2}
+    <div class="layui-form-item box_2"  style="display: block">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="answer" value="A" title="A">
-            <input type="checkbox" name="answer" value="B" title="B">
-            <input type="checkbox" name="answer" value="C" title="C">
-            <input type="checkbox" name="answer" value="D" title="D">
-            <input type="checkbox" name="answer" value="E" title="E">
-            <input type="checkbox" name="answer" value="F" title="F">
+            <input type="checkbox"  name="answer[]" value="A" title="A">
+            <input type="checkbox"   name="answer[]" value="B" title="B">
+            <input type="checkbox"   name="answer[]" value="C" title="C">
+            <input type="checkbox"  name="answer[]" value="D" title="D">
+            <input type="checkbox"  name="answer[]" value="E" title="E">
+            <input type="checkbox"  name="answer[]" value="F" title="F">
         </div>
     </div>
-    <div class="layui-form-item  box_3" style="display:none">
+    {/if}
+    {if ($question_data.type)==5 || ($question_data.type==3)}
+    <div class="layui-form-item  box_3" style="display: block">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <textarea name="answer" placeholder="" class="layui-textarea"></textarea>
+            <textarea name="answer" placeholder="" class="layui-textarea">{$question_data.keyword}</textarea>
         </div>
     </div>
-    <div class="layui-form-item box_4" style="display: none">
+    {/if}
+    {if ($question_data.type)==4}
+    <div class="layui-form-item box_4" style="display: block">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <input type="radio" name="answer" value="1" title="√">
+            {if($question_data.answer)==1}
+            <input type="radio" checked name="answer" value="1" title="√">
             <input type="radio" name="answer" value="2" title="×">
+            {/if} {if($question_data.answer)==2}
+            <input type="radio"  name="answer" value="1" title="√">
+            <input type="radio" checked name="answer" value="2" title="×">
+            {/if}
         </div>
     </div>
+    {/if}
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">试题解析</label>
         <div class="layui-input-block">
@@ -157,24 +190,26 @@
 
         }); //建立编辑器
         //监听参考答案下拉菜单
-        form.on('select(question_type)', function(data){
-            $('.box_1').css('display','none');
-            $('.box_2').css('display','none');
-            $('.box_3').css('display','none');
-            $('.box_4').css('display','none');
-            if(data.value==1){
-                $('.box_1').css('display','block');
-            }
-            if(data.value==2){
-                $('.box_2').css('display','block');
-            }
-            if(data.value==3){
-                $('.box_3').css('display','block');
-            }
-            if(data.value==4){
-                $('.box_4').css('display','block');
-            }
-        });
+        // form.on('select(question_type)', function(data){
+        //     $('.box_1').css('display','none');
+        //     $('.box_2').css('display','none');
+        //     $('.box_3').css('display','none');
+        //     $('.box_4').css('display','none');
+        //     $("input[name='answer']").val('');
+        //     $("textarea[name='answer']").html('');
+        //     if(data.value==1){
+        //         $('.box_1').css('display','block');
+        //     }
+        //     if(data.value==2){
+        //         $('.box_2').css('display','block');
+        //     }
+        //     if(data.value==3){
+        //         $('.box_3').css('display','block');
+        //     }
+        //     if(data.value==4){
+        //         $('.box_4').css('display','block');
+        //     }
+        // });
         //监听科目
         form.on('select(course)', function(data){
            var course=data.value;

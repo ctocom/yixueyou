@@ -341,7 +341,7 @@ class Question extends Controller
             show([], 0, '题库里面的题太少了');
         }
         //随机生成一个试卷
-        $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,$type);
+        $paper_res=paper_random_data($user_id,$unit_id,$unit_list_id,$type);//试卷id
         $question_data_all=[];
         foreach ($question_data as $k=>$v) {
             $question_data_all[$k]['name']=$v['name'];
@@ -364,6 +364,10 @@ class Question extends Controller
             $question_data_all[$k]['question_id']=$v['id'];
         }
         $paper_question_add = Db::table('think_paper_question')->insertAll($question_data_all);
+        //生成试卷文件
+        $this->paperWord($paper_res,$user_id,1);
+        //生成答案文件
+        $this->paperWord($paper_res,$user_id,2);
         $paper_question_list=model('paperQuestion')
             ->field('id,title,type,radios,unit_id')
             ->where('user_id',$user_id)
@@ -390,7 +394,7 @@ class Question extends Controller
             ->count();
         show($errCount,200,'ok');
     }
-    //错题本、历史错题打印
+    //错题本、历史错题列表
     public function userErr()
     {
         $user_id=$this->request->post('user_id',0,'intval');
@@ -439,6 +443,13 @@ class Question extends Controller
         }
         show($err_data,200,'ok');
 
+
+    }
+    //错题本、历史错题打印
+    public function userErrorNotice()
+    {
+        $user_id=$this->request->post('user_id');
+        $type=$this->request->post('type');
 
     }
     //错题清零
@@ -511,5 +522,44 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
-
+    //生成试题
+    public function paperWord($paper_id,$user_id,$type=1)
+    {
+        //从数据库查这个学生试卷的所有题
+        $data=[];
+        $where=[
+            'paper_id'=>$paper_id,
+            'user_id'=>$user_id
+        ];
+        if($type==1){
+            //生成试题
+            $name='question';
+        }else{
+            //生成答案
+            $name='question_answer';
+        }
+        $data=model('paper_question')->where($where)->select();
+        $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
+        $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
+        $fileContent = WordMake($content);//生成word内容
+        $url='uploads/paper/'.randomFileName().".doc";
+//        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
+        $fp = fopen($url, 'w');//打开生成的文档
+        //将试卷路径保存到试卷表
+        if($type==1){
+            //生成试题
+            $update=['paper_url'=>$url];
+        }else{
+            //生成答案
+            $update=['answer_url'=>$url];
+        }
+        $res=model('paper')->where('id',$paper_id)->update($update);
+        fwrite($fp, $fileContent);//写入包保存文件
+        fclose($fp);
+        if($res && $data){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

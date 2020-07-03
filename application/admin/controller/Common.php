@@ -67,7 +67,7 @@ class Common extends Controller
     {
        return bcdiv($num,100,0);
     }
-    public function paperWord($paper_id,$user_id)
+    public function paperWord($paper_id,$user_id,$type=1)
     {
         //从数据库查这个学生试卷的所有题
         $data=[];
@@ -75,15 +75,29 @@ class Common extends Controller
             'paper_id'=>$paper_id,
             'user_id'=>$user_id
         ];
+        if($type==1){
+            //生成试题
+            $name='question';
+        }else{
+            //生成答案
+            $name='question_answer';
+        }
         $data=model('paper_question')->where($where)->select();
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
-        $content = $this->fetch('word/word');//获取模板内容信息word是模板的名称
+        $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
         $url='uploads/paper/'.randomFileName().".doc";
 //        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
         $fp = fopen($url, 'w');//打开生成的文档
         //将试卷路径保存到试卷表
-        $res=model('paper')->where('id',$paper_id)->update(['paper_url'=>$url]);
+        if($type==1){
+            //生成试题
+            $update=['paper_url'=>$url];
+        }else{
+            //生成答案
+            $update=['answer_url'=>$url];
+        }
+        $res=model('paper')->where('id',$paper_id)->update($update);
         fwrite($fp, $fileContent);//写入包保存文件
         fclose($fp);
         if($res && $data){
