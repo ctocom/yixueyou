@@ -232,7 +232,7 @@ class Question extends Controller
         $answer_url=model('paper')->where('id',$paper_id)->value('answer_url');
         $data=[
             'count_num'=>$count_num,
-            'answer_url'=>$answer_url,
+            'answer_url'=>Config::get('domain').$answer_url,
             'paper_question_list'=>$paper_question_list
         ];
         show($data,200,'ok');
@@ -452,7 +452,7 @@ class Question extends Controller
         }
         $data=[
             'err_data'=>$err_data,
-            'err_url'=>$err_url,
+            'err_url'=>Config::get('domain').$err_url,
         ];
         show($data,200,'ok');
 
