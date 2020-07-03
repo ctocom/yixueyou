@@ -463,16 +463,26 @@ class Question extends Controller
         }
         if($type==1){
             //当前错题
-            $history=0;
+            $history=1;
         }else{
             //历史错题
-            $history=1;
+            $history=2;
         }
         if($answer==0){
             show([],0,'answer必传');
         }
-        $this->errorQuestionWord($user_id,$answer,$history);//试题
-        $this->errorQuestionWord($user_id,$answer,$history);//试题答案
+        $res1=$this->errorQuestionWord($user_id,1,$history);//试题
+        $res2=$this->errorQuestionWord($user_id,2,$history);//试题答案
+        if($res1 && $res2){
+            if($answer==1){
+                $data=model('student_error_notice')->field('error_paper_url')->where('user_id',$user_id)->find();
+            }else{
+                $data=model('student_error_notice')->field('error_answer_url')->where('user_id',$user_id)->find();
+            }
+            show($data,200,'打印成功');
+        }else{
+            show([],0,'打印失败');
+        }
     }
     //错题清零
     public function errorClear(){
@@ -593,7 +603,7 @@ class Question extends Controller
             $where=[
                 'user_id'=>$user_id,
             ];
-        }else{
+        }else if($history==2){
             //当前错题
             $where=[
                 'user_id'=>$user_id,

@@ -30,6 +30,7 @@ Route::group('index', [
     'statisticsStudent'=>'index/Question/statisticsStudent',//统计
     'unitListBefore'=>'index/StudentCourse/unitListBefore',//未完成的知识点列表
     'paperQuestionList'=>'index/Question/paperQuestionList',//试卷试题列表
+    'userErrorNotice'=>'index/Question/userErrorNotice',//错题打印
     'signList'=>'index/SignIn/signList',//积分详情
 ])->middleware(app\index\middleware\CheckLogin::class);
 //->middleware(app\index\middleware\CheckLogin::class)
