@@ -334,7 +334,7 @@ class Question extends Controller
             ];
             $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
             $p_data=[
-                'paper_url'=>$paper_url,
+                'paper_url'=>Config::get('domain').$paper_url,
                 'paper_data'=>$paper_data,
                 'paper_id'=>$paper_id
             ];
