@@ -370,7 +370,7 @@ class Question extends Controller
         $paper_question_add = Db::table('think_paper_question')->insertAll($question_data_all);
         //生成试卷文件
         $this->paperWord($paper_res,$user_id,1);
-        //生成答案文件
+        //        生成答案文件
         $this->paperWord($paper_res,$user_id,2);
         $paper_question_list=model('paperQuestion')
             ->field('id,title,type,radios,unit_id')
