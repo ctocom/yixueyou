@@ -48,7 +48,10 @@ class Question extends Controller
         $section_id=model('unit')->where('id',$unit_id)->value('section_id');
         if(empty($question_arr)){
             //没有错误 直接达标
-            $unit_list_type=model('paper')->where('id',$paper_id)->value('type');
+            $unit_list_type=model('paper')->where('user_id',$user_id)->where('id',$paper_id)->value('type');
+            if(!$unit_list_type){
+                show([],0,'paper_id参数错误');
+            }
                 if($unit_list_type==2){
                     //检测该知识点第一盏灯是否亮
                     $is_complete_num=model('user_unit')->where('user_id',$user_id)->where('unit_id',$unit_id)->where('complete_num',2)->find();
