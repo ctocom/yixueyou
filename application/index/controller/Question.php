@@ -229,7 +229,7 @@ class Question extends Controller
             ->where('paper_id',$paper_id)
             ->select();
         $count_num=count($paper_question_list);
-        $answer_url=model('student_error_notice')->where('user_id',$user_id)->value('answer_url');
+        $answer_url=model('paper')->where('id',$paper_id)->value('answer_url');
         $data=[
             'count_num'=>$count_num,
             'answer_url'=>$answer_url,
