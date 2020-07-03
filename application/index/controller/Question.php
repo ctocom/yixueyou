@@ -326,11 +326,13 @@ class Question extends Controller
         }
         if($paper_count!=0){
             $paper_id=model('paper')->where($where)->value('id');
+            $paper_url=model('paper')->where($where)->value('paper_url');
             $where=[
                 'paper_id'=>$paper_id,
             ];
             $paper_data=model('paper_Question')->field('id,title,type,radios,unit_id')->where($where)->select();
             $p_data=[
+                'paper_url'=>$paper_url,
                 'paper_data'=>$paper_data,
                 'paper_id'=>$paper_id
             ];
@@ -374,8 +376,10 @@ class Question extends Controller
             ->where('paper_id',$paper_res)
             ->select();
         $count_num=count($paper_question_list);
+        $paper_url=model('paper')->where('id',$paper_res)->value('paper_url');
         $data=[
             'paper_id'=>$paper_res,
+            'paper_url'=>$paper_url,
             'count_num'=>$count_num,
             'paper_data'=>$paper_question_list
         ];
@@ -445,12 +449,30 @@ class Question extends Controller
 
 
     }
-    //错题本、历史错题打印
+    //错题本、历史错题  答案打印
     public function userErrorNotice()
     {
         $user_id=$this->request->post('user_id');
-        $type=$this->request->post('type');
-
+        $type=$this->request->post('type','0');
+        $answer=$this->request->post('answer','0');
+        if(!$user_id){
+            show([],0,'user_id必传');
+        }
+        if($type==0){
+            show([],0,'type必传');
+        }
+        if($type==1){
+            //当前错题
+            $history=0;
+        }else{
+            //历史错题
+            $history=1;
+        }
+        if($answer==0){
+            show([],0,'answer必传');
+        }
+        $this->errorQuestionWord($user_id,$answer,$history);//试题
+        $this->errorQuestionWord($user_id,$answer,$history);//试题答案
     }
     //错题清零
     public function errorClear(){
@@ -538,7 +560,7 @@ class Question extends Controller
             //生成答案
             $name='question_answer';
         }
-        $data=model('paper_question')->where($where)->select();
+        $data=model('paper_question')->where($where)->select()->toArray();
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
@@ -554,6 +576,61 @@ class Question extends Controller
             $update=['answer_url'=>$url];
         }
         $res=model('paper')->where('id',$paper_id)->update($update);
+        fwrite($fp, $fileContent);//写入包保存文件
+        fclose($fp);
+        if($res && $data){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    //生成错题
+    public function errorQuestionWord($user_id,$type=1,$history=0)
+    {
+        //从数据库查这个学生试卷的所有题
+        if($history==1){
+            //历史错题
+            $where=[
+                'user_id'=>$user_id,
+            ];
+        }else{
+            //当前错题
+            $where=[
+                'user_id'=>$user_id,
+                'delete_time'=>0
+            ];
+        }
+        if($type==1){
+            //生成试题
+            $name='error_question';
+        }else{
+            //生成答案
+            $name='error_question_answer';
+        }
+        $question_id_arr=model('student_errorquestion')->where($where)->column('question_id');
+        $data=model('paper_question')->where('question_id','in',$question_id_arr)->select()->toArray();
+        $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
+        $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
+        $fileContent = WordMake($content);//生成word内容
+        $url='uploads/errorquestion/'.randomFileName().".doc";
+//        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
+        $fp = fopen($url, 'w');//打开生成的文档
+        //将试卷路径保存到试卷表
+        if($type==1){
+            //生成试题
+            $insert=['user_id'=>$user_id,'error_paper_url'=>$url,'create_time'=>time()];
+            $update=['error_paper_url'=>$url,'update_time'=>time()];
+        }else{
+            //生成答案
+            $update=['error_answer_url'=>$url,'update_time'=>time()];
+            $insert=['user_id'=>$user_id,'error_answer_url'=>$url,'create_time'=>time()];
+        }
+        $q_res=model('student_error_notice')->where('id',$user_id)->find();
+        if(!$q_res){
+            $res=model('student_error_notice')->insert($insert);
+        }else{
+            $res=model('student_error_notice')->where('id',$user_id)->update($update);
+        }
         fwrite($fp, $fileContent);//写入包保存文件
         fclose($fp);
         if($res && $data){
