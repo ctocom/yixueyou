@@ -634,7 +634,7 @@ class Question extends Controller
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
-        $url='uploads/errorquestion/'.random(10, '123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ').".doc";
+        $url='uploads/errorquestion/'.randomFileName().".doc";
 //        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
         $fp = fopen($url, 'w');//打开生成的文档
         //将试卷路径保存到试卷表
