@@ -381,7 +381,7 @@ class Question extends Controller
         $paper_url=model('paper')->where('id',$paper_res)->value('paper_url');
         $data=[
             'paper_id'=>$paper_res,
-            'paper_url'=>$paper_url,
+            'paper_url'=>Config::get('domain').$paper_url,
             'count_num'=>$count_num,
             'paper_data'=>$paper_question_list
         ];
