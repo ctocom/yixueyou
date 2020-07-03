@@ -229,8 +229,10 @@ class Question extends Controller
             ->where('paper_id',$paper_id)
             ->select();
         $count_num=count($paper_question_list);
+        $answer_url=model('student_error_notice')->where('user_id',$user_id)->value('answer_url');
         $data=[
             'count_num'=>$count_num,
+            'answer_url'=>$answer_url,
             'paper_question_list'=>$paper_question_list
         ];
         show($data,200,'ok');
@@ -422,7 +424,6 @@ class Question extends Controller
         }else{
             $where=[
                 'user_id'=>$user_id,
-//                'delete_time'=>0
             ];
         }
 
@@ -435,7 +436,9 @@ class Question extends Controller
             $arr[]=$v['question_id'];
         }
         if($type==1){
+            $res1=$this->errorQuestionWord($user_id,1,$user_err);//试题
             $err_data=model('question')->field('id,title,type,radios,unit_id')->where('id','in',$arr)->select()->toArray();
+            $err_url=model('student_error_notice')->where('user_id',$user_id)->value('error_paper_url');
         }else{
             $pass=model('student')
                 ->where('id',$user_id)
@@ -443,9 +446,15 @@ class Question extends Controller
             if($pass!=md5($seconds_password)){
                 show([],0,'二级密码错误');
             }
+            $res2=$this->errorQuestionWord($user_id,2,$user_err);//试题答案
             $err_data=model('question')->field('id,type,unit_id,analysis,options,answer,keyword')->where('id','in',$arr)->select()->toArray();
+            $err_url=model('student_error_notice')->where('user_id',$user_id)->value('error_answer_url');
         }
-        show($err_data,200,'ok');
+        $data=[
+            'err_data'=>$err_data,
+            'err_url'=>$err_url,
+        ];
+        show($data,200,'ok');
 
 
     }
@@ -617,12 +626,15 @@ class Question extends Controller
             //生成答案
             $name='error_question_answer';
         }
+//        if(is_file('D:\phpstudy_pro\WWW/chuan/public/uploads/errorquestion/'.md5($user_id).".doc")){
+//            $a=unlink('D:\phpstudy_pro\WWW/chuan/public/uploads/errorquestion/'.md5($user_id).".doc");
+//        }
         $question_id_arr=model('student_errorquestion')->where($where)->column('question_id');
         $data=model('paper_question')->where('question_id','in',$question_id_arr)->select()->toArray();
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
-        $url='uploads/errorquestion/'.randomFileName().".doc";
+        $url='uploads/errorquestion/'.random(10, '123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ').".doc";
 //        $name = iconv("utf-8", "GBK",$data[0]['name']);//转换好生成的word文件名编码
         $fp = fopen($url, 'w');//打开生成的文档
         //将试卷路径保存到试卷表
@@ -643,7 +655,7 @@ class Question extends Controller
         }
         fwrite($fp, $fileContent);//写入包保存文件
         fclose($fp);
-        if($res && $data){
+        if($data && $res){
             return true;
         }else{
             return false;
