@@ -218,7 +218,7 @@ class Question extends Controller
             show([],0,'paper_id必传');
         }
         if(!$seconds_password){
-            show([],0,'$seconds_password必传');
+            show([],0,'二级密码不能为空哦');
         }
         if($pass!=md5($seconds_password)){
             show([],0,'二级密码错误');
