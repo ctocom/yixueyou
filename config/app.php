@@ -145,5 +145,5 @@ return [
 
 
     'score_rank_limit'      =>10,  //用户积分排行榜人数
-    'domain'      =>'http://api.yixueyouke.net',  //返回图片域名
+    'domain'      =>'http://api.yixueyouke.net/',  //返回图片域名
 ];
