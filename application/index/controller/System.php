@@ -73,7 +73,7 @@ class System extends Controller
             }else{
                 //发送者是老师
                 $teacher=model('user')->where('uid',$v['from_user_id'])->find();
-                $chat_list[$k]['head']=$domain.$teacher['head'];
+                $chat_list[$k]['head']=empty($teacher_info['head'])?$domain.'uploads/student_head/20200704/7d2075424b8057fc73de50f3b51afea5.png':$domain.$teacher['head'];
                 $chat_list[$k]['user_name']=$teacher['name'];
             }
         }
