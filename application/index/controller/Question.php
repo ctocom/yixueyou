@@ -113,12 +113,14 @@ class Question extends Controller
                 ->select()->toArray();
             if(empty($error_info)){
                 //第一次录错题
+                $course_id=model('question')->where('id',$question_arr[0])->value('course_id');
                 foreach ($question_arr as $v){
                     $data[]=[
                         'question_id'=>$v,
                         'paper_id'=>$paper_id,
                         'user_id'=>$user_id,
-                        'create_time'=>time()
+                        'create_time'=>time(),
+                        'course_id'=>$course_id,
                     ];
                 }
                 $res=model('studentErrorquestion')->insertAll($data);
@@ -135,6 +137,7 @@ class Question extends Controller
 //                    ->update(['delete_time'=>time()]);
                 if(is_array($question_arr)){
                     $data=[];
+                    $course_id=model('question')->where('id',$question_arr[0])->value('course_id');
                     foreach ($question_arr as $v){
                         $err_res=model('studentErrorquestion')->where('question_id',$v)->find();
                         if(!$err_res){
@@ -142,7 +145,8 @@ class Question extends Controller
                                 'question_id'=>$v,
                                 'paper_id'=>$paper_id,
                                 'user_id'=>$user_id,
-                                'create_time'=>time()
+                                'create_time'=>time(),
+                                'course_id'=>$course_id
                             ];
                         }
                     }
@@ -394,11 +398,16 @@ class Question extends Controller
     public function errCount()
     {
         $user_id=$this->request->post('user_id',0,'intval');
+        $course_id=$this->request->post('course_id',0,'intval');
         if(!$user_id){
             show([],0,'user_id 必填');
         }
+        if(!$course_id){
+            show([],0,'course_id 必填');
+        }
         $errCount=Model('student_errorquestion')
             ->where('user_id',$user_id)
+            ->where('course_id',$course_id)
             ->where('delete_time',0)
             ->count();
         show($errCount,200,'ok');
@@ -408,6 +417,7 @@ class Question extends Controller
     {
         $user_id=$this->request->post('user_id',0,'intval');
         $type=$this->request->post('type',0,'intval');
+        $course_id=$this->request->post('course_id',0,'intval');
         $user_err=$this->request->post('user_err',0,'intval');
         $seconds_password=$this->request->post('seconds_password',0,'intval');
         if(!$user_id){
@@ -419,14 +429,19 @@ class Question extends Controller
         if(!$user_err){
             show([],0,'user_err 必填');
         }
+        if(!$course_id){
+            show([],0,'course_id 必填');
+        }
         if($user_err==1){
             $where=[
                 'user_id'=>$user_id,
-                'delete_time'=>0
+                'delete_time'=>0,
+                'course_id'=>$course_id
             ];
         }else{
             $where=[
                 'user_id'=>$user_id,
+                'course_id'=>$course_id
             ];
         }
         $question_id=model('student_errorquestion')->field('question_id')->where($where)->select()->toArray();
@@ -639,6 +654,11 @@ class Question extends Controller
 //        }
         $question_id_arr=model('student_errorquestion')->where($where)->column('question_id');
         $data=model('paper_question')->where('question_id','in',$question_id_arr)->select()->toArray();
+        $num=count($data);
+        $num=$num+1;
+        for ($i=1;$i<$num;$i++){
+            $data[$i-1]['t']=$i;
+        }
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
