@@ -453,7 +453,7 @@ class Question extends Controller
             $arr[]=$v['question_id'];
         }
         if($type==1){
-            $res1=$this->errorQuestionWord($user_id,1,$user_err);//试题
+            $res1=$this->errorQuestionWord($user_id,$course_id,1,$user_err);//试题
             $err_data=model('question')->field('id,title,type,radios,unit_id')->where('id','in',$arr)->select()->toArray();
             $err_url=model('student_error_notice')->where('user_id',$user_id)->value('error_paper_url');
         }else{
@@ -463,7 +463,7 @@ class Question extends Controller
             if($pass!=md5($seconds_password)){
                 show([],0,'二级密码错误');
             }
-            $res2=$this->errorQuestionWord($user_id,2,$user_err);//试题答案
+            $res2=$this->errorQuestionWord($user_id,$course_id,2,$user_err);//试题答案
             $err_data=model('question')->field('id,type,unit_id,analysis,options,answer,keyword')->where('id','in',$arr)->select()->toArray();
             $err_url=model('student_error_notice')->where('user_id',$user_id)->value('error_answer_url');
         }
@@ -627,19 +627,21 @@ class Question extends Controller
         }
     }
     //生成错题
-    public function errorQuestionWord($user_id,$type=1,$history=0)
+    public function errorQuestionWord($user_id,$course_id,$type=1,$history=1)
     {
         //从数据库查这个学生试卷的所有题
         if($history==1){
             //当前错题
             $where=[
                 'user_id'=>$user_id,
-                'delete_time'=>0
+                'delete_time'=>0,
+                'course_id'=>$course_id
             ];
         }else if($history==2){
             //历史错题
             $where=[
                 'user_id'=>$user_id,
+                'course_id'=>$course_id
             ];
         }
         if($type==1){
