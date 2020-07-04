@@ -68,7 +68,7 @@ class System extends Controller
             if($student_openid==$v['from_user_id']){
                 //发送者是学生
                 $student=model('student')->where('openid',$v['from_user_id'])->find();
-                $chat_list[$k]['head']=$domain.$student['head'];
+                $chat_list[$k]['head']=empty($student['head'])?$domain.'uploads/student_head/20200704/fba007cc104bb32c2218bae6c766a186.png':$domain.$student['head'];
                 $chat_list[$k]['user_name']=$student['name'];
             }else{
                 //发送者是老师

@@ -41,8 +41,8 @@
             id:'systemNewsListTable',
             cols : [[
                 {field: 'id', title: 'Id', width:100, align:"center"},
-                {field: 'from_user', title: '发送者账号',align:'center'},
-                {field: 'title', title: '标题',align:'center'},
+                {field: 'from_user', width:50, title: '发送者账号',align:'center'},
+                {field: 'title',width:70, title: '标题',align:'center'},
                 {field: 'content', title: '消息内容',align:'center',templet:function (d) {
                         if(d.is_read=='已读'){
                             if(d.content==null){

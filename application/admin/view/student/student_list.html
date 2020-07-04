@@ -44,6 +44,15 @@
                 {field: 'account', title: '账号',align:'center'},
                 {field: 'name', title: '用户名',align:'center'},
                 {field: 'score', title: '积分',align:'center'},
+                {field: 'type', title: '模式',align:'center',templet:function (d) {
+                        if(d.type==1){
+                            return "全自主";
+                        }else if(d.type==2){
+                            return "半监管";
+                        }else{
+                            return "全监管";
+                        }
+                    }},
                 {title: '操作', width:170, templet:'#studentListBar',fixed:"right",align:"center"}
             ]]
         });
