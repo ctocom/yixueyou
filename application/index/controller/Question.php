@@ -616,15 +616,15 @@ class Question extends Controller
     {
         //从数据库查这个学生试卷的所有题
         if($history==1){
-            //历史错题
-            $where=[
-                'user_id'=>$user_id,
-            ];
-        }else if($history==2){
             //当前错题
             $where=[
                 'user_id'=>$user_id,
                 'delete_time'=>0
+            ];
+        }else if($history==2){
+            //历史错题
+            $where=[
+                'user_id'=>$user_id,
             ];
         }
         if($type==1){
