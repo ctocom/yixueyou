@@ -150,6 +150,7 @@ class SignIn extends Controller
         foreach ($user_sign as $k=>$v){
             $user_sign[$k]['sign_in_time']=date('Y-m-d H:i:s',$v['sign_in_time']);
             $user_sign[$k]['create_time']=date('Y-m-d H:i:s',$v['create_time']);
+            $user_sign[$k]['integral']=intval(bcdiv($v['integral'],100));
         }
         show($user_sign,200,'ok');
     }
