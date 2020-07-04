@@ -429,7 +429,6 @@ class Question extends Controller
                 'user_id'=>$user_id,
             ];
         }
-
         $question_id=model('student_errorquestion')->field('question_id')->where($where)->select()->toArray();
         if(!$question_id){
             show([],0,'没有错题');
@@ -650,11 +649,11 @@ class Question extends Controller
             $update=['error_answer_url'=>$url,'update_time'=>time()];
             $insert=['user_id'=>$user_id,'error_answer_url'=>$url,'create_time'=>time()];
         }
-        $q_res=model('student_error_notice')->where('id',$user_id)->find();
+        $q_res=model('student_error_notice')->where('user_id',$user_id)->find();
         if(!$q_res){
             $res=model('student_error_notice')->insert($insert);
         }else{
-            $res=model('student_error_notice')->where('id',$user_id)->update($update);
+            $res=model('student_error_notice')->where('user_id',$user_id)->update($update);
         }
         fwrite($fp, $fileContent);//写入包保存文件
         fclose($fp);

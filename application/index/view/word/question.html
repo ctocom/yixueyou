@@ -25,10 +25,10 @@
 <h1>试卷</h1>
     {foreach $data as $k=>$v}
     ({$k+1}) 、
-    <p>
+    <p style="line-height: 10px;">
        {$v['title']|raw}
     </p>
-    <p>
+    <p style="line-height: 10px">
         {$v['radios']}
     </p>
     {/foreach}
