@@ -582,6 +582,9 @@ class Question extends Controller
             $name='question_answer';
         }
         $data=model('paper_question')->where($where)->select()->toArray();
+        for ($i=1;$i<10;$i++){
+            $data[$i-1]['t']=$i;
+        }
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
@@ -590,6 +593,9 @@ class Question extends Controller
         $fp = fopen($url, 'w');//打开生成的文档
         //将试卷路径保存到试卷表
         if($type==1){
+//            foreach ($data as $k=>$v){
+//                file_put_contents('a.text',$k.'\n',FILE_APPEND);
+//            }
             //生成试题
             $update=['paper_url'=>$url];
         }else{
@@ -633,6 +639,9 @@ class Question extends Controller
 //        }
         $question_id_arr=model('student_errorquestion')->where($where)->column('question_id');
         $data=model('paper_question')->where('question_id','in',$question_id_arr)->select()->toArray();
+        for ($i=1;$i<10;$i++){
+            $data[$i-1]['t']=$i;
+        }
         $this->assign('data',$data);//把获取的数据传递的模板，替换模板里面的变量
         $content = $this->fetch('word/'.$name);//获取模板内容信息word是模板的名称
         $fileContent = WordMake($content);//生成word内容
