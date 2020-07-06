@@ -9,16 +9,16 @@
                 </div>
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
             </div>
-            <div class="layui-inline">
-                <a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>
-            </div>
+            <!--<div class="layui-inline">-->
+                <!--<a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>-->
+            <!--</div>-->
         </form>
     </blockquote>
     <table id="paperList" lay-filter="paperList"></table>
     <!--操作-->
     <script type="text/html" id="paperListBar">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+        <!--<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>-->
     </script>
 </form>
 {/block}
@@ -43,7 +43,7 @@
                 {field: 'id', title: 'Id', width:100, align:"center"},
                 {field: 'name', title: '试卷名称',align:'center'},
                 {field: 'score', title: '总分',align:'center'},
-                {title: '操作', width:170, templet:'#paperListBar',fixed:"right",align:"center"}
+                // {title: '操作', width:170, templet:'#paperListBar',fixed:"right",align:"center"}
             ]]
         });
 

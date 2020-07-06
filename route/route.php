@@ -136,7 +136,7 @@ Route::group('admin', [
 
     'sectionList$'=>'admin/Section/sectionList',//章节列表
     'sectionDelete$'=>'admin/Section/sectionDelete',//章节删除
-    'sectionAdd$'=>'admin/Section/sectionAdd',//章节删除
+    'sectionAdd$'=>'admin/Section/sectionAdd',//章节添加
     'sectionUpload$'=>'admin/Section/sectionUpload',//章节图标上传
     'sectionEdit$'=>'admin/Section/sectionEdit',//章节修改
 
@@ -156,9 +156,9 @@ Route::group('admin', [
     'studentEdit$'=>'admin/Student/studentEdit',//学生修改
 
     'paperList$'=>'admin/Paper/paperList',//试卷列表
-    'paperDelete$'=>'admin/Paper/paperDelete',//试卷删除
-    'paperAdd$'=>'admin/Paper/paperAdd',//试卷添加
-    'paperEdit$'=>'admin/Paper/paperEdit',//试卷修改
+//    'paperDelete$'=>'admin/Paper/paperDelete',//试卷删除
+//    'paperAdd$'=>'admin/Paper/paperAdd',//试卷添加
+//    'paperEdit$'=>'admin/Paper/paperEdit',//试卷修改
 
     'videoList$'=>'admin/StudyMaterial/videoList',//视频列表
     'videoUpload$'=>'admin/StudyMaterial/videoUpload',//视频上传

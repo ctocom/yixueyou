@@ -159,8 +159,8 @@ class Index extends Common
             }
             $study_rate=[];
             foreach ($student_id as $k=>$v){
-                if(isset($new_study_rate[$k])){
-                    $study_rate[]=bcmul(bcdiv($new_study_rate[$k],$unit_num,2),100);
+                if(isset($new_study_rate[$k]) || $unit_num==0){
+                    $study_rate[]=intval(bcmul(bcdiv($new_study_rate[$k],$unit_num,2),100));
                 }else{
                     $study_rate[]=0;
                 }
