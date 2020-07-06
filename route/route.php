@@ -63,6 +63,10 @@ Route::group('admin', [
     'check$'=>'admin/User/check',                                          //验证用户是否存在
     'unlock'=>'admin/Login/unlock',                                        //验证用户是否存在
     'verify'=>'admin/Login/verify',                                        //获取验证码
+    'SystemNewsInfo$'=>'admin/System/SystemNewsList',                      //系统信息
+    'SystemNewsStatus$'=>'admin/System/SystemNewsStatus',                      //系统信息修改阅读状态
+    'SystemNewsDelete$'=>'admin/System/SystemNewsDelete',                      //系统信息删除
+    'systemNewsAudit'=>'admin/System/systemNewsAudit',                      //学习状态审核
 ])->ext('html');
 /**
  * 需要权限验证路由
@@ -73,10 +77,6 @@ Route::group('admin', [
     'index$'=>'admin/Index/index',                                           //首页
     'home'=>'admin/Index/home',
     'statistics'=>'admin/Index/statistics',
-    'SystemNewsInfo$'=>'admin/System/SystemNewsList',                      //系统信息
-    'SystemNewsStatus$'=>'admin/System/SystemNewsStatus',                      //系统信息修改阅读状态
-    'SystemNewsDelete$'=>'admin/System/SystemNewsDelete',                      //系统信息删除
-    'systemNewsAudit'=>'admin/System/systemNewsAudit',                      //学习状态审核
 
 
     'paperWord'=>'admin/Word/paperWord',                      //生成试卷
