@@ -72,25 +72,41 @@
     <div class="layui-form-item box_2" style="display: none">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="answer[]" value="A" title="A">
-            <input type="checkbox" name="answer[]" value="B" title="B">
-            <input type="checkbox" name="answer[]" value="C" title="C">
-            <input type="checkbox" name="answer[]" value="D" title="D">
-            <input type="checkbox" name="answer[]" value="E" title="E">
-            <input type="checkbox" name="answer[]" value="F" title="F">
+            <input type="checkbox" name="answer" value="A" title="A">
+            <input type="checkbox" name="answer" value="B" title="B">
+            <input type="checkbox" name="answer" value="C" title="C">
+            <input type="checkbox" name="answer" value="D" title="D">
+            <input type="checkbox" name="answer" value="E" title="E">
+            <input type="checkbox" name="answer" value="F" title="F">
         </div>
     </div>
-    <div class="layui-form-item  box_3" style="display:none">
+    <div class="layui-form-item box_3" style="display:none">
         <label class="layui-form-label">参考答案</label>
-        <div class="layui-input-block">
-            <textarea name="answer" placeholder="" class="layui-textarea"></textarea>
-        </div>
+        <textarea  id="answer" name="answer"></textarea>
     </div>
+    <!--<div class="layui-form-item  box_3" style="display:none">-->
+        <!--<label class="layui-form-label">参考答案</label>-->
+        <!--<div class="layui-input-block">-->
+            <!--<textarea name="answer" placeholder="" class="layui-textarea"></textarea>-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="layui-form-item box_4" style="display: none">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
             <input type="radio" name="answer" value="1" title="√">
             <input type="radio" name="answer" value="2" title="×">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">讲解资料：</label>
+        <div class="layui-input-inline">
+            　　　　　<!--存放上传后讲解资料路径-->
+            <input type="text" name="teach"  id="inputteachurl" placeholder="讲解资料地址" value="" class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" id="upload_teach"><i class="layui-icon"></i>上传音频</button>
+
+        <div id="win" style="display:none" class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="progressBar">
+            <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -111,16 +127,21 @@
 {css href="/form-select/formSelects-v4.css" /}
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
-    layui.use(['layedit','form'], function(){
+    layui.use(['layedit','form','upload','laydate'], function(){
         var layedit = layui.layedit;
         var form = layui.form;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
         layedit.set({
             uploadImage:{
-                url:"{:url('/admin/upload')}",
-                type:'post'
+                url:"{:url('/admin/questionPictureUpload')}",
+                type:'post',
             }
         });
         index=layedit.build('title',{
+
+        }); //建立编辑器
+        answer_index=layedit.build('answer',{
 
         }); //建立编辑器
         //监听参考答案下拉菜单
@@ -184,14 +205,54 @@
                 }
             })
         });
+        upload.render({
+            elem: '#upload_teach'
+            ,url: "{:url('/admin/questionTeachUpload')}"
+            ,exts:"mp3|mp4"
+            // ,accept: 'video' //视频
+            ,done: function(res){
+                if(res.code==200){
+                    $("#inputteachurl").val(res.data.src);
+                    previewVideo(res.data.src)
+                }
+                layer.msg(res.msg);
+                return false;
+            }
+        });
+        $('#inputteachurl').click(function () {
+            var url=$("#inputteachurl").val()
+            previewVideo(url)
+        })
+        function previewVideo(url) {
+            var html = '<div class="showvideo">';
+            html += '<video  width="300" height="500" controls="controls" autoplay="autoplay">';
+            html += '<source src="'+url+'" type="video/mp4" />';
+            html += '</video>';
+            html += '</div>';
+            //弹出层
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                title: "资料预览",
+                content: html
+            });
+        }
         //监听提交
         form.on('submit(formDemo)', function(data){
             data.field.content = layedit.getContent(index);
+            if(data.field.question_type==3){
+                data.field.answer = layedit.getContent(answer_index);
+            }
             var arr = new Array();
-            $("input:checkbox[name='answer']:checked").each(function(i){
-                arr[i] = $(this).val();
-            });
-            data.field.answer2 = arr.join("||");
+            if(data.field.question_type==2){
+                $("input:checkbox[name='answer']:checked").each(function(i){
+                    arr.push($(this).val())
+                });
+                data.field.answer = arr.join("|");
+            }
+            if(data.field.question_type==1){
+                data.field.answer=$("input:radio[name='answer']:checked").val()+'|';
+            }
             console.log(JSON.stringify(data.field));
             $.ajax({
                 url: "{:url('/admin/questionAdd')}",

@@ -46,6 +46,17 @@
                 {field: 'course_name', title: '所属课程', width:100},
                 {field: 'section_name', title: '所属章节', width:100},
                 {field: 'unit_name', title: '所属知识点', width:100},
+                {field: 'type', title: '题型', width:100,templet:function (d) {
+                        if(d.type==1){
+                            return '选择题';
+                        }else if(d.type==2){
+                            return '多选题';
+                        }else if(d.type==3){
+                            return '简答题';
+                        }else if(d.type==4){
+                            return '判断题';
+                        }
+                    }},
                 {field: 'type1', title: '所属题型',width:100,templet:function (d) {
                         if(d.type1==1){
                             return '应用题';

@@ -96,34 +96,34 @@
     <div class="layui-form-item box_1"  style="display: block">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <!--{if ($question_data.radios)=="A"}-->
-            <!--<input checked type="radio" chekout name="answer" value="A" title="A">-->
-            <!--<input type="radio" name="answer" value="B" title="B">-->
-            <!--<input type="radio" name="answer" value="C" title="C">-->
-            <!--<input type="radio" name="answer" value="D" title="D">-->
-            <!--{/if}-->
-            <!--{if ($question_data.radios)=="B"}-->
-            <!--<input checked type="radio"  name="answer" value="A" title="A">-->
-            <!--<input type="radio" chekout name="answer" value="B" title="B">-->
-            <!--<input type="radio" name="answer" value="C" title="C">-->
-            <!--<input type="radio" name="answer" value="D" title="D">-->
-            <!--{/if}-->
-            <!--{if ($question_data.radios)=="C"}-->
-            <!--<input checked type="radio"  name="answer" value="A" title="A">-->
-            <!--<input type="radio"  name="answer" value="B" title="B">-->
-            <!--<input type="radio" chekout name="answer" value="C" title="C">-->
-            <!--<input type="radio" name="answer" value="D" title="D">-->
-            <!--{/if}-->
-            <!--{if ($question_data.radios)=="D"}-->
-            <!--<input checked type="radio"  name="answer" value="A" title="A">-->
-            <!--<input type="radio"  name="answer" value="B" title="B">-->
-            <!--<input type="radio" chekout name="answer" value="C" title="C">-->
-            <!--<input type="radio" chekout name="answer" value="D" title="D">-->
-            <!--{/if}-->
+            {if ($question_data.options)=="A|"}
+            <input checked type="radio" name="answer" value="A" title="A">
+            <input type="radio" name="answer" value="B" title="B">
+            <input type="radio" name="answer" value="C" title="C">
+            <input type="radio" name="answer" value="D" title="D">
+            {/if}
+            {if ($question_data.options)=="B|"}
+            <input type="radio"  name="answer" value="A" title="A">
+            <input type="radio" checked name="answer" value="B" title="B">
+            <input type="radio" name="answer" value="C" title="C">
+            <input type="radio" name="answer" value="D" title="D">
+            {/if}
+            {if ($question_data.options)=="C|"}
             <input type="radio"  name="answer" value="A" title="A">
             <input type="radio"  name="answer" value="B" title="B">
-            <input type="radio" chekout name="answer" value="C" title="C">
-            <input type="radio" chekout name="answer" value="D" title="D">
+            <input type="radio" checked name="answer" value="C" title="C">
+            <input type="radio" name="answer" value="D" title="D">
+            {/if}
+            {if ($question_data.options)=="D|"}
+            <input type="radio"  name="answer" value="A" title="A">
+            <input type="radio"  name="answer" value="B" title="B">
+            <input type="radio"  name="answer" value="C" title="C">
+            <input type="radio" checked name="answer" value="D" title="D">
+            {/if}
+            <!--<input type="radio"  name="answer" value="A" title="A">-->
+            <!--<input type="radio"  name="answer" value="B" title="B">-->
+            <!--<input type="radio"  name="answer" value="C" title="C">-->
+            <!--<input type="radio"  name="answer" value="D" title="D">-->
         </div>
     </div>
     {/if}
@@ -131,21 +131,19 @@
     <div class="layui-form-item box_2"  style="display: block">
         <label class="layui-form-label">参考答案</label>
         <div class="layui-input-block">
-            <input type="checkbox"  name="answer[]" value="A" title="A">
-            <input type="checkbox"   name="answer[]" value="B" title="B">
-            <input type="checkbox"   name="answer[]" value="C" title="C">
-            <input type="checkbox"  name="answer[]" value="D" title="D">
-            <input type="checkbox"  name="answer[]" value="E" title="E">
-            <input type="checkbox"  name="answer[]" value="F" title="F">
+            <input type="checkbox"  name="answer" value="A" title="A">
+            <input type="checkbox"   name="answer" value="B" title="B">
+            <input type="checkbox"   name="answer" value="C" title="C">
+            <input type="checkbox"  name="answer" value="D" title="D">
+            <input type="checkbox"  name="answer" value="E" title="E">
+            <input type="checkbox"  name="answer" value="F" title="F">
         </div>
     </div>
     {/if}
     {if ($question_data.type)==5 || ($question_data.type==3)}
-    <div class="layui-form-item  box_3" style="display: block">
+    <div class="layui-form-item box_3" style="display:block">
         <label class="layui-form-label">参考答案</label>
-        <div class="layui-input-block">
-            <textarea name="answer" placeholder="" class="layui-textarea">{$question_data.keyword}</textarea>
-        </div>
+        <textarea  id="answer" name="answer">{$question_data.keyword}</textarea>
     </div>
     {/if}
     {if ($question_data.type)==4}
@@ -191,6 +189,9 @@
             }
         });
         index=layedit.build('title',{
+
+        }); //建立编辑器
+        answer_index=layedit.build('answer',{
 
         }); //建立编辑器
         //监听参考答案下拉菜单
@@ -259,11 +260,19 @@
         //监听提交
         form.on('submit(formDemo)', function(data){
             data.field.content = layedit.getContent(index);
+            if(data.field.question_type==3){
+                data.field.answer = layedit.getContent(answer_index);
+            }
             var arr = new Array();
-            $("input:checkbox[name='answer']:checked").each(function(i){
-                arr[i] = $(this).val();
-            });
-            data.field.answer2 = arr.join("||");
+            if(data.field.question_type==2){
+                $("input:checkbox[name='answer']:checked").each(function(i){
+                    arr.push($(this).val())
+                });
+                data.field.answer = arr.join("|");
+            }
+            if(data.field.question_type==1){
+                data.field.answer=$("input:radio[name='answer']:checked").val()+'|';
+            }
             console.log(JSON.stringify(data.field));
             $.ajax({
                 url: "{:url('/admin/questionEdit')}",

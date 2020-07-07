@@ -5,6 +5,7 @@ use app\admin\model\Unit;
 use app\admin\model\QuestionType;
 use app\admin\model\Question as Questions;
 use app\admin\model\Course;
+use app\admin\service\FileUploadService;
 class Question extends Common
 {
     public function questionList()
@@ -32,6 +33,7 @@ class Question extends Common
             return  $this->fetch();
         }
     }
+    //试题添加
     public function questionAdd(){
         if($this->request->isAjax()){
            $post_data=$this->request->post();
@@ -42,9 +44,9 @@ class Question extends Common
            $data['analysis']=$post_data['analysis'];
            $data['title']=$post_data['content'];
            $data['type1']=$post_data['type1'];
+           $data['teach_url']=$post_data['teach'];
            $data['radios']=$post_data['question'];
            $answer=$post_data['answer'];
-           $answer2=$post_data['answer2'];
            $data['type']=intval($post_data['question_type']);
            if($data['type']==1){
                //选择题
@@ -52,7 +54,7 @@ class Question extends Common
 
            }else if($data['type']==2){
                //多选题
-               $data['options']=implode('|',$answer);
+               $data['options']=$answer;
            }else if($data['type']==3){
                //简答题
                $data['keyword']=$answer;
@@ -81,6 +83,21 @@ class Question extends Common
             return  $this->fetch();
         }
     }
+    //试题题目或者试题答案图片
+    public function questionPictureUpload()
+    {
+        $file = request()->file('file');
+        $msg=FileUploadService::upload($file,1024*1024*200,'jpeg,jpg,png,gif','../public/uploads/study_material/question/picture','study_material/question/picture');
+        show($msg['data'],0,'上传成功');
+    }
+    //试题讲解资料
+    public function questionTeachUpload()
+    {
+        $file = request()->file('file');
+        $msg=FileUploadService::upload($file,1024*1024*200,'mp4,mp3','../public/uploads/study_material/question/material','study_material/question/material');
+        return $msg;
+    }
+    //试题修改
     public function questionEdit()
     {
         $id=$this->request->param('id');
@@ -94,8 +111,7 @@ class Question extends Common
             $data['title']=$post_data['content'];
             $data['type1']=$post_data['type1'];
             $data['radios']=$post_data['question'];
-            $answer=$post_data['answer'];
-            $answer2=$post_data['answer2'];
+            $answer=empty($post_data['answer'])?show([],0,'参考答案不能为空哦'):$post_data['answer'];
             $data['type']=intval($post_data['question_type']);
             if($data['type']==1){
                 //选择题
@@ -103,7 +119,7 @@ class Question extends Common
 
             }else if($data['type']==2){
                 //多选题
-                $data['options']=implode('|',$answer);
+                $data['options']=$answer;
             }else if($data['type']==3){
                 //简答题
                 $data['keyword']=$answer;
@@ -111,7 +127,7 @@ class Question extends Common
                 //判断题
                 $data['answer']=$answer;
             }else if($data['type']==5){
-                //填空题题
+                //填空题
                 $data['keyword']=$answer;
             }
             $data['name']=$data['title'];
@@ -128,9 +144,9 @@ class Question extends Common
             $course_data=Course::getCourseInfo([]);
             $question_type=QuestionType::getQuestionType();
             $question_data=model('question')->where('id',$id)->find();
-            if($question_data['type']==1){
-                $question_data['options']=explode('|',$question_data['options']);
-            }
+//            if($question_data['type']==1){
+//                $question_data['options']=explode('|',$question_data['options']);
+//            }
             $section_data=model('section')->select();
             $unit_data=model('unit')->select();
             $this->assign('question_data',$question_data);

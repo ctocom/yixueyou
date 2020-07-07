@@ -12,6 +12,17 @@
             </select>
         </div>
     </div>
+    <div class="layui-form-item" {if(!in_array(1,$group_id))}style="display:none"{/if}>
+        <label class="layui-form-label">所属老师</label>
+        <div class="layui-input-block">
+            <select name="teacher_id" >
+                <option value=""></option>
+                {foreach  $teacher_data as $k=>$v}
+                <option value="{$v.uid}">{$v.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label">账号</label>
         <div class="layui-input-block">

@@ -127,6 +127,8 @@ Route::group('admin', [
     'questionUnit$'=>'admin/Question/questionUnit',//试题知识点下拉
     'questionDelete$'=>'admin/Question/questionDelete',//试题删除
     'questionEdit$'=>'admin/Question/questionEdit',//试题编辑
+    'questionPictureUpload'=>'admin/Question/questionPictureUpload',//试题图片上传
+    'questionTeachUpload$'=>'admin/Question/questionTeachUpload',//试题讲解资料上传
 
     'courseList$'=>'admin/Course/courseList',//课目列表
     'courseDelete$'=>'admin/Course/courseDelete',//科目删除

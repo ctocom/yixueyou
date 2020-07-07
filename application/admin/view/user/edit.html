@@ -74,6 +74,7 @@
                 var msg;
                 $.ajax({
                     async: false,
+                    dataType:'json',
                     url: "{:url('/admin/check')}",
                     data: {username: value},
                     success: function (data) {

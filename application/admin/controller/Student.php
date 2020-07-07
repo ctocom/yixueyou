@@ -13,6 +13,14 @@ class Student extends Common
 {
     public function studentList()
     {
+        $teacher_info=session('user_auth');
+        $group_id=$teacher_info['group_id'];
+        $uid=$teacher_info['uid'];
+        if(in_array(1,$group_id)){
+           $where=[];
+        }else{
+            $where=['teacher_id'=>$uid];
+        }
         if ($this->request->isAjax()) {
             $data = [
                 'key' => $this->request->get('key', '', 'trim'),
@@ -20,6 +28,7 @@ class Student extends Common
             ];
             $list = S::where('account','like',"%".$data['key']."%")
                 ->where('delete_time',0)
+                ->where($where)
                 ->paginate($data['limit'], false, ['query' => $data]);
             $total=$list->total();
             $user_data = [];
@@ -37,7 +46,22 @@ class Student extends Common
     //学生添加
     public function studentAdd()
     {
+        $teacher_info=session('user_auth');
+        $group_id=$teacher_info['group_id'];
+        $uid=$teacher_info['uid'];
         if($this->request->isAjax()){
+            $type=$this->request->post('type',0);
+            if(!$type){
+                show([],0,'监管模式必须选择');
+            }
+            if(!in_array(1,$group_id)){
+                $teacher_id=$uid;
+            }else{
+                $teacher_id=$this->request->post('teacher_id',0);
+                if(!$teacher_id){
+                    show([],0,'所属老师必须选择');
+                }
+            }
             $student_account=$this->request->post('student_account','');
             if(empty($student_account)){
                 show([],0,'账号不能为空');
@@ -73,10 +97,6 @@ class Student extends Common
             if(!is_numeric($tel) || strlen($tel)!=11){
                 show([],0,'手机号必须为11位纯数字');
             }
-            $type=$this->request->post('type',0);
-            if(!$type){
-                show([],0,'监管模式必须选择');
-            }
             $student_password=$this->request->post('student_password');
             if(strlen($student_password)<6 || strlen($student_password)>16){
                 show([],0,'密码最少6位最多16位,数字或英文组成');
@@ -93,7 +113,7 @@ class Student extends Common
             $data['password']=md5($student_password);
             $data['score']=0;
             $teacher_info=session('user_auth');
-            $data['teacher_id']=$teacher_info['uid'];
+            $data['teacher_id']=$teacher_id;
             $data['status']=$status;
             $data['type']=$type;
             $data['openid']=md5(uniqid(mt_rand(), true));
@@ -105,6 +125,9 @@ class Student extends Common
                 show([],0,'添加失败');
             }
         }else{
+            $teacher_data=model('user')->where('uid','<>',$uid)->select();
+            $this->assign('group_id',$group_id);
+            $this->assign('teacher_data',$teacher_data);
             return $this->fetch();
         }
 
@@ -112,8 +135,24 @@ class Student extends Common
     //修改学生资料
     public function studentEdit()
     {
+        $teacher_info=session('user_auth');
+        $group_id=$teacher_info['group_id'];
+        $uid=$teacher_info['uid'];
         $id=$this->request->param('uid');
         if($this->request->isAjax()){
+            $type=$this->request->post('type',0);
+            if(!$type){
+                show([],0,'监管模式必须选择');
+            }
+            $teacher_id=$this->request->post('teacher_id',0);
+            if(!in_array(1,$group_id)){
+                $teacher_id=$uid;
+            }else{
+                $teacher_id=$this->request->post('teacher_id',0);
+                if(!$teacher_id){
+                    show([],0,'所属老师必须选择');
+                }
+            }
             $student_account=$this->request->post('student_account','');
             if(empty($student_account)){
                 show([],0,'账号不能为空');
@@ -152,10 +191,6 @@ class Student extends Common
             if(!is_numeric($tel) || strlen($tel)!=11){
                 show([],0,'手机号必须为11位纯数字');
             }
-            $type=$this->request->post('type',0);
-            if(!$type){
-                show([],0,'监管模式必须选择');
-            }
             $data=[];
             $student_password1=$this->request->post('student_password1','');
             $student_password2=$this->request->post('student_password2','');
@@ -180,11 +215,10 @@ class Student extends Common
             $data['age']=$age;
             $data['tel']=$tel;
             $teacher_info=session('user_auth');
-            $data['teacher_id']=$teacher_info['uid'];
+            $data['teacher_id']=$teacher_id;
             $data['status']=$status;
             $data['type']=$type;
             $data['update_time']=time();
-//            var_dump($data);exit;
             $res=model('student')->where('id',$id)->update($data);
             if($res){
                 show([],200,'修改成功');
@@ -192,6 +226,9 @@ class Student extends Common
                 show([],0,'修改失败');
             }
         }else{
+            $teacher_data=model('user')->where('uid','<>',$uid)->select();
+            $this->assign('group_id',$group_id);
+            $this->assign('teacher_data',$teacher_data);
             $student_data=model('student')->where('id',$id)->find();
             $this->assign('student_data',$student_data);
             return $this->fetch();

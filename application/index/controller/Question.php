@@ -90,10 +90,14 @@ class Question extends Controller
                         ['unit_list_module_id'=>$module_id1,'user_id'=>$user_id,'is_complete'=>1],
                         ['unit_list_module_id'=>$module_id2,'user_id'=>$user_id,'is_complete'=>1],
                     ];
+                    //添加用户学习完成的模块
                     model('user_unit_list_module')->insertAll($unit_module_arr);
                     //知识点亮一个灯
                     $user_unit_res= model('user_unit')->insert(['complete_num'=>1,'unit_id'=>$unit_id,'user_id'=>$user_id,'section_id'=>$section_id]);
                 }
+                //检测完成
+            //将试卷改为已做
+            $paper_res=model('paper')->where('id',$paper_id)->update(['status'=>2]);
             //加积分
             //检测完成加积分
             $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
@@ -125,6 +129,7 @@ class Question extends Controller
                 }
                 $res=model('studentErrorquestion')->insertAll($data);
                 if($res){
+                    $paper_res=model('paper')->where('id',$paper_id)->update(['status'=>2]);
                     show([],200,'录入成功');
                 }else{
                     show([],0,'录入失败');
@@ -192,6 +197,7 @@ class Question extends Controller
                             ->where('user_id',$user_id)
                             ->update(['complete_rate'=>100]);
                     }
+                    $paper_res=model('paper')->where('id',$paper_id)->update(['status'=>2]);
                     //加积分
                     //检测完成加积分
                     $score_config=json_decode(model('config')->where('name','score_config')->value('value'),true);
@@ -311,6 +317,7 @@ class Question extends Controller
             $where=[
                 'user_id'=>$user_id,
                 'unit_list_id'=>$unit_list_id,
+                'status'=>1,
                 'unit_id'=>$unit_id,
             ];
             $paper_count=model('paper')->where($where)->count();
@@ -320,6 +327,7 @@ class Question extends Controller
                 $where=[
                     'user_id'=>$user_id,
                     'type'=>2,
+                    'status'=>1,
                     'unit_id'=>$unit_id,
                 ];
                 $paper_count=model('paper')->where($where)->count();
@@ -328,6 +336,7 @@ class Question extends Controller
                 $where=[
                     'user_id'=>$user_id,
                     'type'=>3,
+                    'status'=>1,
                     'unit_id'=>$unit_id,
                 ];
                 $paper_count=model('paper')->where($where)->count();
@@ -373,6 +382,7 @@ class Question extends Controller
             $question_data_all[$k]['paper_id']=$paper_res;
             $question_data_all[$k]['user_id']=$user_id;
             $question_data_all[$k]['question_id']=$v['id'];
+            $question_data_all[$k]['status']=1;
         }
         $paper_question_add = Db::table('think_paper_question')->insertAll($question_data_all);
         //生成试卷文件
@@ -580,7 +590,7 @@ class Question extends Controller
         ];
         show($data,200,'ok');
     }
-    //生成试题
+    //生成试题文档
     public function paperWord($paper_id,$user_id,$type=1)
     {
         //从数据库查这个学生试卷的所有题
@@ -626,7 +636,7 @@ class Question extends Controller
             return false;
         }
     }
-    //生成错题
+    //生成错题文档
     public function errorQuestionWord($user_id,$course_id,$type=1,$history=1)
     {
         //从数据库查这个学生试卷的所有题
